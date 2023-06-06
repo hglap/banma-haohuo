@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ebanma.cloud.user.dao.ProdLifetimeMapper">
+  <resultMap id="BaseResultMap" type="com.ebanma.cloud.user.model.ProdLifetime">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="principal_id" jdbcType="VARCHAR" property="principalId" />
+    <result column="principal_type" jdbcType="VARCHAR" property="principalType" />
+    <result column="product_code" jdbcType="VARCHAR" property="productCode" />
+    <result column="amount" jdbcType="BIGINT" property="amount" />
+    <result column="count" jdbcType="BIGINT" property="count" />
+    <result column="writeoff_amount" jdbcType="BIGINT" property="writeoffAmount" />
+    <result column="writeoff_count" jdbcType="BIGINT" property="writeoffCount" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+  </resultMap>
+</mapper>

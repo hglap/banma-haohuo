@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ebanma.cloud.post.dao.PostInfoMapper">
+  <resultMap id="BaseResultMap" type="com.ebanma.cloud.post.model.PostInfo">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="post_id" jdbcType="VARCHAR" property="postId" />
+    <result column="user_id" jdbcType="VARCHAR" property="userId" />
+    <result column="nick_name" jdbcType="VARCHAR" property="nickName" />
+    <result column="head_img" jdbcType="VARCHAR" property="headImg" />
+    <result column="post_title" jdbcType="VARCHAR" property="postTitle" />
+    <result column="post_content" jdbcType="VARCHAR" property="postContent" />
+    <result column="status" jdbcType="CHAR" property="status" />
+    <result column="tag_ids" jdbcType="VARCHAR" property="tagIds" />
+    <result column="praise_count" jdbcType="INTEGER" property="praiseCount" />
+    <result column="reply_count" jdbcType="INTEGER" property="replyCount" />
+    <result column="sku_url" jdbcType="VARCHAR" property="skuUrl" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+  </resultMap>
+</mapper>

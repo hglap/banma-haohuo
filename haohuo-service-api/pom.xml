@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>haohuo-parent</artifactId>
+        <groupId>com.ebanma.cloud</groupId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>haohuo-service-api</artifactId>
+    <packaging>pom</packaging>
+
+    <description>
+        通用的API feign的父工程
+    </description>
+    <modules>
+        <module>haohuo-service-mall-api</module>
+        <module>haohuo-service-user-api</module>
+        <module>haohuo-service-trans-api</module>
+        <module>haohuo-service-order-api</module>
+        <module>haohuo-service-game-api</module>
+        <module>haohuo-service-post-api</module>
+        <module>haohuo-service-seckill-api</module>
+    </modules>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-openfeign</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.ebanma.cloud</groupId>
+            <artifactId>haohuo-common</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+    </dependencies>
+
+</project>

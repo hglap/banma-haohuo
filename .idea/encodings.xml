@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="Encoding" defaultCharsetForPropertiesFiles="UTF-8">
+    <file url="file://$PROJECT_DIR$/haohuo-common-db/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/haohuo-common-db/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/haohuo-common/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/haohuo-common/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/haohuo-gateway-app/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/haohuo-gateway-app/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/haohuo-service-api/haohuo-service-game-api/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/haohuo-service-api/haohuo-service-game-api/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/haohuo-service-api/haohuo-service-mall-api/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/haohuo-service-api/haohuo-service-mall-api/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/haohuo-service-api/haohuo-service-order-api/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/haohuo-service-api/haohuo-service-order-api/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/haohuo-service-api/haohuo-service-post-api/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/haohuo-service-api/haohuo-service-post-api/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/haohuo-service-api/haohuo-service-seckill-api/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/haohuo-service-api/haohuo-service-seckill-api/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/haohuo-service-api/haohuo-service-trans-api/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/haohuo-service-api/haohuo-service-trans-api/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/haohuo-service-api/haohuo-service-user-api/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/haohuo-service-api/haohuo-service-user-api/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/haohuo-service-api/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/haohuo-service-api/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/haohuo-service/haohuo-service-game/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/haohuo-service/haohuo-service-game/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/haohuo-service/haohuo-service-mall/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/haohuo-service/haohuo-service-mall/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/haohuo-service/haohuo-service-order/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/haohuo-service/haohuo-service-order/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/haohuo-service/haohuo-service-post/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/haohuo-service/haohuo-service-post/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/haohuo-service/haohuo-service-seckill/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/haohuo-service/haohuo-service-seckill/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/haohuo-service/haohuo-service-trans/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/haohuo-service/haohuo-service-trans/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/haohuo-service/haohuo-service-user/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/haohuo-service/haohuo-service-user/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/haohuo-service/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/haohuo-service/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/main/resources" charset="UTF-8" />
+  </component>
+</project>

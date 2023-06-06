@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ebanma.cloud.trans.dao.TransAccountMapper">
+  <resultMap id="BaseResultMap" type="com.ebanma.cloud.trans.model.TransAccount">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="trans_id" jdbcType="VARCHAR" property="transId" />
+    <result column="init_amount" jdbcType="BIGINT" property="initAmount" />
+    <result column="balance" jdbcType="BIGINT" property="balance" />
+    <result column="freeze_Balance" jdbcType="BIGINT" property="freezeBalance" />
+    <result column="total_in_amount" jdbcType="BIGINT" property="totalInAmount" />
+    <result column="total_out_amount" jdbcType="BIGINT" property="totalOutAmount" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+  </resultMap>
+</mapper>
