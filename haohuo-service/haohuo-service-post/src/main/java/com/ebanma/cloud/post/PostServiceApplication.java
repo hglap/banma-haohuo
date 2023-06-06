@@ -7,7 +7,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
 //@EnableDiscoveryClient
-@MapperScan(basePackages = {"com.ebanma.cloud.post.dao", "com.ebanma.cloud.common.core"})
+//@MapperScan(basePackages = {"com.ebanma.cloud.post.dao", "com.ebanma.cloud.common.core"})
 public class PostServiceApplication {
 
     public static void main(String[] args) {

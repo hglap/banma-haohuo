@@ -31,26 +31,25 @@ public class PostInfoController {
 
     @PostMapping("/delete")
     public Result delete(@RequestParam Integer id) {
-        postInfoService.deleteById(id);
+        postInfoService.removeById(id);
         return ResultGenerator.genSuccessResult();
     }
 
     @PostMapping("/update")
     public Result update(PostInfo postInfo) {
-        postInfoService.update(postInfo);
+        postInfoService.updateById(postInfo);
         return ResultGenerator.genSuccessResult();
     }
 
     @PostMapping("/detail")
     public Result detail(@RequestParam Integer id) {
-        PostInfo postInfo = postInfoService.findById(id);
+        PostInfo postInfo = postInfoService.getById(id);
         return ResultGenerator.genSuccessResult(postInfo);
     }
 
     @PostMapping("/list")
-    public Result list(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "0") Integer size) {
-        PageHelper.startPage(page, size);
-        List<PostInfo> list = postInfoService.findAll();
+    public Result list() {
+        List<PostInfo> list = postInfoService.list();
         PageInfo pageInfo = new PageInfo(list);
         return ResultGenerator.genSuccessResult(pageInfo);
     }
