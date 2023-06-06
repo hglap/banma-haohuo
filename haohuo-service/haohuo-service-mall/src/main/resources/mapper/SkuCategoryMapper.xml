@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ebanma.cloud.mall.dao.SkuCategoryMapper">
+
+    <resultMap id="BaseResultMap" type="com.ebanma.cloud.mall.model.po.SkuCategory">
+            <id property="id" column="id" jdbcType="VARCHAR"/>
+            <result property="name" column="name" jdbcType="VARCHAR"/>
+            <result property="categoryNo" column="category_no" jdbcType="VARCHAR"/>
+            <result property="useStatus" column="use_status" jdbcType="VARCHAR"/>
+            <result property="seq" column="seq" jdbcType="BIGINT"/>
+            <result property="description" column="description" jdbcType="VARCHAR"/>
+            <result property="version" column="version" jdbcType="BIGINT"/>
+            <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+            <result property="createUser" column="create_user" jdbcType="VARCHAR"/>
+            <result property="lastModified" column="last_modified" jdbcType="TIMESTAMP"/>
+            <result property="lastModifyUser" column="last_modify_user" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,name,category_no,
+        use_status,seq,description,
+        version,create_time,create_user,
+        last_modified,last_modify_user
+    </sql>
+</mapper>

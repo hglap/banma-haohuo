@@ -4,55 +4,12 @@ spring:
   application:
     name: mall-service
   datasource:
-
-
-
-
-
-    #-----------------------------------必须配置-------------------------#
-    spring.application.name=qfc-business-bmk
-    server.port=8104
-    spring.datasource.druid.url=jdbc:mysql://10.66.80.8:3306/fcw_bmk?serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=UTF-8
-    spring.datasource.druid.username=root
-    spring.datasource.druid.password=Yq202281!
-
-
-    spring.redis.host=10.66.80.8
-    spring.redis.port=6379
-    spring.redis.password=Yq20220801
-    spring.redis.database=0
-
-    #spring.redis.cluster.nodes=10.133.92.174:30001,10.133.92.175:30001,10.133.92.176:30001
-    #spring.redis.password=test@123
-    #spring.redis.database=0
-
-    ribbon.ReadTimeout=10000
-    ribbon.ConnectTimeout=10000
-
-
-
-    spring.jackson.time-zone=GMT+8
-
-    spring.mvc.pathmatch.matching-strategy=ANT_PATH_MATCHER
-
-    ## Mybatis
-    mybatis-plus.mapper-locations=classpath*:/mybatis/mapper/*.xml
-
-
-    #BPM.gateway.appKey=f3cd0d366d6b470b83a3aa597c4b7b4f
-    #BPM.gateway.appSecret=c3e85b803d254d958a751f19fb3d3896
-    #BPM.gateway.env=sit
-
-
-    BPM.gateway.appKey=afa857b4e020474b893d1e494777acd0
-    BPM.gateway.appSecret=69f11a18d43a43019991d514a0d4118b
-    BPM.gateway.env=sit
-
-
-    # 文件最大限制
-    spring.servlet.multipart.max-file-size=1024MB
-    # 请求最大限制
-    spring.servlet.multipart.max-request-size=1024MB
-    spring.servlet.multipart.enabled=true
-    # 设置文件缓存的临界点,超过则先保存到临时目录,默认为0,所有文件都会进行缓存
-    spring.servlet.multipart.file-size-threshold=0
+    druid:
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      url: jdbc:mysql://30.16.95.144/yizu-duyumeng?serverTimezone=GMT%2B8&useUnicode=true&characterEncoding=UTF-8
+      username: root
+      password: root
+mybatis-plus:
+  mapper-locations: classpath:/mapper/*.xml
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
