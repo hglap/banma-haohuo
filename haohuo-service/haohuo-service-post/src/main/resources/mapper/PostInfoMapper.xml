@@ -1,23 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ebanma.cloud.post.dao.PostInfoMapper">
-  <resultMap id="BaseResultMap" type="com.ebanma.cloud.post.model.PostInfo">
-    <!--
-      WARNING - @mbg.generated
-    -->
-    <id column="id" jdbcType="BIGINT" property="id" />
-    <result column="post_id" jdbcType="VARCHAR" property="postId" />
-    <result column="user_id" jdbcType="VARCHAR" property="userId" />
-    <result column="nick_name" jdbcType="VARCHAR" property="nickName" />
-    <result column="head_img" jdbcType="VARCHAR" property="headImg" />
-    <result column="post_title" jdbcType="VARCHAR" property="postTitle" />
-    <result column="post_content" jdbcType="VARCHAR" property="postContent" />
-    <result column="status" jdbcType="CHAR" property="status" />
-    <result column="tag_ids" jdbcType="VARCHAR" property="tagIds" />
-    <result column="praise_count" jdbcType="INTEGER" property="praiseCount" />
-    <result column="reply_count" jdbcType="INTEGER" property="replyCount" />
-    <result column="sku_url" jdbcType="VARCHAR" property="skuUrl" />
-    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
-    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
-  </resultMap>
+
+    <resultMap id="BaseResultMap" type="com.ebanma.cloud.post.model.po.PostInfoPO">
+            <id property="id" column="id" jdbcType="BIGINT"/>
+            <result property="postId" column="post_id" jdbcType="VARCHAR"/>
+            <result property="userId" column="user_id" jdbcType="VARCHAR"/>
+            <result property="nickName" column="nick_name" jdbcType="VARCHAR"/>
+            <result property="headImg" column="head_img" jdbcType="VARCHAR"/>
+            <result property="title" column="title" jdbcType="VARCHAR"/>
+            <result property="content" column="content" jdbcType="VARCHAR"/>
+            <result property="status" column="status" jdbcType="CHAR"/>
+            <result property="topic" column="topic" jdbcType="VARCHAR"/>
+            <result property="img" column="img" jdbcType="VARCHAR"/>
+            <result property="sku" column="sku" jdbcType="VARCHAR"/>
+            <result property="likes" column="likes" jdbcType="INTEGER"/>
+            <result property="views" column="views" jdbcType="INTEGER"/>
+            <result property="comments" column="comments" jdbcType="INTEGER"/>
+            <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+            <result property="modifiedTime" column="modified_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,post_id,user_id,
+        nick_name,head_img,title,
+        content,status,topic,
+        img,sku,likes,
+        views,comments,create_time,
+        modified_time
+    </sql>
 </mapper>

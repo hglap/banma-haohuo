@@ -1,12 +1,13 @@
 package com.ebanma.cloud.post.service;
 
-
-import com.ebanma.cloud.common.core.Service;
-import com.ebanma.cloud.post.model.PostInfo;
+import com.ebanma.cloud.post.model.po.PostInfoPO;
+import com.baomidou.mybatisplus.extension.service.IService;
 
 /**
- * Created by CodeGenerator on 2023/06/06.
- */
-public interface PostInfoService extends Service<PostInfo> {
+* @author banma-0163
+* @description 针对表【post_info(推荐帖信息表)】的数据库操作Service
+* @createDate 2023-06-06 19:10:57
+*/
+public interface PostInfoService extends IService<PostInfoPO> {
 
 }
