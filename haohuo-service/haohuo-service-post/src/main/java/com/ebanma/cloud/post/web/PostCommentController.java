@@ -2,8 +2,9 @@ package com.ebanma.cloud.post.web;
 
 import com.ebanma.cloud.common.dto.Result;
 import com.ebanma.cloud.common.dto.ResultGenerator;
-import com.ebanma.cloud.post.model.po.PostInfoPO;
-import com.ebanma.cloud.post.service.PostInfoService;
+import com.ebanma.cloud.post.model.po.PostCommentPO;
+import com.ebanma.cloud.post.service.PostCommentService;
+import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,38 +18,39 @@ import java.util.List;
 * Created by CodeGenerator on 2023/06/06.
 */
 @RestController
-@RequestMapping("/post/info")
-public class PostInfoController {
+@RequestMapping("/post/comment")
+public class PostCommentController {
     @Resource
-    private PostInfoService postInfoService;
+    private PostCommentService postCommentService;
 
     @PostMapping("/add")
-    public Result add(PostInfoPO postInfo) {
-        postInfoService.save(postInfo);
+    public Result add(PostCommentPO postComment) {
+        postCommentService.save(postComment);
         return ResultGenerator.genSuccessResult();
     }
 
     @PostMapping("/delete")
     public Result delete(@RequestParam Integer id) {
-        postInfoService.removeById(id);
+        postCommentService.removeById(id);
         return ResultGenerator.genSuccessResult();
     }
 
     @PostMapping("/update")
-    public Result update(PostInfoPO postInfo) {
-        postInfoService.updateById(postInfo);
+    public Result update(PostCommentPO postComment) {
+        postCommentService.updateById(postComment);
         return ResultGenerator.genSuccessResult();
     }
 
     @PostMapping("/detail")
     public Result detail(@RequestParam Integer id) {
-        PostInfoPO postInfo = postInfoService.getById(id);
-        return ResultGenerator.genSuccessResult(postInfo);
+        PostCommentPO postComment = postCommentService.getById(id);
+        return ResultGenerator.genSuccessResult(postComment);
     }
 
     @PostMapping("/list")
-    public Result list() {
-        List<PostInfoPO> list = postInfoService.list();
+    public Result list(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "0") Integer size) {
+        PageHelper.startPage(page, size);
+        List<PostCommentPO> list = postCommentService.list();
         PageInfo pageInfo = new PageInfo(list);
         return ResultGenerator.genSuccessResult(pageInfo);
     }

@@ -2,6 +2,8 @@ package com.ebanma.cloud.post.model.po;
 
 import java.io.Serializable;
 import java.util.Date;
+
+import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
 import javax.persistence.Table;
@@ -11,7 +13,7 @@ import javax.persistence.Table;
  * @TableName post_info
  */
 @Data
-@Table(name = "post_info")
+@TableName("post_info")
 public class PostInfoPO implements Serializable {
     /**
      * 主键
@@ -21,7 +23,6 @@ public class PostInfoPO implements Serializable {
     /**
      * 帖子ID
      */
-    private Long postId;
 
     /**
      * 用户ID
@@ -108,7 +109,6 @@ public class PostInfoPO implements Serializable {
         }
         PostInfoPO other = (PostInfoPO) that;
         return (this.getId() == null ? other.getId() == null : this.getId().equals(other.getId()))
-            && (this.getPostId() == null ? other.getPostId() == null : this.getPostId().equals(other.getPostId()))
             && (this.getUserId() == null ? other.getUserId() == null : this.getUserId().equals(other.getUserId()))
             && (this.getNickName() == null ? other.getNickName() == null : this.getNickName().equals(other.getNickName()))
             && (this.getHeadImg() == null ? other.getHeadImg() == null : this.getHeadImg().equals(other.getHeadImg()))
@@ -130,7 +130,6 @@ public class PostInfoPO implements Serializable {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((getId() == null) ? 0 : getId().hashCode());
-        result = prime * result + ((getPostId() == null) ? 0 : getPostId().hashCode());
         result = prime * result + ((getUserId() == null) ? 0 : getUserId().hashCode());
         result = prime * result + ((getNickName() == null) ? 0 : getNickName().hashCode());
         result = prime * result + ((getHeadImg() == null) ? 0 : getHeadImg().hashCode());
@@ -155,7 +154,6 @@ public class PostInfoPO implements Serializable {
         sb.append(" [");
         sb.append("Hash = ").append(hashCode());
         sb.append(", id=").append(id);
-        sb.append(", postId=").append(postId);
         sb.append(", userId=").append(userId);
         sb.append(", nickName=").append(nickName);
         sb.append(", headImg=").append(headImg);
