@@ -41,5 +41,11 @@ public class SkuRecordController {
         return ResultGenerator.genSuccessResult(skuRecordService.getRecrodCountBySkuIdAndTypeAndUserId(skuRecordSearchDTO));
     }
 
+    @ApiOperation(value = "商品一键收藏", notes = "商品一键收藏", httpMethod = "GET")
+    @GetMapping("/collect")
+    public Result<Boolean> getCollectCount(String productId){
+        return ResultGenerator.genSuccessResult(skuRecordService.collect(productId));
+    }
+
 
 }

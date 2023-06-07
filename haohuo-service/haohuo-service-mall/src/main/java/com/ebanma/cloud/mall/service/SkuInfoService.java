@@ -18,5 +18,6 @@ public interface SkuInfoService extends IService<SkuInfoPO> {
 
     SkuInfoVO queryById(String id);
 
-    String queryRecommendList(SkuInfoSearchDTO skuInfoSearchDTO);
+    //TODO:获取商品推荐精选
+//    String queryRecommendList(SkuInfoSearchDTO skuInfoSearchDTO);
 }

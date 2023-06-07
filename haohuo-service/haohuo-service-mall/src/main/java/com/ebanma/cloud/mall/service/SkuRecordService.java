@@ -14,4 +14,6 @@ public interface SkuRecordService extends IService<SkuRecordPO> {
     Integer getRecrodCountBySkuIdAndType(SkuRecordSearchDTO skuRecordSearchDTO);
 
     Integer getRecrodCountBySkuIdAndTypeAndUserId(SkuRecordSearchDTO skuRecordSearchDTO);
+
+    Boolean collect(String productId);
 }

@@ -45,7 +45,8 @@ public class SkuInfoController {
     @ApiOperation(value = "获取商品推荐精选", notes = "获取商品推荐精选", httpMethod = "POST")
     @PostMapping("/queryRecommendList")
     public Result queryRecommendList(@RequestBody SkuInfoSearchDTO skuInfoSearchDTO){
-        return ResultGenerator.genSuccessResult(skuInfoService.queryRecommendList(skuInfoSearchDTO));
+        return null;
+//        return ResultGenerator.genSuccessResult(skuInfoService.queryRecommendList(skuInfoSearchDTO));
     }
 
 }

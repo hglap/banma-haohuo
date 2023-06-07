@@ -6,6 +6,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 
 @Data
 @ApiModel(value = "BasePO", description = "基础实体类")
@@ -20,11 +21,11 @@ public class BasePO {
 
     @ApiModelProperty("创建时间")
     @TableField(value = "create_time", fill = FieldFill.INSERT)
-    private LocalDateTime createTime;
+    private Date createTime;
 
     @ApiModelProperty("修改时间")
     @TableField(value = "last_modified", fill = FieldFill.INSERT_UPDATE)
-    private LocalDateTime lastModified;
+    private Date lastModified;
 
     @ApiModelProperty("修改人")
     @TableField(value = "last_modify_user", fill = FieldFill.INSERT_UPDATE)

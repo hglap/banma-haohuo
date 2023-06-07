@@ -38,22 +38,22 @@ public class SkuDetailPO implements Serializable {
     private String content;
 
     /**
-     * 
+     *
      */
     private Date createTime;
 
     /**
-     * 
+     *
      */
     private String createUser;
 
     /**
-     * 
+     *
      */
     private Date lastModified;
 
     /**
-     * 
+     *
      */
     private String lastModifyUser;
 
@@ -64,7 +64,7 @@ public class SkuDetailPO implements Serializable {
     private String del;
 
     /**
-     * 
+     *  version
      */
     private Long version;
 

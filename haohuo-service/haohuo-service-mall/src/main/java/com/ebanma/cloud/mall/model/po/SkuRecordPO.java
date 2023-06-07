@@ -7,20 +7,20 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
 import java.util.Date;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.experimental.Accessors;
 
 /**
  * 
  * @TableName sku_record
  * 记录表【收藏等】
  */
+@EqualsAndHashCode(callSuper = true)
 @TableName(value ="sku_record")
 @Data
-public class SkuRecordPO implements Serializable {
-    /**
-     * 
-     */
-    @TableId
-    private String id;
+@Accessors(chain = true)
+public class SkuRecordPO extends BasePO implements Serializable {
+
 
     /**
      * 商品ID
@@ -32,30 +32,7 @@ public class SkuRecordPO implements Serializable {
      */
     private String type;
 
-    /**
-     * 
-     */
-    private Long version;
 
-    /**
-     * 
-     */
-    private Date createTime;
-
-    /**
-     * 
-     */
-    private String createUser;
-
-    /**
-     * 
-     */
-    private Date lastModified;
-
-    /**
-     * 
-     */
-    private String lastModifyUser;
 
     /**
      * 删除标记 0未删除 1已删除
