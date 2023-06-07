@@ -35,7 +35,7 @@ public class ValidMallUserTokenGlobalFilter implements GlobalFilter, Ordered {
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
 
         final List<String> ignoreURLs = new ArrayList<>();
-        ignoreURLs.add("/users/mall/login");
+        ignoreURLs.add("/haohuo-user/user/login");
         ignoreURLs.add("/users/mall/register");
         ignoreURLs.add("/categories/mall/listAll");
         ignoreURLs.add("/mall/index/recommondInfos");
@@ -44,6 +44,8 @@ public class ValidMallUserTokenGlobalFilter implements GlobalFilter, Ordered {
         ignoreURLs.add("/orders/swagger/v3/api-docs");
         ignoreURLs.add("/users/swagger/v3/api-docs");
         ignoreURLs.add("/goods/swagger/v3/api-docs");
+
+        System.err.println(exchange.getRequest().getURI().getPath());
 
         // 登录注册接口，直接放行
         if (ignoreURLs.contains(exchange.getRequest().getURI().getPath())) {
