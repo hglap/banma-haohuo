@@ -1,156 +1,133 @@
-package com.ebanma.cloud.order.model;
+package com.ebanma.cloud.order.model.dto;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.extension.plugins.pagination.PageDTO;
+import com.ebanma.cloud.common.dto.Page;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import java.math.BigDecimal;
 import java.util.Date;
 
-@TableName(value = "order_info")
-public class OrderInfo {
+public class OrderInfoDTO extends Page {
     /**
      * 主键
      */
-    @TableId(value = "id", type= IdType.ASSIGN_ID)
     private Long id;
 
     /**
      * 订单编号
      */
-    @TableField(value = "order_id")
     private String orderId;
 
     /**
      * 总金额
      */
-    @TableField(value = "total_amount")
     private BigDecimal totalAmount;
 
     /**
      * 订单状态
      */
-    @TableField(value = "order_status")
     private String orderStatus;
 
     /**
      * 用户id
      */
-    @TableField(value = "user_id")
     private String userId;
 
     /**
      * 付款方式
      */
-    @TableField(value = "payment_way")
     private String paymentWay;
 
     /**
      * 送货地址
      */
-    @TableField(value = "delivery_address")
     private String deliveryAddress;
 
     /**
      * 收货人
      */
-    @TableField(value = "consignee")
     private String consignee;
 
     /**
      * 收件人电话
      */
-    @TableField(value = "consignee_tel")
     private String consigneeTel;
 
     /**
      * 订单备注
      */
-    @TableField(value = "order_comment")
     private String orderComment;
 
     /**
      * 订单交易编号（第三方支付用)
      */
-    @TableField(value = "out_trade_no")
     private String outTradeNo;
 
     /**
      * 订单描述(第三方支付用)
      */
-    @TableField(value = "trade_body")
     private String tradeBody;
 
     /**
      * 创建时间
      */
-    @TableField(value = "create_time")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date createTime;
 
     /**
      * 支付时间
      */
-    @TableField(value = "payment_time")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date paymentTime;
 
     /**
      * 发货时间
      */
-    @TableField(value = "delivery_time")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date deliveryTime;
 
     /**
      * 签收时间
      */
-    @TableField(value = "consign_time")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date consignTime;
 
     /**
      * 图片路径
      */
-    @TableField(value = "img_url")
     private String imgUrl;
 
     /**
      * 商品id
      */
-    @TableField(value = "sku_id")
     private String skuId;
 
     /**
      * 商品数量
      */
-    @TableField(value = "sku_num")
     private Integer skuNum;
 
     /**
      * 抵扣积分
      */
-    @TableField(value = "integral")
     private String integral;
 
     /**
      * 红包id
      */
-    @TableField(value = "red_packet_id")
     private String redPacketId;
 
     /**
      * 购买价格(下单时sku价格）
      */
-    @TableField(value = "order_price")
     private BigDecimal orderPrice;
 
     /**
      * 商户id
      */
-    @TableField(value = "merchant_id")
     private String merchantId;
 
     /**
