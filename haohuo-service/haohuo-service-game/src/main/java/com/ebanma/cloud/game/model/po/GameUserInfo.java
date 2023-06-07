@@ -1,4 +1,4 @@
-package com.ebanma.cloud.game.model;
+package com.ebanma.cloud.game.model.po;
 
 import lombok.Data;
 

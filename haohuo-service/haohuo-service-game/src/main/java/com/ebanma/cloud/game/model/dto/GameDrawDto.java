@@ -1,4 +1,4 @@
-package com.ebanma.cloud.game.dto;
+package com.ebanma.cloud.game.model.dto;
 
 import io.swagger.annotations.ApiModel;
 import lombok.Data;

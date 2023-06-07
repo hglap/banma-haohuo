@@ -1,28 +1,19 @@
-package com.ebanma.cloud.game.model;
+package com.ebanma.cloud.game.model.po;
 
-import jdk.nashorn.internal.objects.annotations.Getter;
-import jdk.nashorn.internal.objects.annotations.Setter;
 import lombok.Data;
 
 import javax.persistence.*;
 import java.util.Date;
-import java.util.List;
 
-@Table(name = "game_rule")
+@Table(name = "game_user_record")
 @Data
-public class GameRule {
-    /**
-     * id
-     */
+public class GameUserRecord {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    /**
-     * 蛋类型
-     */
-    @Column(name = "egg_type")
-    private String eggType;
+    @Column(name = "user_id")
+    private String userId;
 
     /**
      * 奖品类型
@@ -37,15 +28,6 @@ public class GameRule {
     private Integer presentCount;
 
     /**
-     * 蛋概率
-     */
-    @Column(name = "egg_odd")
-    private Double eggOdd;
-
-    @Column(name = "present_odd")
-    private Double presentOdd;
-
-    /**
      * 创建时间
      */
     @Column(name = "create_time")
@@ -56,5 +38,4 @@ public class GameRule {
      */
     @Column(name = "modified_time")
     private Date modifiedTime;
-
 }

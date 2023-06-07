@@ -1,9 +1,8 @@
-package com.ebanma.cloud.game.vo;
+package com.ebanma.cloud.game.model.vo;
 
-import com.ebanma.cloud.game.model.GameUserInfo;
-import com.ebanma.cloud.game.model.GameUserProp;
+import com.ebanma.cloud.game.model.po.GameUserInfo;
+import com.ebanma.cloud.game.model.po.GameUserProp;
 import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiOperation;
 import lombok.Data;
 
 import java.util.List;

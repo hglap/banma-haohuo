@@ -1,16 +1,13 @@
 package com.ebanma.cloud.game.service.impl;
 
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.ebanma.cloud.common.core.AbstractService;
 import com.ebanma.cloud.common.core.ServiceException;
 import com.ebanma.cloud.game.dao.GameRuleMapper;
-import com.ebanma.cloud.game.model.GameRule;
+import com.ebanma.cloud.game.model.po.GameRule;
 import com.ebanma.cloud.game.service.GameRuleService;
 import com.ebanma.cloud.game.util.AliasMethod;
-import com.ebanma.cloud.game.vo.GameEggRuleVO;
-import com.ebanma.cloud.game.vo.GamePresentRuleVO;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.ebanma.cloud.game.model.vo.GameEggRuleVO;
+import com.ebanma.cloud.game.model.vo.GamePresentRuleVO;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,7 +25,7 @@ import java.util.stream.Collectors;
  */
 @Service
 @Transactional
-public class GameRuleServiceImpl extends ServiceImpl<BaseMapper<GameRule>,GameRule> implements GameRuleService {
+public class GameRuleServiceImpl extends ServiceImpl<GameRuleMapper,GameRule> implements GameRuleService {
 
 
     public static final String GAME_RULE="GameRules";

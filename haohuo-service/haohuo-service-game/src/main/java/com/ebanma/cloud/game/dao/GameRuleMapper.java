@@ -2,7 +2,7 @@ package com.ebanma.cloud.game.dao;
 
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.ebanma.cloud.game.model.GameRule;
+import com.ebanma.cloud.game.model.po.GameRule;
 import org.apache.ibatis.annotations.Mapper;
 
 @Mapper

@@ -1,11 +1,8 @@
-package com.ebanma.cloud.game.vo;
+package com.ebanma.cloud.game.model.vo;
 
-import com.ebanma.cloud.game.model.GameRule;
+import com.ebanma.cloud.game.model.po.GameRule;
 import io.swagger.annotations.ApiModel;
 import lombok.Data;
-
-import javax.persistence.Column;
-import java.util.List;
 
 /**
  * 概率控制

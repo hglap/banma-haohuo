@@ -1,7 +1,6 @@
 package com.ebanma.cloud.game;
 
-import com.ebanma.cloud.game.model.GameRule;
-import com.ebanma.cloud.game.model.GameUserRecord;
+import com.ebanma.cloud.game.model.po.GameRule;
 import com.ebanma.cloud.game.service.GameRuleService;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

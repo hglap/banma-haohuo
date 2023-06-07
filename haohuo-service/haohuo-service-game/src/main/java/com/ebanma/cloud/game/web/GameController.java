@@ -2,11 +2,10 @@ package com.ebanma.cloud.game.web;
 
 import com.ebanma.cloud.common.dto.Result;
 import com.ebanma.cloud.common.dto.ResultGenerator;
-import com.ebanma.cloud.game.dto.GameDrawDto;
+import com.ebanma.cloud.game.model.dto.GameDrawDto;
 import com.ebanma.cloud.game.service.GameService;
 import com.sun.istack.internal.NotNull;
 import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;

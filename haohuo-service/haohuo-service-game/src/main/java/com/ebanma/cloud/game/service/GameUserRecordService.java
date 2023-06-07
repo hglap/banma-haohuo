@@ -1,7 +1,7 @@
 package com.ebanma.cloud.game.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.ebanma.cloud.game.model.GameUserRecord;
+import com.ebanma.cloud.game.model.po.GameUserRecord;
 
 
 /**

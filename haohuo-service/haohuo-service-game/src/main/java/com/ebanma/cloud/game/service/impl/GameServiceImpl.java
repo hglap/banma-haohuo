@@ -1,19 +1,18 @@
 package com.ebanma.cloud.game.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.ebanma.cloud.game.dto.GameDrawDto;
-import com.ebanma.cloud.game.model.GameUserInfo;
-import com.ebanma.cloud.game.model.GameUserProp;
+import com.ebanma.cloud.game.model.dto.GameDrawDto;
+import com.ebanma.cloud.game.model.po.GameUserInfo;
+import com.ebanma.cloud.game.model.po.GameUserProp;
 import com.ebanma.cloud.game.service.GameService;
 import com.ebanma.cloud.game.service.GameUserInfoService;
 import com.ebanma.cloud.game.service.GameUserPropService;
-import com.ebanma.cloud.game.vo.GameUserInfoVO;
-import com.ebanma.cloud.game.vo.GamePrizeVO;
+import com.ebanma.cloud.game.model.vo.GameUserInfoVO;
+import com.ebanma.cloud.game.model.vo.GamePrizeVO;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.util.concurrent.locks.Condition;
 
 /**
  * @author banma-

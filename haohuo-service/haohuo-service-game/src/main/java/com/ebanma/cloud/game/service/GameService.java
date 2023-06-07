@@ -1,8 +1,8 @@
 package com.ebanma.cloud.game.service;
 
-import com.ebanma.cloud.game.dto.GameDrawDto;
-import com.ebanma.cloud.game.vo.GameUserInfoVO;
-import com.ebanma.cloud.game.vo.GamePrizeVO;
+import com.ebanma.cloud.game.model.dto.GameDrawDto;
+import com.ebanma.cloud.game.model.vo.GameUserInfoVO;
+import com.ebanma.cloud.game.model.vo.GamePrizeVO;
 
 public interface GameService {
 
