@@ -10,11 +10,13 @@ import lombok.Data;
  * @description:
  */
 @Data
-public class SkuInfoInsertDTO extends BasePageSearchVO {
+public class SkuInfoSearchDTO extends BasePageSearchVO {
 
     // 分类
     private String category;
     // 搜索值
     private String searchValue;
+    // 商品ID
+    private String productId;
 
 }

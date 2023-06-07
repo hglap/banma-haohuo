@@ -1,12 +1,10 @@
 package com.ebanma.cloud.mall.service;
 
-import com.ebanma.cloud.mall.model.dto.SkuInfoInsertDTO;
+import com.ebanma.cloud.mall.model.dto.SkuInfoSearchDTO;
 import com.ebanma.cloud.mall.model.po.SkuInfoPO;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.ebanma.cloud.mall.model.vo.SkuInfoVO;
 import com.github.pagehelper.PageInfo;
-
-import java.util.List;
 
 /**
 * @author kmkmj
@@ -16,5 +14,9 @@ import java.util.List;
 public interface SkuInfoService extends IService<SkuInfoPO> {
 
 
-    PageInfo queryList(SkuInfoInsertDTO skuInfoInsertDTO);
+    PageInfo queryList(SkuInfoSearchDTO skuInfoSearchDTO);
+
+    SkuInfoVO queryById(String id);
+
+    String queryRecommendList(SkuInfoSearchDTO skuInfoSearchDTO);
 }

@@ -2,6 +2,7 @@ package com.ebanma.cloud.mall.model.po;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
 import java.util.Date;
@@ -82,8 +83,9 @@ public class SkuInventoryPO implements Serializable {
     private String lastModifyUser;
 
     /**
-     * 
+     * 删除标记 0未删除 1已删除
      */
+    @TableLogic(value = "0", delval = "1")
     private String del;
 
     @TableField(exist = false)

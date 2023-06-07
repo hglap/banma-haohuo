@@ -2,6 +2,9 @@ package com.ebanma.cloud.mall.service;
 
 import com.ebanma.cloud.mall.model.po.SkuDetailPO;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.ebanma.cloud.mall.model.vo.SkuDetailVO;
+
+import java.util.List;
 
 /**
 * @author kmkmj
@@ -10,4 +13,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
 */
 public interface SkuDetailService extends IService<SkuDetailPO> {
 
+    List<SkuDetailVO> queryDetailBySkuId(String id);
 }

@@ -2,24 +2,17 @@ package com.ebanma.cloud.mall.web;
 
 import com.ebanma.cloud.common.dto.Result;
 import com.ebanma.cloud.common.dto.ResultGenerator;
-import com.ebanma.cloud.mall.model.dto.SkuInfoInsertDTO;
-import com.ebanma.cloud.mall.model.po.SkuInfoPO;
-import com.ebanma.cloud.mall.model.vo.SkuInfoVO;
+import com.ebanma.cloud.mall.model.dto.SkuInfoSearchDTO;
 import com.ebanma.cloud.mall.service.SkuInfoService;
 import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import java.util.List;
 
 /**
  * @author: why
@@ -39,8 +32,20 @@ public class SkuInfoController {
 
     @ApiOperation(value = "分页查询商品信息", notes = "分页查询商品信息", httpMethod = "POST")
     @PostMapping("/queryList")
-    public Result<PageInfo> queryList(@RequestBody SkuInfoInsertDTO skuInfoInsertDTO){
-        return ResultGenerator.genSuccessResult(skuInfoService.queryList(skuInfoInsertDTO));
+    public Result<PageInfo> queryList(@RequestBody SkuInfoSearchDTO skuInfoSearchDTO){
+        return ResultGenerator.genSuccessResult(skuInfoService.queryList(skuInfoSearchDTO));
+    }
+
+    @ApiOperation(value = "查询商品详情", notes = "查询商品详情", httpMethod = "GET")
+    @GetMapping("/queryById")
+    public Result queryById(String id){
+        return ResultGenerator.genSuccessResult(skuInfoService.queryById(id));
+    }
+
+    @ApiOperation(value = "获取商品推荐精选", notes = "获取商品推荐精选", httpMethod = "POST")
+    @PostMapping("/queryRecommendList")
+    public Result queryRecommendList(@RequestBody SkuInfoSearchDTO skuInfoSearchDTO){
+        return ResultGenerator.genSuccessResult(skuInfoService.queryRecommendList(skuInfoSearchDTO));
     }
 
 }

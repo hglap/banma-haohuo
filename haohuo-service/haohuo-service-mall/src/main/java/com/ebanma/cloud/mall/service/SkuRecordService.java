@@ -1,5 +1,6 @@
 package com.ebanma.cloud.mall.service;
 
+import com.ebanma.cloud.mall.model.dto.SkuRecordSearchDTO;
 import com.ebanma.cloud.mall.model.po.SkuRecordPO;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -10,4 +11,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 */
 public interface SkuRecordService extends IService<SkuRecordPO> {
 
+    Integer getRecrodCountBySkuIdAndType(SkuRecordSearchDTO skuRecordSearchDTO);
+
+    Integer getRecrodCountBySkuIdAndTypeAndUserId(SkuRecordSearchDTO skuRecordSearchDTO);
 }

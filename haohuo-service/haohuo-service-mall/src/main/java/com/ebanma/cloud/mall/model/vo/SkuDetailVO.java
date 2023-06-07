@@ -1,25 +1,23 @@
-package com.ebanma.cloud.mall.model.po;
+package com.ebanma.cloud.mall.model.vo;
 
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableLogic;
-import com.baomidou.mybatisplus.annotation.TableName;
+import lombok.Data;
+import lombok.experimental.Accessors;
+
 import java.io.Serializable;
 import java.util.Date;
-import lombok.Data;
 
 /**
- * 
- * @TableName sku_record
- * 记录表【收藏等】
+ *
+ * @TableName sku_detail
+ * 商品详细
  */
-@TableName(value ="sku_record")
 @Data
-public class SkuRecordPO implements Serializable {
+@Accessors(chain = true)
+public class SkuDetailVO implements Serializable {
     /**
      * 
      */
-    @TableId
     private String id;
 
     /**
@@ -28,14 +26,14 @@ public class SkuRecordPO implements Serializable {
     private String skuId;
 
     /**
-     * 记录收藏推荐类型
+     * 信息
      */
-    private String type;
+    private String info;
 
     /**
-     * 
+     * 内容
      */
-    private Long version;
+    private String content;
 
     /**
      * 
@@ -63,6 +61,9 @@ public class SkuRecordPO implements Serializable {
     @TableLogic(value = "0", delval = "1")
     private String del;
 
-    @TableField(exist = false)
-    private static final long serialVersionUID = 1L;
+    /**
+     * 
+     */
+    private Long version;
+
 }

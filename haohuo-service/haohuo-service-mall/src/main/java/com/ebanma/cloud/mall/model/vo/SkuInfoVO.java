@@ -2,6 +2,7 @@ package com.ebanma.cloud.mall.model.vo;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
+import lombok.Data;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -13,6 +14,7 @@ import java.util.List;
  * @time: 15:35
  * @description:
  */
+@Data
 public class SkuInfoVO {
     /**
      *
@@ -94,6 +96,11 @@ public class SkuInfoVO {
      * 推荐总数
      */
     private Integer recommandCount;
+
+    /**
+     * 是否收藏
+     */
+    private Boolean collect;
 
     /**
      * 照片列表

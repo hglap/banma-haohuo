@@ -1,16 +1,15 @@
-package com.ebanma.cloud.mall.model.vo;
+package com.ebanma.cloud.mall.model.dto;
 
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
+import lombok.experimental.Accessors;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.util.List;
 
 
 @Data
-public class SkuAttachmentVO implements Serializable {
+@Accessors(chain = true)
+public class SkuAttachmentSearchDTO implements Serializable {
     /**
      * id
      */
@@ -37,10 +36,21 @@ public class SkuAttachmentVO implements Serializable {
      */
     private String relationId;
 
+
+    /**
+     * 关联类型
+     */
+    private String relationType;
+
     /**
      * 附件大小
      */
     private String size;
+
+    /**
+     *  关联ID列表
+     */
+    private List<String> relationIdList;
 
 
 }
