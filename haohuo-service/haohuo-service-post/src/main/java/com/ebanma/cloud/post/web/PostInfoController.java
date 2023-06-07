@@ -108,8 +108,8 @@ public class PostInfoController {
      * @return {@link Result}
      */
     @PostMapping("/list")
-    public Result list(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "0") Integer size, Long userId) {
-        List<PostInfoVO> pageInfoList=postInfoService.getList(page, size, userId);
+    public Result list(@RequestBody PostInfoSearchVO searchVO) {
+        List<PostInfoVO> pageInfoList=postInfoService.getList(searchVO.getPageNum(), searchVO.getPageSize(), searchVO.getUserId());
         return ResultGenerator.genSuccessResult(pageInfoList);
     }
 

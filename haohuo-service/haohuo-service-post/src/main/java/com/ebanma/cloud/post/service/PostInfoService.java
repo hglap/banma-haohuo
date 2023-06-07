@@ -27,7 +27,9 @@ public interface PostInfoService extends IService<PostInfoPO> {
 
     Long add(PostInfoVO postInfo);
 
+    List<PostInfoVO> getList(Integer page, Integer size, String userId);
+
     List<PostInfoVO> search(PostSearchDto postSearchDto);
 
-    List<PostInfoVO> getList(Integer page, Integer size, Long userId);
+
 }

@@ -159,7 +159,7 @@ public class PostInfoServiceImpl extends ServiceImpl<PostInfoMapper, PostInfoPO>
      * @return {@link List}<{@link PostInfoVO}>
      */
     @Override
-    public List<PostInfoVO> getList(Integer page, Integer size, Long userId) {
+    public List<PostInfoVO> getList(Integer page, Integer size, String userId) {
         // todo 向大数据服务请求 ids 列表
         Long[] mockIds= {1L,2L,3L,4L,5L,6L,7L,8L,1666285944905527297L,1666308613952577538L};
         List<Long> ids = new ArrayList<>(Arrays.asList(mockIds));
