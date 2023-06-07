@@ -9,7 +9,7 @@
     <result column="user_id" jdbcType="VARCHAR" property="userId" />
     <result column="remain_times" jdbcType="INTEGER" property="remainTimes" />
     <result column="total_win_points" jdbcType="INTEGER" property="totalWinPoints" />
-    <result column="total_red_packet" jdbcType="DOUBLE" property="totalRedPacket" />
+    <result column="total_red_packet" jdbcType="INTEGER" property="totalRedPacket" />
     <result column="winning_times" jdbcType="INTEGER" property="winningTimes" />
     <result column="total_draw_times" jdbcType="INTEGER" property="totalDrawTimes" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />

@@ -4,7 +4,6 @@ import com.ebanma.cloud.common.dto.Result;
 import com.ebanma.cloud.common.dto.ResultGenerator;
 import com.ebanma.cloud.game.model.dto.GameDrawDto;
 import com.ebanma.cloud.game.service.GameService;
-import com.sun.istack.internal.NotNull;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -32,7 +31,7 @@ public class GameController {
      */
     @ApiOperation("获取抽奖界面详细信息")
     @PostMapping("/details")
-    public Result details(@NotNull String userId) {
+    public Result details( String userId) {
         return ResultGenerator.genSuccessResult( gameService.details(userId));
     };
 
