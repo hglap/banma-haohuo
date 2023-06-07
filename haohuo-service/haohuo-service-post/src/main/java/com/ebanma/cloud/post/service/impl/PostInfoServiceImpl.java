@@ -40,7 +40,8 @@ public class PostInfoServiceImpl extends ServiceImpl<PostInfoMapper, PostInfoPO>
         PostInfoVO postInfoVO = new PostInfoVO();
         BeanUtils.copyProperties(postInfoPO, postInfoVO);
         // 拼接字符串
-        postInfoVO.setImg(postInfoPO.getImg().split(";"));
+        String[] imgURL=postInfoPO.getImg().split(";");
+        postInfoVO.setImg(imgURL);
         // 中间件 获取内容
         String key = postInfoPO.getContent();
         // todo

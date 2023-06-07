@@ -48,7 +48,7 @@ public class PostInfoController {
      */
     @PostMapping("/detail")
     public Result detail(@RequestBody PostInfoVO postInfoVO) {
-        PostInfoVO postInfo = postInfoService.getByPostId(postInfoVO.getPostId());
+        PostInfoVO postInfo = postInfoService.getByPostId(postInfoVO.getId());
         return ResultGenerator.genSuccessResult(postInfo);
     }
 
