@@ -17,6 +17,12 @@ public class UserLogin {
 
     private String SMSCode;
 
+    private String loginIP;
+
+    private String loginLocation;
+
+    private String exploreType;
+
     public String getUserPhone() {
         return userPhone;
     }
@@ -51,10 +57,37 @@ public class UserLogin {
         this.type = type;
     }
 
-    public UserLogin(String userPhone, String type, String password, String SMSCode) {
+    public String getLoginIP() {
+        return loginIP;
+    }
+
+    public void setLoginIP(String loginIP) {
+        this.loginIP = loginIP;
+    }
+
+    public String getLoginLocation() {
+        return loginLocation;
+    }
+
+    public void setLoginLocation(String loginLocation) {
+        this.loginLocation = loginLocation;
+    }
+
+    public String getExploreType() {
+        return exploreType;
+    }
+
+    public void setExploreType(String exploreType) {
+        this.exploreType = exploreType;
+    }
+
+    public UserLogin(String userPhone, String type, String password, String SMSCode, String loginIP, String loginLocation, String exploreType) {
         this.userPhone = userPhone;
         this.type = type;
         this.password = password;
         this.SMSCode = SMSCode;
+        this.loginIP = loginIP;
+        this.loginLocation = loginLocation;
+        this.exploreType = exploreType;
     }
 }

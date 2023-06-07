@@ -42,6 +42,17 @@ public class ResultGenerator {
         return result;
     }
 
+    public static Result genUnRegisterResult(String message) {
+        Result result = new Result();
+        result.setCode(ResultCode.UNREGISTER);
+        if (!StringUtils.hasText(message)) {
+            result.setMessage(DEFAULT_FAIL_MESSAGE);
+        } else {
+            result.setMessage(message);
+        }
+        return result;
+    }
+
     public static Result genErrorResult(ResultCode code, String message) {
         Result result = new Result();
         result.setCode(code);

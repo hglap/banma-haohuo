@@ -3,13 +3,10 @@ package com.ebanma.cloud.user.web;
 import com.ebanma.cloud.common.dto.Result;
 import com.ebanma.cloud.common.dto.ResultGenerator;
 import com.ebanma.cloud.common.enums.UserLoginEnum;
-import com.ebanma.cloud.user.model.Address;
 import com.ebanma.cloud.user.model.UserLogin;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.ebanma.cloud.user.service.LoginService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @author yuqintao
@@ -19,16 +16,19 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/user")
 public class LoginController {
 
-    @GetMapping("/login")
-    public Result login(UserLogin userLogin) {
+    @Autowired
+    private LoginService loginService;
+
+    @PostMapping("/login")
+    public Result login(@RequestBody UserLogin userLogin) {
         if(userLogin.getType().equals(UserLoginEnum.APP_PHONE_LOGIN.getType())){
-
+            return loginService.appCodeLogin(userLogin);
         }else if(userLogin.getType().equals(UserLoginEnum.APP_PASSWORD_LOGIN.getType())){
-
+            return loginService.appPasswordLogin(userLogin);
         }else if(userLogin.getType().equals(UserLoginEnum.PLATFORM_PASSWORD_LOGIN.getType())){
-
+            return loginService.platformPasswordLogin(userLogin);
         }
-        return ResultGenerator.genSuccessResult();
+        return ResultGenerator.genFailResult("登陆非法");
     }
 
 }
