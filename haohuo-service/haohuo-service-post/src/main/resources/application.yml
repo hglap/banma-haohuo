@@ -3,3 +3,24 @@ server:
 spring:
   application:
     name: post-service
+  jackson:
+    default-property-inclusion: non_empty
+  servlet:
+    multipart:
+      max-file-size: 5MB
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://30.16.95.144:3306/yizu-duyumeng?useUnicode=true&characterEncoding=utf-8&autoReconnect=true&failOverReadOnly=false&useSSL=true&serverTimezone=GMT%2B8
+    username: root
+    password: root
+#  cloud:
+#    nacos:
+#      discovery:
+#        server-addr: http://30.16.95.140:8848
+mybatis-plus:
+  mapper-locations: com/ebanma/cloud/post/dao/*.xml
+  configuration:
+    #这个配置会将执行的sql打印出来，在开发或测试的时候可以用
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  #配置扫描xml
+

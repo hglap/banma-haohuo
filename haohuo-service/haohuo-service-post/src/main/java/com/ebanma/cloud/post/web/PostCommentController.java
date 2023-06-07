@@ -2,8 +2,8 @@ package com.ebanma.cloud.post.web;
 
 import com.ebanma.cloud.common.dto.Result;
 import com.ebanma.cloud.common.dto.ResultGenerator;
-import com.ebanma.cloud.post.model.PostInfo;
-import com.ebanma.cloud.post.service.PostInfoService;
+import com.ebanma.cloud.post.model.PostComment;
+import com.ebanma.cloud.post.service.PostCommentService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,38 +18,39 @@ import java.util.List;
 * Created by CodeGenerator on 2023/06/06.
 */
 @RestController
-@RequestMapping("/post/info")
-public class PostInfoController {
+@RequestMapping("/post/comment")
+public class PostCommentController {
     @Resource
-    private PostInfoService postInfoService;
+    private PostCommentService postCommentService;
 
     @PostMapping("/add")
-    public Result add(PostInfo postInfo) {
-        postInfoService.save(postInfo);
+    public Result add(PostComment postComment) {
+        postCommentService.save(postComment);
         return ResultGenerator.genSuccessResult();
     }
 
     @PostMapping("/delete")
     public Result delete(@RequestParam Integer id) {
-        postInfoService.removeById(id);
+        postCommentService.removeById(id);
         return ResultGenerator.genSuccessResult();
     }
 
     @PostMapping("/update")
-    public Result update(PostInfo postInfo) {
-        postInfoService.updateById(postInfo);
+    public Result update(PostComment postComment) {
+        postCommentService.updateById(postComment);
         return ResultGenerator.genSuccessResult();
     }
 
     @PostMapping("/detail")
     public Result detail(@RequestParam Integer id) {
-        PostInfo postInfo = postInfoService.getById(id);
-        return ResultGenerator.genSuccessResult(postInfo);
+        PostComment postComment = postCommentService.getById(id);
+        return ResultGenerator.genSuccessResult(postComment);
     }
 
     @PostMapping("/list")
-    public Result list() {
-        List<PostInfo> list = postInfoService.list();
+    public Result list(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "0") Integer size) {
+        PageHelper.startPage(page, size);
+        List<PostComment> list = postCommentService.list();
         PageInfo pageInfo = new PageInfo(list);
         return ResultGenerator.genSuccessResult(pageInfo);
     }
