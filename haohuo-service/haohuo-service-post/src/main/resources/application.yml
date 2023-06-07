@@ -10,6 +10,7 @@ fdfs:
   connect-timeout: 600
   so-timeout: 1500
   trackerList: 124.221.94.214:22122
+  # 后续删除
   thumb-image:
     width: 150
     height: 150

@@ -2,10 +2,13 @@ package com.ebanma.cloud.post.web;
 
 import com.ebanma.cloud.common.dto.Result;
 import com.ebanma.cloud.common.dto.ResultGenerator;
+import com.ebanma.cloud.post.model.dto.ImgDto;
+import com.ebanma.cloud.post.model.dto.PostSearchDto;
 import com.ebanma.cloud.post.model.po.PostInfoPO;
 import com.ebanma.cloud.post.model.vo.PostInfoSearchVO;
 import com.ebanma.cloud.post.model.vo.PostInfoVO;
 import com.ebanma.cloud.post.service.PostInfoService;
+import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -23,10 +26,16 @@ public class PostInfoController {
     @Resource
     private PostInfoService postInfoService;
 
-    @PostMapping("/add")
-    public Result add(PostInfoPO postInfo) {
-        postInfoService.save(postInfo);
-        return ResultGenerator.genSuccessResult();
+    /**
+     * 添加贴子
+     *
+     * @param postInfo 发布信息
+     * @return {@link Result}
+     */
+    @PostMapping("/insert")
+    public Result add(@RequestBody PostInfoVO postInfo) {
+        Long id = postInfoService.add(postInfo);
+        return ResultGenerator.genSuccessResult(id);
     }
 
     @PostMapping("/delete")
@@ -66,21 +75,63 @@ public class PostInfoController {
         return ResultGenerator.genSuccessResult(img);
     }
 
+    /**
+     * 上传所有图片
+     *
+     * @param file 文件
+     * @return {@link Result}
+     * @throws IOException ioexception
+     */
     @PostMapping("/uploadAll")
-    public Result upload(MultipartFile[] file) throws IOException {
+    public Result uploadAll(MultipartFile[] file) throws IOException {
         String[] img=postInfoService.uploadAll(file);
         return ResultGenerator.genSuccessResult(img);
     }
 
     /**
-     * 向后端返回list
+     * 删除img
+     * 上传所有图片
+     *
+     * @param imgDto img dto
+     * @return {@link Result}
+     * @throws IOException ioexception
+     */
+    @PostMapping("/removeImg")
+    public Result removeImg(ImgDto imgDto) throws IOException {
+        boolean flag = postInfoService.removeImg(imgDto);
+        return ResultGenerator.genSuccessResult(flag);
+    }
+
+    /**
+     * 推荐主页帖子展示
      *
      * @return {@link Result}
      */
     @PostMapping("/list")
+<<<<<<< HEAD
     public Result list(@RequestBody PostInfoSearchVO searchVO) {
         List<PostInfoPO> list = postInfoService.list();
+=======
+    public Result list(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "0") Integer size, Long userId) {
+        List<PostInfoVO> pageInfoList=postInfoService.getList(page, size, userId);
+        return ResultGenerator.genSuccessResult(pageInfoList);
+    }
+
+    /**
+     * 推荐主页帖子展示
+     *
+     * @return {@link Result}
+     */
+    @PostMapping("/search")
+    public Result search(PostSearchDto postSearchDto) {
+        PageHelper.startPage(postSearchDto.getPageNum(),postSearchDto.getPageSize());
+        List<PostInfoVO> list = postInfoService.search(postSearchDto);
+>>>>>>> origin/dev-liuchengdong
         PageInfo pageInfo = new PageInfo(list);
         return ResultGenerator.genSuccessResult(pageInfo);
     }
+
+
+
+
 }

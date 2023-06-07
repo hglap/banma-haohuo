@@ -68,7 +68,7 @@ public class PostInfoPO implements Serializable {
     /**
      * 商品链接
      */
-    private String sku;
+    private Long sku;
 
     /**
      * 帖子点赞数量

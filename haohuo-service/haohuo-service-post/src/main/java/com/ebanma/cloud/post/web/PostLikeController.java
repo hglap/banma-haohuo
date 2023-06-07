@@ -23,16 +23,28 @@ public class PostLikeController {
     @Resource
     private PostLikeService postLikeService;
 
+    /**
+     * 帖子点赞
+     *
+     * @param postLike 后像
+     * @return {@link Result}
+     */
     @PostMapping("/add")
     public Result add(PostLikePO postLike) {
-        postLikeService.save(postLike);
-        return ResultGenerator.genSuccessResult();
+        boolean flag = postLikeService.add(postLike);
+        return ResultGenerator.genSuccessResult(flag);
     }
 
+    /**
+     * 取消点赞
+     *
+     * @param id id
+     * @return {@link Result}
+     */
     @PostMapping("/delete")
-    public Result delete(@RequestParam Integer id) {
-        postLikeService.removeById(id);
-        return ResultGenerator.genSuccessResult();
+    public Result delete(@RequestParam Long id) {
+        boolean flag = postLikeService.remove(id);
+        return ResultGenerator.genSuccessResult(flag);
     }
 
     @PostMapping("/update")

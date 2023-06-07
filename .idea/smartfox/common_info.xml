@@ -3,7 +3,12 @@
   <component name="SmartFoxWorkToolsProjectState">
     <option name="branch" value="dev-sx" />
     <option name="gitUrl" value="git@gitlab.alibaba-inc.com:banma-faw-tech/haohuo.git" />
+<<<<<<< HEAD
     <option name="localBranch" value="dev-sx" />
     <option name="revision" value="fcc1d5a01d03ae201ed3fed518966a551c01725c" />
+=======
+    <option name="localBranch" value="dev-liuchengdong" />
+    <option name="revision" value="fdfef1da2b1e2fb503d068845e37f34bd0efcb98" />
+>>>>>>> origin/dev-liuchengdong
   </component>
 </project>

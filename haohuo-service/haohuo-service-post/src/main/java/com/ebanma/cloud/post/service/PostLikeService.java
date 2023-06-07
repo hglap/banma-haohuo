@@ -10,4 +10,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 */
 public interface PostLikeService extends IService<PostLikePO> {
 
+    boolean add(PostLikePO postLike);
+
+    boolean remove(Long id);
 }
