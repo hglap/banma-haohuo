@@ -23,7 +23,7 @@ public class PostInfoPO implements Serializable {
     /**
      * 帖子ID
      */
-    private Long postId;
+
 
     /**
      * 用户ID

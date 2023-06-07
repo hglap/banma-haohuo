@@ -49,25 +49,11 @@ public class PostInfoServiceImpl extends ServiceImpl<PostInfoMapper, PostInfoPO>
         if (postInfoPO == null){
             return null;
         }
-<<<<<<< HEAD
-        PostInfoVO postInfoVO = new PostInfoVO();
-        BeanUtils.copyProperties(postInfoPO, postInfoVO);
-        // 拼接字符串
-        String[] imgURL=postInfoPO.getImg().split(";");
-        postInfoVO.setImg(imgURL);
-        // 中间件 获取内容
-        String key = postInfoPO.getContent();
-        // todo
-        String content = key;
-        // 赋值
-        postInfoVO.setContent(content);
-=======
+
         PostInfoVO postInfoVO = getVObyPO(postInfoPO);
         // todo 存入redis中
         // redisKey
 
-
->>>>>>> origin/dev-liuchengdong
         return postInfoVO;
     }
 

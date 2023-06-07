@@ -108,10 +108,6 @@ public class PostInfoController {
      * @return {@link Result}
      */
     @PostMapping("/list")
-<<<<<<< HEAD
-    public Result list(@RequestBody PostInfoSearchVO searchVO) {
-        List<PostInfoPO> list = postInfoService.list();
-=======
     public Result list(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "0") Integer size, Long userId) {
         List<PostInfoVO> pageInfoList=postInfoService.getList(page, size, userId);
         return ResultGenerator.genSuccessResult(pageInfoList);
@@ -126,7 +122,6 @@ public class PostInfoController {
     public Result search(PostSearchDto postSearchDto) {
         PageHelper.startPage(postSearchDto.getPageNum(),postSearchDto.getPageSize());
         List<PostInfoVO> list = postInfoService.search(postSearchDto);
->>>>>>> origin/dev-liuchengdong
         PageInfo pageInfo = new PageInfo(list);
         return ResultGenerator.genSuccessResult(pageInfo);
     }
