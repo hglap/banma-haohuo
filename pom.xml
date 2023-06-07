@@ -18,7 +18,7 @@
     <description>好货商城微服务版本(Spring Cloud Alibaba)</description>
 
     <properties>
-        <spring.boot.version>2.4.2</spring.boot.version>
+        <spring.boot.version>2.6.3</spring.boot.version>
         <spring.cloud.dependencies.version>2021.0.1</spring.cloud.dependencies.version>
         <spring.cloud.alibaba.version>2021.0.1.0</spring.cloud.alibaba.version>
         <mybatis.starter.version>2.1.4</mybatis.starter.version>
