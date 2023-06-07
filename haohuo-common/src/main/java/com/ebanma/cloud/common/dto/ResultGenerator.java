@@ -53,6 +53,18 @@ public class ResultGenerator {
         return result;
     }
 
+    public static Result genFirstLoginResult(String message,String code) {
+        Result result = new Result();
+        result.setCode(ResultCode.UNREGISTER);
+        if (!StringUtils.hasText(message)) {
+            result.setMessage("First Time Login");
+        } else {
+            result.setMessage(message);
+        }
+        result.setData(code);
+        return result;
+    }
+
     public static Result genErrorResult(ResultCode code, String message) {
         Result result = new Result();
         result.setCode(code);

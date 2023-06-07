@@ -1,9 +1,11 @@
 package com.ebanma.cloud.user.service.impl;
 
+import com.alibaba.nacos.common.utils.StringUtils;
 import com.ebanma.cloud.common.dto.Result;
 import com.ebanma.cloud.common.dto.ResultGenerator;
 import com.ebanma.cloud.common.util.JwtUtil;
 import com.ebanma.cloud.user.dao.UserInfoMapper;
+import com.ebanma.cloud.user.model.SMSCode;
 import com.ebanma.cloud.user.model.UserInfo;
 import com.ebanma.cloud.user.model.UserLogin;
 import com.ebanma.cloud.user.service.LoginService;
@@ -21,10 +23,23 @@ public class LoginServiceImpl implements LoginService {
     @Resource
     private UserInfoMapper userInfoMapper;
 
+    private final String SMS_CODE_KEY_LOGIN = "smsCode:login";
+
+    private final String SMS_CODE_KEY_PASSWORD = "smsCode:password";
+
     @Override
     public Result appCodeLogin(UserLogin userLogin) {
-        //todo:查询
-        return null;
+        UserInfo userInfo = userInfoMapper.selectByPhone(userLogin.getUserPhone());
+        if(userInfo == null){
+            return ResultGenerator.genUnRegisterResult("该手机号未注册");
+        }
+        //todo:使用redis获取生成的验证码
+        String smsCode = "4396";
+        if(userLogin.getSMSCode().equals(smsCode)){
+            String token = JwtUtil.createJWT("appLogin",userLogin.getUserPhone(),null);
+            return ResultGenerator.genSuccessResult(token);
+        }
+        return ResultGenerator.genFailResult("验证码错误");
     }
 
     @Override
@@ -35,7 +50,6 @@ public class LoginServiceImpl implements LoginService {
         }else if(!userInfo.getPassword().equals(userLogin.getPassword())){
             return ResultGenerator.genFailResult("密码错误");
         }
-        //todo:生成token
         String token = JwtUtil.createJWT("appLogin",userLogin.getUserPhone(),null);
         return ResultGenerator.genSuccessResult(token);
     }
@@ -48,8 +62,39 @@ public class LoginServiceImpl implements LoginService {
         }else if(!userInfo.getPassword().equals(userLogin.getPassword())){
             return ResultGenerator.genFailResult("密码错误");
         }
-        //todo:生成token
-        String token = JwtUtil.createJWT("appLogin",userLogin.getUserPhone(),null);
+        String token = JwtUtil.createJWT("platformLogin",userLogin.getUserPhone(),null);
         return ResultGenerator.genSuccessResult(token);
+    }
+
+    @Override
+    public Result getSMSCode(SMSCode smsCode) {
+        //手机号校验
+        if(StringUtils.isBlank(smsCode.getUserPhone()) || smsCode.getUserPhone().matches("^[3-9]\\d{9}$")){
+            return ResultGenerator.genFailResult("手机号不合法");
+        }
+        //根据不同用处在redis中设置验证码
+        if(smsCode.getType().equals("login")){
+            //登录
+            UserInfo userInfo = userInfoMapper.selectByPhone(smsCode.getUserPhone());
+            if(userInfo == null) {
+                //第一次登录
+                String code = "439666";
+                //TODO:redis设置验证码
+                return ResultGenerator.genFirstLoginResult("第一次登录",code);
+            }else{
+                //非第一次登录
+                String code = "666666";
+                //TODO:redis设置验证码
+                return ResultGenerator.genSuccessResult(code);
+            }
+
+
+
+        } else if (smsCode.getType().equals("pass")) {
+            //密码服务
+
+
+        }
+        return null;
     }
 }

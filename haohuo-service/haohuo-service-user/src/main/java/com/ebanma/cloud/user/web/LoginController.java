@@ -3,6 +3,7 @@ package com.ebanma.cloud.user.web;
 import com.ebanma.cloud.common.dto.Result;
 import com.ebanma.cloud.common.dto.ResultGenerator;
 import com.ebanma.cloud.common.enums.UserLoginEnum;
+import com.ebanma.cloud.user.model.SMSCode;
 import com.ebanma.cloud.user.model.UserLogin;
 import com.ebanma.cloud.user.service.LoginService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +30,11 @@ public class LoginController {
             return loginService.platformPasswordLogin(userLogin);
         }
         return ResultGenerator.genFailResult("登陆非法");
+    }
+
+    @PostMapping("/getSMSCode")
+    public Result getSMSCode(@RequestBody SMSCode smsCode){
+        return loginService.getSMSCode(smsCode);
     }
 
 }
