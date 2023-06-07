@@ -1,6 +1,6 @@
 package com.ebanma.cloud.mall.dao;
 
-import com.ebanma.cloud.mall.model.po.SkuCategory;
+import com.ebanma.cloud.mall.model.po.SkuCategoryPO;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -11,7 +11,7 @@ import org.apache.ibatis.annotations.Mapper;
 * @Entity com.ebanma.cloud.mall.model.po.SkuCategory
 */
 @Mapper
-public interface SkuCategoryMapper extends BaseMapper<SkuCategory> {
+public interface SkuCategoryMapper extends BaseMapper<SkuCategoryPO> {
 
 }
 

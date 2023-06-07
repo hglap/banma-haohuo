@@ -1,7 +1,7 @@
 package com.ebanma.cloud.mall.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.ebanma.cloud.mall.model.po.SkuCategory;
+import com.ebanma.cloud.mall.model.po.SkuCategoryPO;
 import com.ebanma.cloud.mall.service.SkuCategoryService;
 import com.ebanma.cloud.mall.dao.SkuCategoryMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,14 +13,14 @@ import org.springframework.stereotype.Service;
 * @createDate 2023-06-06 17:41:13
 */
 @Service
-public class SkuCategoryServiceImpl extends ServiceImpl<SkuCategoryMapper, SkuCategory>
+public class SkuCategoryServiceImpl extends ServiceImpl<SkuCategoryMapper, SkuCategoryPO>
     implements SkuCategoryService{
 
     @Autowired
     private SkuCategoryMapper skuCategoryMapper;
 
     @Override
-    public SkuCategory test() {
+    public SkuCategoryPO test() {
         return skuCategoryMapper.selectById("1");
     }
 }

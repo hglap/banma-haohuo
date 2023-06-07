@@ -1,6 +1,5 @@
 package com.ebanma.cloud.mall.model.po;
 
-import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -11,10 +10,11 @@ import lombok.Data;
 /**
  * 
  * @TableName sku_category
+ * 商品分类
  */
 @TableName(value ="sku_category")
 @Data
-public class SkuCategory implements Serializable {
+public class SkuCategoryPO implements Serializable {
     /**
      * 
      */
