@@ -8,6 +8,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 //@EnableDiscoveryClient
 @MapperScan(basePackages = {"com.ebanma.cloud.trans.dao", "com.ebanma.cloud.common.core"})
+//@tk.mybatis.spring.annotation.MapperScan(basePackages = {"com.ebanma.cloud.trans.dao", "com.ebanma.cloud.common.core"})
 public class TransServiceApplication {
 
     public static void main(String[] args) {
