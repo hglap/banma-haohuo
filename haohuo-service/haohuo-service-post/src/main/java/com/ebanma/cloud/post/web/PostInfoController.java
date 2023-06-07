@@ -3,6 +3,7 @@ package com.ebanma.cloud.post.web;
 import com.ebanma.cloud.common.dto.Result;
 import com.ebanma.cloud.common.dto.ResultGenerator;
 import com.ebanma.cloud.post.model.po.PostInfoPO;
+import com.ebanma.cloud.post.model.vo.PostInfoSearchVO;
 import com.ebanma.cloud.post.model.vo.PostInfoVO;
 import com.ebanma.cloud.post.service.PostInfoService;
 import com.github.pagehelper.PageInfo;
@@ -77,7 +78,7 @@ public class PostInfoController {
      * @return {@link Result}
      */
     @PostMapping("/list")
-    public Result list() {
+    public Result list(@RequestBody PostInfoSearchVO searchVO) {
         List<PostInfoPO> list = postInfoService.list();
         PageInfo pageInfo = new PageInfo(list);
         return ResultGenerator.genSuccessResult(pageInfo);
