@@ -1,6 +1,8 @@
 package com.ebanma.cloud.post.model.po;
 
 import java.io.Serializable;
+
+import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
 /**
@@ -8,6 +10,7 @@ import lombok.Data;
  * @TableName post_like
  */
 @Data
+@TableName("post_like")
 public class PostLikePO implements Serializable {
     /**
      * 主键

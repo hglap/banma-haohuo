@@ -1,11 +1,14 @@
 package com.ebanma.cloud.post.service;
 
+import com.ebanma.cloud.post.model.dto.ImgDto;
+import com.ebanma.cloud.post.model.dto.PostSearchDto;
 import com.ebanma.cloud.post.model.po.PostInfoPO;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.ebanma.cloud.post.model.vo.PostInfoVO;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 
 /**
 * @author banma-0163
@@ -19,4 +22,12 @@ public interface PostInfoService extends IService<PostInfoPO> {
     String upload(MultipartFile multipartFile) throws IOException;
 
     String[] uploadAll(MultipartFile[] file) throws IOException;
+
+    boolean removeImg(ImgDto imgDto);
+
+    Long add(PostInfoVO postInfo);
+
+    List<PostInfoVO> search(PostSearchDto postSearchDto);
+
+    List<PostInfoVO> getList(Integer page, Integer size, Long userId);
 }

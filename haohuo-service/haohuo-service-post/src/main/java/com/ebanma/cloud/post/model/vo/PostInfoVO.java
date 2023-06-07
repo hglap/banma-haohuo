@@ -1,12 +1,11 @@
-package com.ebanma.cloud.post.model.po;
+package com.ebanma.cloud.post.model.vo;
+
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.ebanma.cloud.post.model.po.PostInfoPO;
+import lombok.Data;
 
 import java.io.Serializable;
 import java.util.Date;
-
-import com.baomidou.mybatisplus.annotation.TableName;
-import lombok.Data;
-
-import javax.persistence.Table;
 
 /**
  * 推荐帖信息表
@@ -14,7 +13,7 @@ import javax.persistence.Table;
  */
 @Data
 @TableName("post_info")
-public class PostInfoPO implements Serializable {
+public class PostInfoVO implements Serializable {
     /**
      * 主键
      */
@@ -23,7 +22,7 @@ public class PostInfoPO implements Serializable {
     /**
      * 帖子ID
      */
-
+    private Long postId;
     /**
      * 用户ID
      */
@@ -62,7 +61,7 @@ public class PostInfoPO implements Serializable {
     /**
      * 图片url数组
      */
-    private String img;
+    private String[] img;
 
     /**
      * 商品链接
