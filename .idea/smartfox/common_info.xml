@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="SmartFoxWorkToolsProjectState">
-    <option name="branch" value="dev-duym" />
+    <option name="branch" value="dev-liuchengdong" />
     <option name="gitUrl" value="git@gitlab.alibaba-inc.com:banma-faw-tech/haohuo.git" />
-    <option name="localBranch" value="dev-duym" />
-    <option name="revision" value="412eab9d097082a89bcfa774dbadc09ad61e6eab" />
+    <option name="localBranch" value="dev-liuchengdong" />
+    <option name="revision" value="3d51581a9755f01c192d33a296a7e9f4322dca00" />
   </component>
 </project>

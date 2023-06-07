@@ -3,3 +3,15 @@ server:
 spring:
   application:
     name: post-service
+#在application.yml中配置fastdfs的连接地址等信息
+
+  # 注意这个trackerList：如果是集群tracker的话以逗号分隔开就行 30.16.95.144
+fdfs:
+  connect-timeout: 600
+  so-timeout: 1500
+  trackerList: 124.221.94.214:22122
+  thumb-image:
+    width: 150
+    height: 150
+  pool:
+    max-total: 200

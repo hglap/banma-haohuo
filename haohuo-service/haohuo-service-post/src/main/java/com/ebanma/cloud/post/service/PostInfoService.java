@@ -2,6 +2,10 @@ package com.ebanma.cloud.post.service;
 
 import com.ebanma.cloud.post.model.po.PostInfoPO;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.ebanma.cloud.post.model.vo.PostInfoVO;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 /**
 * @author banma-0163
@@ -10,4 +14,9 @@ import com.baomidou.mybatisplus.extension.service.IService;
 */
 public interface PostInfoService extends IService<PostInfoPO> {
 
+    PostInfoVO getByPostId(Long id);
+
+    String upload(MultipartFile multipartFile) throws IOException;
+
+    String[] uploadAll(MultipartFile[] file) throws IOException;
 }
