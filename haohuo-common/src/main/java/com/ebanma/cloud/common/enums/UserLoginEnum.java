@@ -28,6 +28,8 @@ public enum UserLoginEnum {
         this.type = type;
     }
 
-    UserLoginEnum() {}
+    UserLoginEnum() {
+
+    }
 
 }
