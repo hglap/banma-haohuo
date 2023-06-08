@@ -11,10 +11,10 @@ spring:
       username: nacos
       password: nacos
   redis:
-#    host: 30.16.95.140
-    host: 127.0.0.1
+    host: 30.16.95.140
+#    host: 127.0.0.1
     port: 6379
-    password:
+    password: admin
     database: 1
 #    cluster:
 #      nodes: 30.16.95.140:6379
