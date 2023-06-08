@@ -114,4 +114,15 @@
             </plugin>
         </plugins>
     </build>
+<<<<<<< HEAD
+=======
+
+<!--    <repositories>-->
+<!--        <repository>-->
+<!--            <id>central</id>-->
+<!--            <url>https://maven.aliyun.com/repository/central</url>-->
+<!--            <name>aliyun</name>-->
+<!--        </repository>-->
+<!--    </repositories>-->
+>>>>>>> 071e5a20c75ca23f6c51d8310e598106fe30ffc6
 </project>
