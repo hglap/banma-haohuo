@@ -15,7 +15,7 @@ import java.util.List;
 public interface GameRuleService extends Service<GameRule> {
 
     /**
-     * 把游戏规则
+     * 获取游戏规则
      * 获取游戏概率控制 [根据道具进行修正]
      * 根据道具使用情况,分别进行概率修正
      *
@@ -50,4 +50,12 @@ public interface GameRuleService extends Service<GameRule> {
      */
     GamePresentRuleVO getPresentDraw(List<GamePresentRuleVO> presentRuleVOS);
 
+    /**
+     * 砸蛋抽奖
+     * 对金蛋进行保底控制
+     *
+     * @param gameRules 游戏规则
+     * @return {@link GameEggRuleVO}
+     */
+    GameEggRuleVO getEggDrawByGuaranteed(List<GameEggRuleVO> gameRules);
 }

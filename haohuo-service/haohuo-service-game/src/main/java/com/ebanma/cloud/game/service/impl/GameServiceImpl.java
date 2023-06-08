@@ -87,7 +87,7 @@ public class GameServiceImpl implements GameService {
             gameUserInfoService.update(userInfo);
             //更新道具剩余信息
             gameUserPropService.update(userInfo.getUseGameUserProp());
-            //清楚道具使用记录
+            //清除道具使用记录
             userInfo.setUseGameUserProp(null);
             //6.3 抽奖记录
             GameUserRecord gameUserRecord = new GameUserRecord(gameDrawDto.getUserId(),presentDraw);
