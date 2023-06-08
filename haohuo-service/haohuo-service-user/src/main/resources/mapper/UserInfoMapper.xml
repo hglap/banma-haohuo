@@ -17,4 +17,8 @@
     <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
     <result column="last_login_time" jdbcType="TIMESTAMP" property="lastLoginTime" />
   </resultMap>
+
+  <select id="selectByPhone" resultMap="BaseResultMap">
+    select * from user_info where user_phone = #{userPhone}
+  </select>
 </mapper>
