@@ -166,7 +166,10 @@ public class PostInfoServiceImpl extends ServiceImpl<PostInfoMapper, PostInfoPO>
         // 查询数据
         List<PostInfoPO> postInfoPOList = lambdaQuery().in(PostInfoPO::getId, ids).list();
         // 数据处理
-        return postInfoPOList.stream().map(this::getVObyPO).collect(Collectors.toList());
+        List<PostInfoVO> voList = postInfoPOList.stream().map(this::getVObyPO).collect(Collectors.toList());
+
+
+        return voList;
     }
 
     /**

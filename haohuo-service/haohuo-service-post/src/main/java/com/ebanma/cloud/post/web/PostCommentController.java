@@ -3,13 +3,11 @@ package com.ebanma.cloud.post.web;
 import com.ebanma.cloud.common.dto.Result;
 import com.ebanma.cloud.common.dto.ResultGenerator;
 import com.ebanma.cloud.post.model.po.PostCommentPO;
+import com.ebanma.cloud.post.model.vo.PostInfoSearchVO;
 import com.ebanma.cloud.post.service.PostCommentService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -48,8 +46,8 @@ public class PostCommentController {
     }
 
     @PostMapping("/list")
-    public Result list(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "0") Integer size) {
-        PageHelper.startPage(page, size);
+    public Result list(@RequestBody PostInfoSearchVO searchVO) {
+        PageHelper.startPage(searchVO.getPageNum(), searchVO.getPageSize());
         List<PostCommentPO> list = postCommentService.list();
         PageInfo pageInfo = new PageInfo(list);
         return ResultGenerator.genSuccessResult(pageInfo);
