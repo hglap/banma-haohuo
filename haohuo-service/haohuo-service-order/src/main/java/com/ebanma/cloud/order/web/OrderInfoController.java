@@ -14,13 +14,19 @@ import javax.annotation.Resource;
 import java.util.List;
 
 /**
-* Created by CodeGenerator on 2023/06/06.
-*/
+ * Created by CodeGenerator on 2023/06/06.
+ */
 @RestController
 @RequestMapping("/order/info")
 public class OrderInfoController {
     @Resource
     private OrderInfoService orderInfoService;
+
+    @PostMapping("/add")
+    public Result add(@RequestBody OrderInfo orderInfo) {
+        orderInfoService.save(orderInfo);
+        return ResultGenerator.genSuccessResult();
+    }
 
     @PostMapping("/list")
     public Result list(@RequestBody OrderInfoDTO orderInfoDTO) {
@@ -32,8 +38,21 @@ public class OrderInfoController {
 
     @PostMapping("/detail")
     public Result detail(@RequestBody OrderInfoDTO orderInfoDTO) {
-        OrderInfoDTO  orderInfoDTO1 = orderInfoService.detail(orderInfoDTO.getId());
+        OrderInfoDTO orderInfoDTO1 = orderInfoService.detail(orderInfoDTO.getId());
         return ResultGenerator.genSuccessResult(orderInfoDTO1);
+    }
+
+    @PostMapping("/update")
+    public Result update(@RequestBody OrderInfo orderInfo) {
+        try {
+            int n = orderInfoService.update(orderInfo);
+            if (n == 0) {
+                return ResultGenerator.genFailResult("操作失败");
+            }
+        } catch (Exception e) {
+            return ResultGenerator.genFailResult("操作失败");
+        }
+        return ResultGenerator.genSuccessResult();
     }
 
     //@PostMapping("/add")

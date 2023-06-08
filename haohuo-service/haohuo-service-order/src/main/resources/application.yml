@@ -3,3 +3,14 @@ server:
 spring:
   application:
     name: order-service
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 30.16.95.140:8848
+      username: nacos
+      password: nacos
+  redis:
+    host: 30.16.95.140
+    port: 6379
+    password: admin
+    database: 0

@@ -17,4 +17,8 @@ public interface OrderInfoService {
     List<OrderInfoDTO> queryAll(OrderInfoDTO orderInfoDTO);
 
     OrderInfoDTO detail(Long orderId);
+
+    int update(OrderInfo orderInfo);
+
+    int save(OrderInfo orderInfo);
 }
