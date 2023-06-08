@@ -1,4 +1,4 @@
-package com.ebanma.cloud.trans.VO;
+package com.ebanma.cloud.trans.vo;
 
 import com.github.pagehelper.PageInfo;
 import lombok.AllArgsConstructor;

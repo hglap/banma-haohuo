@@ -1,4 +1,4 @@
-package com.ebanma.cloud.trans.VO;
+package com.ebanma.cloud.trans.vo;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
