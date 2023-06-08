@@ -8,15 +8,24 @@ import com.ebanma.cloud.order.dao.OrderInfoMapper;
 import com.ebanma.cloud.order.model.OrderInfo;
 import com.ebanma.cloud.order.model.dto.OrderInfoDTO;
 import com.ebanma.cloud.order.service.OrderInfoService;
+import com.ebanma.cloud.order.util.RedisUtil;
+import javafx.beans.binding.StringBinding;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.rocketmq.common.message.Message;
 import org.apache.rocketmq.spring.core.RocketMQTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.script.DefaultRedisScript;
+import org.springframework.data.redis.core.script.RedisScript;
+import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -30,8 +39,15 @@ public class OrderInfoServiceImpl implements OrderInfoService {
     @Resource
     private OrderInfoMapper orderInfoMapper;
 
+    @Resource
+    private DefaultRedisScript<Long> redisScript;
+
     @Autowired
-    private RedisTemplate redisTemplate;
+    private RedisUtil redisUtil;
+
+    @Autowired
+    private RocketMQTemplate rocketMQTemplate;
+
 
     @Override
     public List<OrderInfoDTO> queryAll(OrderInfoDTO orderInfoDTO) {
@@ -62,8 +78,25 @@ public class OrderInfoServiceImpl implements OrderInfoService {
     @Override
     public int save(OrderInfo orderInfo) {
         String lockKey = orderInfo.getSkuId();
-        redisTemplate.opsForValue().set(lockKey,"20",20, TimeUnit.SECONDS);
-        System.out.println(redisTemplate.opsForValue().get(lockKey));
+        redisUtil.getRedisTemplate().opsForValue().set(lockKey,20+"");
+        redisUtil.getRedisTemplate().opsForValue().decrement(lockKey,2);
+
+        System.out.println(redisUtil.getRedisTemplate().opsForValue().get(lockKey));
+        List<String> keyList = new ArrayList<>();
+        keyList.add(lockKey);
+        Object execute = redisUtil.getRedisTemplate().execute(redisScript, keyList, 2+"");
+
+
+        if ("1".equals(execute.toString())) {
+            // 成功后，发送消息
+            rocketMQTemplate.syncSend("hgl-order-topic"
+                    ,MessageBuilder.withPayload("测试消息").build(),3000,3);
+            System.out.println("扣减库存成功");
+        } else {
+            // 失败后返回结果
+            System.out.println("扣减库存失败");
+        }
+        System.out.println(redisUtil.getRedisTemplate().opsForValue().get(lockKey));
         return 0;
     }
 
