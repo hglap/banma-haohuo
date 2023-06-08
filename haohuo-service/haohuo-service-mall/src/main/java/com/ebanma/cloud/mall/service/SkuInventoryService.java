@@ -1,5 +1,7 @@
 package com.ebanma.cloud.mall.service;
 
+import com.ebanma.cloud.common.dto.Result;
+import com.ebanma.cloud.mall.model.dto.SkuInventoryInsertDTO;
 import com.ebanma.cloud.mall.model.po.SkuInventoryPO;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -10,4 +12,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
 */
 public interface SkuInventoryService extends IService<SkuInventoryPO> {
 
+    Boolean add(SkuInventoryInsertDTO skuInventoryInsertDTO);
 }

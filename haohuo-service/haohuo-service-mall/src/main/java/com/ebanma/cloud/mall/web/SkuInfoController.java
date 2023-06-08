@@ -3,6 +3,8 @@ package com.ebanma.cloud.mall.web;
 import com.ebanma.cloud.common.dto.Result;
 import com.ebanma.cloud.common.dto.ResultGenerator;
 import com.ebanma.cloud.mall.model.dto.SkuAttachmentSearchDTO;
+import com.ebanma.cloud.mall.model.dto.SkuInfoEditDTO;
+import com.ebanma.cloud.mall.model.dto.SkuInfoInsertDTO;
 import com.ebanma.cloud.mall.model.dto.SkuInfoSearchDTO;
 import com.ebanma.cloud.mall.service.SkuInfoService;
 import com.github.pagehelper.PageInfo;
@@ -53,6 +55,18 @@ public class SkuInfoController {
     @PostMapping("/searchList")
     public Result<PageInfo> searchList(@RequestBody SkuInfoSearchDTO skuInfoSearchDTO){
         return ResultGenerator.genSuccessResult(skuInfoService.searchList(skuInfoSearchDTO));
+    }
+
+    @ApiOperation(value = "商品信息新增", notes = "【服务端】商品信息新增", httpMethod = "POST")
+    @PostMapping("/add")
+    public Result<Boolean> add(@RequestBody SkuInfoInsertDTO skuInfoInsertDTO){
+        return ResultGenerator.genSuccessResult(skuInfoService.add(skuInfoInsertDTO));
+    }
+
+    @ApiOperation(value = "商品信息编辑", notes = "【服务端】商品信息编辑", httpMethod = "POST")
+    @PostMapping("/edit")
+    public Result<Boolean> edit(@RequestBody SkuInfoEditDTO skuInfoEditDTO){
+        return ResultGenerator.genSuccessResult(skuInfoService.edit(skuInfoEditDTO));
     }
 
 }

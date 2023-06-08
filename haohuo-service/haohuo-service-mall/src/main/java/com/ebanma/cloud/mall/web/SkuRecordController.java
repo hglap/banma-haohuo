@@ -2,6 +2,7 @@ package com.ebanma.cloud.mall.web;
 
 import com.ebanma.cloud.common.dto.Result;
 import com.ebanma.cloud.common.dto.ResultGenerator;
+import com.ebanma.cloud.mall.model.dto.SkuRecordInsertDTO;
 import com.ebanma.cloud.mall.model.dto.SkuRecordSearchDTO;
 import com.ebanma.cloud.mall.service.SkuRecordService;
 import io.swagger.annotations.Api;
@@ -45,6 +46,12 @@ public class SkuRecordController {
     @GetMapping("/collect")
     public Result<Boolean> getCollectCount(String productId){
         return ResultGenerator.genSuccessResult(skuRecordService.collect(productId));
+    }
+
+    @ApiOperation(value = "插入记录", notes = "插入记录", httpMethod = "POST")
+    @PostMapping("/add")
+    public Result<Boolean> add(@RequestBody SkuRecordInsertDTO recordInsertDTO){
+        return ResultGenerator.genSuccessResult(skuRecordService.add(recordInsertDTO));
     }
 
 

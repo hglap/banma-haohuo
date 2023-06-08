@@ -1,8 +1,11 @@
 package com.ebanma.cloud.mall.service;
 
+import com.ebanma.cloud.mall.model.dto.SkuRecordInsertDTO;
 import com.ebanma.cloud.mall.model.dto.SkuRecordSearchDTO;
 import com.ebanma.cloud.mall.model.po.SkuRecordPO;
 import com.baomidou.mybatisplus.extension.service.IService;
+
+import java.util.List;
 
 /**
 * @author kmkmj
@@ -16,4 +19,8 @@ public interface SkuRecordService extends IService<SkuRecordPO> {
     Integer getRecrodCountBySkuIdAndTypeAndUserId(SkuRecordSearchDTO skuRecordSearchDTO);
 
     Boolean collect(String productId);
+
+    Boolean add(SkuRecordInsertDTO recordInsertDTO);
+
+    Boolean addList(List<SkuRecordInsertDTO> skuRecordInsertDTOList);
 }

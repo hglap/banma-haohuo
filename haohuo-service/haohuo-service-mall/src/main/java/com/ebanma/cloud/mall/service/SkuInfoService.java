@@ -1,5 +1,7 @@
 package com.ebanma.cloud.mall.service;
 
+import com.ebanma.cloud.mall.model.dto.SkuInfoEditDTO;
+import com.ebanma.cloud.mall.model.dto.SkuInfoInsertDTO;
 import com.ebanma.cloud.mall.model.dto.SkuInfoSearchDTO;
 import com.ebanma.cloud.mall.model.po.SkuInfoPO;
 import com.baomidou.mybatisplus.extension.service.IService;
@@ -23,4 +25,7 @@ public interface SkuInfoService extends IService<SkuInfoPO> {
 
     PageInfo searchList(SkuInfoSearchDTO skuInfoSearchDTO);
 
+    Boolean add(SkuInfoInsertDTO skuInfoInsertDTO);
+
+    Boolean edit(SkuInfoEditDTO skuInfoEditDTO);
 }

@@ -1,8 +1,10 @@
 package com.ebanma.cloud.mall.service.impl;
 
+import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.ebanma.cloud.mall.model.dto.SkuRecordInsertDTO;
 import com.ebanma.cloud.mall.model.dto.SkuRecordSearchDTO;
 import com.ebanma.cloud.mall.model.enums.SkuRecordTypeEnum;
 import com.ebanma.cloud.mall.model.po.SkuRecordPO;
@@ -11,6 +13,8 @@ import com.ebanma.cloud.mall.dao.SkuRecordMapper;
 import org.aspectj.weaver.ast.Var;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
 * @author kmkmj
@@ -62,6 +66,30 @@ public class SkuRecordServiceImpl extends ServiceImpl<SkuRecordMapper, SkuRecord
                 .setSkuId(productId)
                 .setType(SkuRecordTypeEnum.USER_PRODUCT_COLLECT.getName()));
 
+        return true;
+    }
+
+    /**
+     * 插入记录
+     * @param recordInsertDTO
+     * @return
+     */
+    @Override
+    public Boolean add(SkuRecordInsertDTO recordInsertDTO) {
+        SkuRecordPO skuRecordPO = BeanUtil.copyProperties(recordInsertDTO, SkuRecordPO.class);
+        skuRecordMapper.insert(skuRecordPO);
+        return true;
+    }
+
+    /**
+     * 批量插入记录
+     * @param skuRecordInsertDTOList
+     * @return
+     */
+    @Override
+    public Boolean addList(List<SkuRecordInsertDTO> skuRecordInsertDTOList) {
+        List<SkuRecordPO> skuRecordPOList = BeanUtil.copyToList(skuRecordInsertDTOList, SkuRecordPO.class);
+        saveBatch(skuRecordPOList);
         return true;
     }
 }

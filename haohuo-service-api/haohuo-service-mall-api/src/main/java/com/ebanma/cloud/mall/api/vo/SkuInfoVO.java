@@ -1,27 +1,22 @@
-package com.ebanma.cloud.mall.model.po;
+package com.ebanma.cloud.mall.api.vo;
 
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableLogic;
-import com.baomidou.mybatisplus.annotation.TableName;
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.util.Date;
 import lombok.Data;
 
-/**
- * 
- * @TableName sku_info
- * 商品信息
- */
-@TableName(value ="sku_info")
-@Data
-public class SkuInfoPO extends BasePO implements Serializable {
+import java.math.BigDecimal;
+import java.util.List;
 
+/**
+ * @author: why
+ * @date: 2023/6/7
+ * @time: 15:35
+ * @description:
+ */
+@Data
+public class SkuInfoVO {
     /**
-     * 商品ID
+     *
      */
-    private String skuId;
+    private String id;
 
     /**
      * 价格
@@ -83,12 +78,35 @@ public class SkuInfoPO extends BasePO implements Serializable {
      */
     private Long currentQua;
 
-    /**
-     * 删除标记 0未删除 1已删除
-     */
-    @TableLogic(value = "0", delval = "1")
-    private String del;
 
-    @TableField(exist = false)
-    private static final long serialVersionUID = 1L;
+    /**
+     * 已卖数量
+     */
+    private Integer saledCount;
+
+    /**
+     * 热度
+     */
+    private Integer heat;
+
+    /**
+     * 推荐总数
+     */
+    private Integer recommandCount;
+
+    /**
+     * 是否收藏
+     */
+    private Boolean collect;
+
+    /**
+     * 照片列表
+     */
+    private List<SkuAttachmentVO> attachmentVOList;
+
+    /**
+     * 商家名称
+     */
+    private String storeName;
+
 }

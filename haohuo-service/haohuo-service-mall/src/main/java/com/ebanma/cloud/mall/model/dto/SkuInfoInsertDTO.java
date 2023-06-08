@@ -1,22 +1,33 @@
-package com.ebanma.cloud.mall.model.po;
+package com.ebanma.cloud.mall.model.dto;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableName;
+import lombok.Data;
+import lombok.experimental.Accessors;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
-import lombok.Data;
+import java.util.List;
 
 /**
  * 
  * @TableName sku_info
  * 商品信息
  */
-@TableName(value ="sku_info")
+
 @Data
-public class SkuInfoPO extends BasePO implements Serializable {
+@Accessors(chain = true)
+public class SkuInfoInsertDTO implements Serializable {
+
+
+    private static final long serialVersionUID = -4842189898294781021L;
+    /**
+     * 
+     */
+    private String id;
 
     /**
      * 商品ID
@@ -83,12 +94,23 @@ public class SkuInfoPO extends BasePO implements Serializable {
      */
     private Long currentQua;
 
-    /**
-     * 删除标记 0未删除 1已删除
-     */
-    @TableLogic(value = "0", delval = "1")
-    private String del;
 
-    @TableField(exist = false)
-    private static final long serialVersionUID = 1L;
+    /**
+     * 关键词
+     */
+    private String keyWordsList;
+
+    /**
+     * 商品相册
+     */
+    private List<SkuAttachmentInsertDTO> attachmentInfoList;
+
+
+    private List<SkuDetailInsertDTO> skuDetailDTO;
+
+    /**
+     * 商品详情
+     */
+    private SkuAttachmentInsertDTO detailPhoto;
+
 }

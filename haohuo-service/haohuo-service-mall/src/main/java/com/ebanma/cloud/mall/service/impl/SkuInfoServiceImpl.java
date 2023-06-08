@@ -3,24 +3,27 @@ package com.ebanma.cloud.mall.service.impl;
 import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.ebanma.cloud.mall.model.dto.SkuAttachmentSearchDTO;
-import com.ebanma.cloud.mall.model.dto.SkuInfoSearchDTO;
-import com.ebanma.cloud.mall.model.dto.SkuRecordSearchDTO;
+import com.ebanma.cloud.mall.model.dto.*;
 import com.ebanma.cloud.mall.model.enums.SkuAttachmentRelationTypeEnum;
 import com.ebanma.cloud.mall.model.enums.SkuRecordTypeEnum;
+import com.ebanma.cloud.mall.model.po.SkuAttachmentPO;
+import com.ebanma.cloud.mall.model.po.SkuDetailPO;
 import com.ebanma.cloud.mall.model.po.SkuInfoPO;
+import com.ebanma.cloud.mall.model.po.SkuInventoryPO;
 import com.ebanma.cloud.mall.model.vo.SkuAttachmentVO;
 import com.ebanma.cloud.mall.model.vo.SkuInfoVO;
 import com.ebanma.cloud.mall.model.vo.SkuRecommendVO;
 import com.ebanma.cloud.mall.service.SkuAttachmentService;
 import com.ebanma.cloud.mall.service.SkuInfoService;
 import com.ebanma.cloud.mall.dao.SkuInfoMapper;
+import com.ebanma.cloud.mall.service.SkuInventoryService;
 import com.ebanma.cloud.mall.service.SkuRecordService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,7 +46,19 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoMapper, SkuInfoPO>
     private SkuAttachmentService skuAttachmentService;
 
     @Autowired
+    private SkuAttachmentServiceImpl skuAttachmentServiceImpl;
+
+    @Autowired
     private SkuRecordService skuRecordService;
+
+    @Autowired
+    private SkuDetailServiceImpl skuDetailServiceImpl;
+
+    @Autowired
+    private SkuInventoryService skuInventoryService;
+
+    @Autowired
+    private SkuInventoryServiceImpl skuInventoryServiceImpl;
 
     @Override
     public PageInfo queryList(SkuInfoSearchDTO skuInfoSearchDTO) {
@@ -148,6 +163,88 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoMapper, SkuInfoPO>
 
         pageInfo.setList(skuInfoVOList);
         return pageInfo;
+    }
+
+    @Transactional
+    @Override
+    public Boolean add(SkuInfoInsertDTO skuInfoInsertDTO) {
+        //TODO 通过上下文获取商家ID
+        String storeId = "1111";
+
+        // TODO 生成商品编号 规则为商品分类首字母+商家ID+4位自增数字（例：FZ10000001）
+        String goodsNo = "xxxx";
+
+        /* 查找排序为1的图片 */
+        List<SkuAttachmentInsertDTO> attachmentAlbumList = skuInfoInsertDTO.getAttachmentInfoList();
+        SkuAttachmentInsertDTO skuAttachmentInsertDTO = attachmentAlbumList.stream().filter(dto -> dto.getSeq().equals("1")).findFirst().orElse(null);
+        /* 插入商品信息 */
+        SkuInfoPO skuInfoPO = BeanUtil.copyProperties(skuInfoInsertDTO, SkuInfoPO.class);
+        skuInfoPO.setSkuDefaultImg(skuAttachmentInsertDTO.getUrl());
+        save(skuInfoPO);
+
+        /* 创建库存记录 */
+        skuInventoryService.add(new SkuInventoryInsertDTO()
+                .setSkuId(skuInfoPO.getId())
+                .setStoreId(storeId)
+                .setAllInQua(skuInfoInsertDTO.getCurrentQua()));
+
+        /* 插入商品参数 */
+        List<SkuDetailInsertDTO> skuDetailDTO = skuInfoInsertDTO.getSkuDetailDTO();
+        List<SkuDetailPO> skuDetailPOList = BeanUtil.copyToList(skuDetailDTO, SkuDetailPO.class);
+        skuDetailPOList.forEach(skuDetailPO -> {
+            skuDetailPO.setSkuId(skuInfoPO.getId());
+        });
+        skuDetailServiceImpl.saveBatch(skuDetailPOList);
+
+        /* 插入商品相册 */
+        List<SkuAttachmentPO> skuAttachmentPOList = BeanUtil.copyToList(attachmentAlbumList, SkuAttachmentPO.class);
+        skuAttachmentPOList.forEach(po->{
+            po.setRelationId(skuInfoPO.getId())
+              .setRelationType(SkuAttachmentRelationTypeEnum.PRODUCT_ALBUM.getName());
+        });
+        skuAttachmentServiceImpl.saveBatch(skuAttachmentPOList);
+
+        /* 插入商品详情图片 */
+        SkuAttachmentInsertDTO detailPhoto = skuInfoInsertDTO.getDetailPhoto();
+        SkuAttachmentPO skuAttachmentDetailPhotoPO = BeanUtil.copyProperties(detailPhoto, SkuAttachmentPO.class);
+        skuAttachmentDetailPhotoPO.setRelationId(skuInfoPO.getId())
+                .setRelationType(SkuAttachmentRelationTypeEnum.PRODUCT_DETAIL_IMAGE.getName());
+        skuAttachmentServiceImpl.save(skuAttachmentDetailPhotoPO);
+
+
+        /* 插入关键词 */
+        String keyWordsList = skuInfoInsertDTO.getKeyWordsList();
+        String[] wordsList = StringUtils.split(keyWordsList, " ");
+        List<SkuRecordInsertDTO> skuRecordInsertDTOList = new ArrayList<SkuRecordInsertDTO>();
+        for (int i = 0; i < wordsList.length; i++) {
+            SkuRecordInsertDTO dto = new SkuRecordInsertDTO();
+            dto.setType(SkuRecordTypeEnum.PRODUCT_KEYWORDS.getName() + "-" + wordsList[i])
+               .setSkuId(skuInfoPO.getId());
+            skuRecordInsertDTOList.add(dto);
+        }
+        skuRecordService.addList(skuRecordInsertDTOList);
+        return true;
+    }
+
+    @Override
+    public Boolean edit(SkuInfoEditDTO skuInfoEditDTO) {
+        //TODO 通过上下文获取商家ID
+        String storeId = "1111";
+
+        /* 查找排序为1的图片 */
+        List<SkuAttachmentInsertDTO> attachmentAlbumList = skuInfoEditDTO.getAttachmentInfoList();
+        SkuAttachmentInsertDTO skuAttachmentInsertDTO = attachmentAlbumList.stream().filter(dto -> dto.getSeq().equals("1")).findFirst().orElse(null);
+        /* 插入商品信息 */
+        SkuInfoPO skuInfoPO = BeanUtil.copyProperties(skuInfoEditDTO, SkuInfoPO.class);
+        skuInfoPO.setSkuDefaultImg(skuAttachmentInsertDTO.getUrl());
+        save(skuInfoPO);
+
+        /* 更新库存信息 */
+        SkuInventoryPO skuInventoryPO = skuInventoryServiceImpl.lambdaQuery().eq(SkuInventoryPO::getSkuId, skuInfoPO.getId()).one();
+        skuInventoryServiceImpl.save(skuInventoryPO.setCurrentQua(skuInfoEditDTO.getCurrentQua()));
+
+
+        return true ;
     }
 }
 

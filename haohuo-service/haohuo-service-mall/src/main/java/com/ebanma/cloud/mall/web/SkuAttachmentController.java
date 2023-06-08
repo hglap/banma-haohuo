@@ -2,6 +2,7 @@ package com.ebanma.cloud.mall.web;
 
 import com.ebanma.cloud.common.dto.Result;
 import com.ebanma.cloud.common.dto.ResultGenerator;
+import com.ebanma.cloud.mall.model.dto.SkuAttachmentDTO;
 import com.ebanma.cloud.mall.model.dto.SkuAttachmentSearchDTO;
 import com.ebanma.cloud.mall.model.po.SkuAttachmentPO;
 import com.ebanma.cloud.mall.model.vo.SkuAttachmentVO;
@@ -52,6 +53,12 @@ public class SkuAttachmentController {
     @GetMapping("/queryById")
     public Result<SkuAttachmentVO> getAttachmentList(@NotEmpty String id){
         return ResultGenerator.genSuccessResult(skuAttachmentService.queryById(id));
+    }
+
+    @ApiOperation(value = "根据关联ID及关联类型删除附件", notes = "根据关联ID及关联类型删除附件", httpMethod = "POST")
+    @GetMapping("/del")
+    public Result<Boolean> del(@RequestBody SkuAttachmentDTO skuAttachmentDTO) {
+        return ResultGenerator.genSuccessResult(skuAttachmentService.del(skuAttachmentDTO));
     }
 
 

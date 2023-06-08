@@ -1,23 +1,25 @@
-package com.ebanma.cloud.mall.model.po;
+package com.ebanma.cloud.mall.model.dto;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableName;
-import java.io.Serializable;
-import java.util.Date;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
-/**
- *
- * @TableName sku_inventory
- * 商品库存表
- */
-@TableName(value ="sku_inventory")
+import java.io.Serializable;
+import java.util.Date;
+
 @Data
 @Accessors(chain = true)
-public class SkuInventoryPO extends BasePO implements Serializable {
+public class SkuInventoryInsertDTO implements Serializable {
+
+
+    private static final long serialVersionUID = -8238989622259204710L;
+    /**
+     * 
+     */
+    private String id;
 
     /**
      * 商品ID
@@ -53,16 +55,6 @@ public class SkuInventoryPO extends BasePO implements Serializable {
      * 上下架
      */
     private String useStatus;
-
-
-
-    /**
-     * 删除标记 0未删除 1已删除
-     */
-    @TableLogic(value = "0", delval = "1")
-    private String del;
-
-    private static final long serialVersionUID = 4411727871776847658L;
 
 
 }

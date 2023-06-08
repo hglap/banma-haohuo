@@ -4,6 +4,7 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollectionUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.ebanma.cloud.mall.model.dto.SkuAttachmentDTO;
 import com.ebanma.cloud.mall.model.dto.SkuAttachmentSearchDTO;
 import com.ebanma.cloud.mall.model.po.SkuAttachmentPO;
 import com.ebanma.cloud.mall.model.vo.SkuAttachmentVO;
@@ -70,6 +71,19 @@ public class SkuAttachmentServiceImpl extends ServiceImpl<SkuAttachmentMapper, S
         SkuAttachmentPO skuAttachmentPO = skuAttachmentMapper.selectById(id);
         SkuAttachmentVO skuAttachmentVO = BeanUtil.copyProperties(skuAttachmentPO, SkuAttachmentVO.class);
         return skuAttachmentVO;
+    }
+
+    /**
+     * 根据关联ID及类型删除对应附件
+     * @param skuAttachmentDTO
+     * @return
+     */
+    @Override
+    public Boolean del(SkuAttachmentDTO skuAttachmentDTO) {
+        skuAttachmentMapper.delete(new LambdaQueryWrapper<SkuAttachmentPO>()
+                .eq(SkuAttachmentPO::getRelationId, skuAttachmentDTO.getRelationId())
+                .eq(SkuAttachmentPO::getRelationType, skuAttachmentDTO.getRelationType()));
+        return true;
     }
 }
 

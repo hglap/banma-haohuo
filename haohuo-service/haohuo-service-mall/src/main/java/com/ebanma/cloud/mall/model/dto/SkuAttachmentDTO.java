@@ -9,7 +9,7 @@ import java.util.List;
 
 @Data
 @Accessors(chain = true)
-public class SkuAttachmentSearchDTO implements Serializable {
+public class SkuAttachmentDTO implements Serializable {
 
 
     private static final long serialVersionUID = -4179953322319812275L;

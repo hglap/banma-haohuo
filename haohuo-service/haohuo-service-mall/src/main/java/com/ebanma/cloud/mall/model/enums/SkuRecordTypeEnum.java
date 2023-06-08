@@ -14,7 +14,8 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum SkuRecordTypeEnum {
 
-    USER_PRODUCT_COLLECT("用户商品收藏");
+    USER_PRODUCT_COLLECT("用户商品收藏"),
+    PRODUCT_KEYWORDS("商品关键词");
 
 
 

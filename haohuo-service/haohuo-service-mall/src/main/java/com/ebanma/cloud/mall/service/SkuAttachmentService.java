@@ -1,5 +1,6 @@
 package com.ebanma.cloud.mall.service;
 
+import com.ebanma.cloud.mall.model.dto.SkuAttachmentDTO;
 import com.ebanma.cloud.mall.model.dto.SkuAttachmentSearchDTO;
 import com.ebanma.cloud.mall.model.po.SkuAttachmentPO;
 import com.baomidou.mybatisplus.extension.service.IService;
@@ -20,4 +21,6 @@ public interface SkuAttachmentService extends IService<SkuAttachmentPO> {
     Map<String,List<SkuAttachmentVO>> getAttachmentMap(SkuAttachmentSearchDTO skuAttachment);
 
     SkuAttachmentVO queryById(String id);
+
+    Boolean del(SkuAttachmentDTO skuAttachmentDTO);
 }
