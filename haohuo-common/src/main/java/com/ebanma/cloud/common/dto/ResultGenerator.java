@@ -44,7 +44,7 @@ public class ResultGenerator {
 
     public static Result genUnRegisterResult(String message) {
         Result result = new Result();
-        result.setCode(ResultCode.UNREGISTER);
+        result.setCode(ResultCode.UNREGISTER.code());
         if (!StringUtils.hasText(message)) {
             result.setMessage(DEFAULT_FAIL_MESSAGE);
         } else {
@@ -55,7 +55,7 @@ public class ResultGenerator {
 
     public static Result genFirstLoginResult(String message,String data) {
         Result result = new Result();
-        result.setCode(ResultCode.UNREGISTER);
+        result.setCode(ResultCode.UNREGISTER.code());
         if (!StringUtils.hasText(message)) {
             result.setMessage("First Time Login");
         } else {
