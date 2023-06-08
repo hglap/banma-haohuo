@@ -22,5 +22,11 @@
     <result column="delivery_time" jdbcType="TIMESTAMP" property="deliveryTime" />
     <result column="consign_time" jdbcType="TIMESTAMP" property="consignTime" />
     <result column="img_url" jdbcType="VARCHAR" property="imgUrl" />
+    <result column="sku_id" jdbcType="VARCHAR" property="skuId" />
+    <result column="sku_num" jdbcType="INTEGER" property="skuNum" />
+    <result column="integral" jdbcType="VARCHAR" property="integral" />
+    <result column="red_packet_id" jdbcType="VARCHAR" property="redPacketId" />
+    <result column="order_price" jdbcType="VARCHAR" property="orderPrice" />
+    <result column="merchant_id" jdbcType="VARCHAR" property="merchantId" />
   </resultMap>
 </mapper>

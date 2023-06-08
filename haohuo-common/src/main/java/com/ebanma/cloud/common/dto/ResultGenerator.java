@@ -12,28 +12,28 @@ public class ResultGenerator {
 
     public static Result genSuccessResult() {
         Result result = new Result();
-        result.setCode(ResultCode.SUCCESS);
+        result.setCode(ResultCode.SUCCESS.code());
         result.setMessage(DEFAULT_SUCCESS_MESSAGE);
         return result;
     }
 
     public static Result genSuccessResult(String message) {
         Result result = new Result();
-        result.setCode(ResultCode.SUCCESS);
+        result.setCode(ResultCode.SUCCESS.code());
         result.setMessage(message);
         return result;
     }
 
     public static <T> Result<T> genSuccessResult(T data) {
         return new Result()
-                .setCode(ResultCode.SUCCESS)
+                .setCode(ResultCode.SUCCESS.code())
                 .setMessage(DEFAULT_SUCCESS_MESSAGE)
                 .setData(data);
     }
 
     public static Result genFailResult(String message) {
         Result result = new Result();
-        result.setCode(ResultCode.FAIL);
+        result.setCode(ResultCode.FAIL.code());
         if (!StringUtils.hasText(message)) {
             result.setMessage(DEFAULT_FAIL_MESSAGE);
         } else {
@@ -44,7 +44,7 @@ public class ResultGenerator {
 
     public static Result genErrorResult(ResultCode code, String message) {
         Result result = new Result();
-        result.setCode(code);
+        result.setCode(code.code());
         result.setMessage(message);
         return result;
     }

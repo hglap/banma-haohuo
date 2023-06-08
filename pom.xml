@@ -13,6 +13,7 @@
         <module>haohuo-gateway-app</module>
         <module>haohuo-service</module>
         <module>haohuo-service-api</module>
+        <module>haohuo-common-file</module>
     </modules>
     <packaging>pom</packaging>
     <description>好货商城微服务版本(Spring Cloud Alibaba)</description>
@@ -121,4 +122,5 @@
 <!--            <name>aliyun</name>-->
 <!--        </repository>-->
 <!--    </repositories>-->
+
 </project>

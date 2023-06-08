@@ -42,8 +42,8 @@ public class Result<T> implements Serializable {
         return data;
     }
 
-    public Result setCode(ResultCode resultCode) {
-        this.code = resultCode.code();
+    public Result setCode(int code) {
+        this.code = code;
         return this;
     }
 

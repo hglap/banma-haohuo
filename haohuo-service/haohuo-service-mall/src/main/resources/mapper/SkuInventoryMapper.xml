@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ebanma.cloud.mall.dao.SkuInventoryMapper">
+
+    <resultMap id="BaseResultMap" type="com.ebanma.cloud.mall.model.po.SkuInventoryPO">
+            <id property="id" column="id" jdbcType="VARCHAR"/>
+            <result property="skuId" column="sku_id" jdbcType="VARCHAR"/>
+            <result property="storeId" column="store_id" jdbcType="VARCHAR"/>
+            <result property="allInQua" column="all_in_qua" jdbcType="BIGINT"/>
+            <result property="allOutQua" column="all_out_qua" jdbcType="BIGINT"/>
+            <result property="currentQua" column="current_qua" jdbcType="BIGINT"/>
+            <result property="freezeQua" column="freeze_qua" jdbcType="BIGINT"/>
+            <result property="useStatus" column="use_status" jdbcType="VARCHAR"/>
+            <result property="version" column="version" jdbcType="BIGINT"/>
+            <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+            <result property="createUser" column="create_user" jdbcType="VARCHAR"/>
+            <result property="lastModified" column="last_modified" jdbcType="TIMESTAMP"/>
+            <result property="lastModifyUser" column="last_modify_user" jdbcType="VARCHAR"/>
+            <result property="del" column="del" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,sku_id,store_id,
+        all_in_qua,all_out_qua,current_qua,
+        freeze_qua,use_status,version,
+        create_time,create_user,last_modified,
+        last_modify_user,del
+    </sql>
+</mapper>

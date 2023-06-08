@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ebanma.cloud.mall.dao.SkuDetailMapper">
+
+    <resultMap id="BaseResultMap" type="com.ebanma.cloud.mall.model.po.SkuDetailPO">
+            <id property="id" column="id" jdbcType="VARCHAR"/>
+            <result property="skuId" column="sku_id" jdbcType="VARCHAR"/>
+            <result property="info" column="info" jdbcType="VARCHAR"/>
+            <result property="content" column="content" jdbcType="VARCHAR"/>
+            <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+            <result property="createUser" column="create_user" jdbcType="VARCHAR"/>
+            <result property="lastModified" column="last_modified" jdbcType="VARCHAR"/>
+            <result property="lastModifyUser" column="last_modify_user" jdbcType="VARCHAR"/>
+            <result property="del" column="del" jdbcType="VARCHAR"/>
+            <result property="version" column="version" jdbcType="BIGINT"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,sku_id,info,
+        content,create_time,create_user,
+        last_modified,last_modify_user,del,
+        version
+    </sql>
+</mapper>

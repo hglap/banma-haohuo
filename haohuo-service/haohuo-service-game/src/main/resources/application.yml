@@ -3,3 +3,6 @@ server:
 spring:
   application:
     name: game-service
+
+mybatis:
+  mapper-locations: mapper/*.xml
