@@ -18,13 +18,13 @@ spring:
 #    cluster:
 #      nodes: 30.16.95.140:6379
 
-rocketmq:
-#  rocketmq的命名服务器，格式为 host:port;host:port
-  name-server: 30.16.95.140:9090
-  producer:
-#    生产者组名
-    group: hgl-order
-#    发送消息超时时间
-    send-message-timeout: 3000
+#rocketmq:
+##  rocketmq的命名服务器，格式为 host:port;host:port
+#  name-server: 30.16.95.140:9090
+#  producer:
+##    生产者组名
+#    group: hgl-order
+##    发送消息超时时间
+#    send-message-timeout: 3000
 
 

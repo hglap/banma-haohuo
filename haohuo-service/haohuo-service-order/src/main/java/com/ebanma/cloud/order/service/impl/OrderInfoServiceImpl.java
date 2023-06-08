@@ -4,6 +4,7 @@ package com.ebanma.cloud.order.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.ebanma.cloud.common.util.BeanUtil;
+import com.ebanma.cloud.mall.api.openfeign.SkuInfoServiceFeign;
 import com.ebanma.cloud.order.dao.OrderInfoMapper;
 import com.ebanma.cloud.order.model.OrderInfo;
 import com.ebanma.cloud.order.model.dto.OrderInfoDTO;
@@ -45,8 +46,9 @@ public class OrderInfoServiceImpl implements OrderInfoService {
     @Autowired
     private RedisUtil redisUtil;
 
-    @Autowired
-    private RocketMQTemplate rocketMQTemplate;
+
+    //@Autowired
+    //private RocketMQTemplate rocketMQTemplate;
 
 
     @Override
@@ -65,6 +67,7 @@ public class OrderInfoServiceImpl implements OrderInfoService {
     @Override
     public OrderInfoDTO detail(Long id) {
         OrderInfo orderInfo = orderInfoMapper.selectById(id);
+
         OrderInfoDTO orderInfoDTO = new OrderInfoDTO();
         BeanUtil.copyProperties(orderInfo,orderInfoDTO);
         return orderInfoDTO;
@@ -89,8 +92,8 @@ public class OrderInfoServiceImpl implements OrderInfoService {
 
         if ("1".equals(execute.toString())) {
             // 成功后，发送消息
-            rocketMQTemplate.syncSend("hgl-order-topic"
-                    ,MessageBuilder.withPayload("测试消息").build(),3000,3);
+            //rocketMQTemplate.syncSend("hgl-order-topic"
+            //        ,MessageBuilder.withPayload("测试消息").build(),3000,3);
             System.out.println("扣减库存成功");
         } else {
             // 失败后返回结果
