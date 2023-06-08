@@ -43,9 +43,13 @@
       </set>
     </option>
   </component>
+<<<<<<< HEAD
 
   <component name="ProjectRootManager" version="2" languageLevel="JDK_1_8" default="true" project-jdk-name="1.8" project-jdk-type="JavaSDK" />
 
+=======
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_8" default="true" project-jdk-name="1.8" project-jdk-type="JavaSDK" />
+>>>>>>> a62faaaccca99bdd7fe6b2d8eaf6180fbf6a8cfe
   <component name="SuppressionsComponent">
     <option name="suppComments" value="[]" />
   </component>
