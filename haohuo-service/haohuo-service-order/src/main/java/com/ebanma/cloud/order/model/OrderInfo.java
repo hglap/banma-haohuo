@@ -1,112 +1,157 @@
 package com.ebanma.cloud.order.model;
 
-import javax.persistence.*;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import java.math.BigDecimal;
 import java.util.Date;
 
-@Table(name = "order_info")
+@TableName(value = "order_info")
 public class OrderInfo {
     /**
      * 主键
      */
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @TableId(value = "id", type= IdType.ASSIGN_ID)
     private Long id;
 
     /**
      * 订单编号
      */
-    @Column(name = "order_id")
+    @TableField(value = "order_id")
     private String orderId;
 
     /**
      * 总金额
      */
-    @Column(name = "total_amount")
+    @TableField(value = "total_amount")
     private BigDecimal totalAmount;
 
     /**
      * 订单状态
      */
-    @Column(name = "order_status")
+    @TableField(value = "order_status")
     private String orderStatus;
 
     /**
      * 用户id
      */
-    @Column(name = "user_id")
+    @TableField(value = "user_id")
     private String userId;
 
     /**
      * 付款方式
      */
-    @Column(name = "payment_way")
+    @TableField(value = "payment_way")
     private String paymentWay;
 
     /**
      * 送货地址
      */
-    @Column(name = "delivery_address")
+    @TableField(value = "delivery_address")
     private String deliveryAddress;
 
     /**
      * 收货人
      */
+    @TableField(value = "consignee")
     private String consignee;
 
     /**
      * 收件人电话
      */
-    @Column(name = "consignee_tel")
+    @TableField(value = "consignee_tel")
     private String consigneeTel;
 
     /**
      * 订单备注
      */
-    @Column(name = "order_comment")
+    @TableField(value = "order_comment")
     private String orderComment;
 
     /**
      * 订单交易编号（第三方支付用)
      */
-    @Column(name = "out_trade_no")
+    @TableField(value = "out_trade_no")
     private String outTradeNo;
 
     /**
      * 订单描述(第三方支付用)
      */
-    @Column(name = "trade_body")
+    @TableField(value = "trade_body")
     private String tradeBody;
 
     /**
      * 创建时间
      */
-    @Column(name = "create_time")
+    @TableField(value = "create_time")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date createTime;
 
     /**
      * 支付时间
      */
-    @Column(name = "payment_time")
+    @TableField(value = "payment_time")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date paymentTime;
 
     /**
      * 发货时间
      */
-    @Column(name = "delivery_time")
+    @TableField(value = "delivery_time")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date deliveryTime;
 
     /**
      * 签收时间
      */
-    @Column(name = "consign_time")
+    @TableField(value = "consign_time")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date consignTime;
 
     /**
      * 图片路径
      */
-    @Column(name = "img_url")
+    @TableField(value = "img_url")
     private String imgUrl;
+
+    /**
+     * 商品id
+     */
+    @TableField(value = "sku_id")
+    private String skuId;
+
+    /**
+     * 商品数量
+     */
+    @TableField(value = "sku_num")
+    private Integer skuNum;
+
+    /**
+     * 抵扣积分
+     */
+    @TableField(value = "integral")
+    private String integral;
+
+    /**
+     * 红包id
+     */
+    @TableField(value = "red_packet_id")
+    private String redPacketId;
+
+    /**
+     * 购买价格(下单时sku价格）
+     */
+    @TableField(value = "order_price")
+    private BigDecimal orderPrice;
+
+    /**
+     * 商户id
+     */
+    @TableField(value = "merchant_id")
+    private String merchantId;
 
     /**
      * 获取主键
@@ -413,4 +458,53 @@ public class OrderInfo {
     public void setImgUrl(String imgUrl) {
         this.imgUrl = imgUrl;
     }
+
+    public String getSkuId() {
+        return skuId;
+    }
+
+    public void setSkuId(String skuId) {
+        this.skuId = skuId;
+    }
+
+    public Integer getSkuNum() {
+        return skuNum;
+    }
+
+    public void setSkuNum(Integer skuNum) {
+        this.skuNum = skuNum;
+    }
+
+    public String getIntegral() {
+        return integral;
+    }
+
+    public void setIntegral(String integral) {
+        this.integral = integral;
+    }
+
+    public String getRedPacketId() {
+        return redPacketId;
+    }
+
+    public void setRedPacketId(String redPacketId) {
+        this.redPacketId = redPacketId;
+    }
+
+    public BigDecimal getOrderPrice() {
+        return orderPrice;
+    }
+
+    public void setOrderPrice(BigDecimal orderPrice) {
+        this.orderPrice = orderPrice;
+    }
+
+    public String getMerchantId() {
+        return merchantId;
+    }
+
+    public void setMerchantId(String merchantId) {
+        this.merchantId = merchantId;
+    }
+
 }

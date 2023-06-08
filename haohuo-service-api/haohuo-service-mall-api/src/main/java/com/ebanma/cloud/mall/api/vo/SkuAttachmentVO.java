@@ -1,11 +1,8 @@
 package com.ebanma.cloud.mall.api.vo;
 
-import lombok.Data;
-
 import java.io.Serializable;
 
 
-@Data
 public class SkuAttachmentVO implements Serializable {
     /**
      * id
@@ -17,6 +14,54 @@ public class SkuAttachmentVO implements Serializable {
      * 附件名称
      */
     private String name;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    public String getSeq() {
+        return seq;
+    }
+
+    public void setSeq(String seq) {
+        this.seq = seq;
+    }
+
+    public String getRelationId() {
+        return relationId;
+    }
+
+    public void setRelationId(String relationId) {
+        this.relationId = relationId;
+    }
+
+    public String getSize() {
+        return size;
+    }
+
+    public void setSize(String size) {
+        this.size = size;
+    }
 
     /**
      * 地址
