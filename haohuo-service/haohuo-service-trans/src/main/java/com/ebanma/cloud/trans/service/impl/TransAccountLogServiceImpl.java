@@ -137,11 +137,12 @@ public class TransAccountLogServiceImpl extends AbstractService<TransAccountLog>
         if (bizType == 1) {
             Integer redPacketStatus = transAccountLogSearchVO.getRedPacketStatus();
             //封装返回DTO，更新红包过期状态
-            for (int i = 0; i < filterResult.size(); i++) {
+            List<TransAccountLog> logs = filterResult.stream().filter(item -> item.getLogType() == 0).collect(Collectors.toList());
+            for (int i = 0; i < logs.size(); i++) {
                 TransAccountLogDTO transAccountLogDTO = new TransAccountLogDTO();
-                BeanUtils.copyProperties(filterResult.get(i), transAccountLogDTO);
-                if (filterResult.get(i).getRedPacket() != null) {
-                    transAccountLogDTO = updateDTOAndRedPacket(filterResult.get(i).getRedPacket(), transAccountLogDTO);
+                BeanUtils.copyProperties(logs.get(i), transAccountLogDTO);
+                if (logs.get(i).getRedPacket() != null) {
+                    transAccountLogDTO = updateDTOAndRedPacket(logs.get(i).getRedPacket(), transAccountLogDTO);
                 }
                 list.add(transAccountLogDTO);
             }
@@ -173,7 +174,7 @@ public class TransAccountLogServiceImpl extends AbstractService<TransAccountLog>
         transAccountLogDTO.setRedPacketStatus(status);
         //红包状态未使用的，需要重新校验红包状态
         if (status == 0) {
-            long time = (expireTime.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24);
+            long time = (expireTime.getTime() - new Date().getTime());
             if (time <= 0) {
                 //更新DTO状态及红包状态
                 transAccountLogDTO.setRedPacketStatus(2);
@@ -211,6 +212,8 @@ public class TransAccountLogServiceImpl extends AbstractService<TransAccountLog>
             transRedPacket.setTransId(transAccountLog.getTransId());
             transRedPacket.setRedPacketId(uuid);
             transRedPacketService.save(transRedPacket);
+            //流水记录中记录红包id
+            transAccountLog.setRedPacketId(uuid);
         } else {
             //使用红包
             List<RedPacket> redPacketList = transAccount.getRedPacketList();
@@ -281,7 +284,7 @@ public class TransAccountLogServiceImpl extends AbstractService<TransAccountLog>
             }
             //校验抵扣金额超标
             BigDecimal redPacketAmount = new BigDecimal(redPacket.getRedPacketAmount());
-            if (redPacketAmount.compareTo(transAccountLog.getActualAmount())<0) {
+            if (redPacketAmount.compareTo(transAccountLog.getActualAmount()) < 0) {
                 throw new Exception("实际抵扣金额不得超出红包上限");
             }
             return transAccount;
