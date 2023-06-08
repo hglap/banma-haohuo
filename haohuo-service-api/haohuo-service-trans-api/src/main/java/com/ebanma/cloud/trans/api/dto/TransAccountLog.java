@@ -14,6 +14,11 @@ public class TransAccountLog {
     private Integer id;
 
     /**
+     * 用户id
+     */
+    private String userId;
+
+    /**
      * 账务id
      */
 
@@ -106,6 +111,24 @@ public class TransAccountLog {
      */
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    /**
+     * 获取用户id
+     *
+     * @return userId - 用户id
+     */
+    public String getUserId() {
+        return userId;
+    }
+
+    /**
+     * 设置用户id
+     *
+     * @param userId 用户id
+     */
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
     /**
