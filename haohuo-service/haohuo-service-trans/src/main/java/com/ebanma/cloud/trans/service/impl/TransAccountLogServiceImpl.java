@@ -56,9 +56,8 @@ public class TransAccountLogServiceImpl extends AbstractService<TransAccountLog>
         //TODO
         //1.幂等，分布式锁或者订单表？
 
-        //TODO
-        //2.查询账户,userId从token获取
-        String userId = "001";
+        //2.查询账户
+        String userId = transAccountLog.getUserId() == null ? "001" : transAccountLog.getUserId();
         //3.如果账户不存在，需要新建
         if (transInfoService.findBy("userId", userId) == null) {
             //此次作出修改，创建账户不再区分积分与红包，此处账户类型均为混合账户。且默认code为0003，账户名为userId与code的拼接值。
@@ -104,7 +103,7 @@ public class TransAccountLogServiceImpl extends AbstractService<TransAccountLog>
     @Override
     public TransAccountLogVO searchByCondition(TransAccountLogSearchVO transAccountLogSearchVO) throws Exception {
         //分页查询明细
-        String userId = "001";
+        String userId = transAccountLogSearchVO.getUserId() == null ? "001" : transAccountLogSearchVO.getUserId();
         String transId = userId + "0003";
         TransAccountLog transAccountLog = new TransAccountLog();
         transAccountLog.setTransId(transId);
@@ -152,7 +151,7 @@ public class TransAccountLogServiceImpl extends AbstractService<TransAccountLog>
             }
         }
         PageInfo pageInfo = new PageInfo(list);
-        //TODO 增加总积分（按需要）
+        //查询并返回总积分
         Condition condition = new Condition(TransAccount.class);
         condition.createCriteria().andEqualTo("transId", transId);
         TransAccount transAccount = transAccountService.findByCondition(condition).get(0);
@@ -196,7 +195,7 @@ public class TransAccountLogServiceImpl extends AbstractService<TransAccountLog>
     private void transRedPacket(TransAccountLog transAccountLog, TransAccount transAccount) {
         //增加红包
         if (transAccountLog.getLogType() == 0) {
-            //根据金额创建红包 TODO 红包过期
+            //根据金额创建红包
             RedPacket redPacket = new RedPacket();
             String uuid = UUID.randomUUID().toString();
             redPacket.setRedPacketId(uuid);
