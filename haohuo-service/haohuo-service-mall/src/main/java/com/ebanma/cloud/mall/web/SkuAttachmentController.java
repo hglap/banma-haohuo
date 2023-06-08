@@ -6,6 +6,7 @@ import com.ebanma.cloud.mall.model.dto.SkuAttachmentSearchDTO;
 import com.ebanma.cloud.mall.model.po.SkuAttachmentPO;
 import com.ebanma.cloud.mall.model.vo.SkuAttachmentVO;
 import com.ebanma.cloud.mall.service.SkuAttachmentService;
+import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
@@ -35,24 +36,23 @@ public class SkuAttachmentController {
     @Resource
     private SkuAttachmentService skuAttachmentService;
 
-    @ApiOperation(value = "根据关联ID和关联类型查询附件列表", notes = "根据关联ID和关联类型查询附件列表", httpMethod = "POST")
+    @ApiOperation(value = "根据关联ID和关联类型查询附件列表", notes = "【APP】根据关联ID和关联类型查询附件列表", httpMethod = "POST")
     @PostMapping("/getAttachmentList")
     public Result<List<SkuAttachmentVO>> getAttachmentList(@RequestBody SkuAttachmentSearchDTO skuAttachmentSearchDTO){
         return ResultGenerator.genSuccessResult(skuAttachmentService.getAttachmentList(skuAttachmentSearchDTO));
     }
 
-    @ApiOperation(value = "根据关联ID列表和关联类型查询附件列表", notes = "根据关联ID列表和关联类型查询附件列表", httpMethod = "POST")
+    @ApiOperation(value = "根据关联ID列表和关联类型查询附件列表", notes = "【APP】根据关联ID列表和关联类型查询附件列表", httpMethod = "POST")
     @PostMapping("/getAttachmentListByRelationIdListAndRelationType")
     public Result<Map<String,List<SkuAttachmentVO>>> getAttachmentMap(@RequestBody SkuAttachmentSearchDTO skuAttachmentSearchDTO){
         return ResultGenerator.genSuccessResult(skuAttachmentService.getAttachmentMap(skuAttachmentSearchDTO));
     }
 
-    @ApiOperation(value = "根据ID查询附件", notes = "根据ID查询附件", httpMethod = "GET")
+    @ApiOperation(value = "根据ID查询附件", notes = "【APP】根据ID查询附件", httpMethod = "GET")
     @GetMapping("/queryById")
     public Result<SkuAttachmentVO> getAttachmentList(@NotEmpty String id){
         return ResultGenerator.genSuccessResult(skuAttachmentService.queryById(id));
     }
-
 
 
 

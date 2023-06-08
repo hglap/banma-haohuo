@@ -4,6 +4,7 @@ import com.ebanma.cloud.mall.model.dto.SkuInfoSearchDTO;
 import com.ebanma.cloud.mall.model.po.SkuInfoPO;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.ebanma.cloud.mall.model.vo.SkuInfoVO;
+import com.ebanma.cloud.mall.model.vo.SkuRecommendVO;
 import com.github.pagehelper.PageInfo;
 
 /**
@@ -17,7 +18,9 @@ public interface SkuInfoService extends IService<SkuInfoPO> {
     PageInfo queryList(SkuInfoSearchDTO skuInfoSearchDTO);
 
     SkuInfoVO queryById(String id);
-
     //TODO:获取商品推荐精选
-//    String queryRecommendList(SkuInfoSearchDTO skuInfoSearchDTO);
+    SkuRecommendVO queryRecommendList(SkuInfoSearchDTO skuInfoSearchDTO);
+
+    PageInfo searchList(SkuInfoSearchDTO skuInfoSearchDTO);
+
 }

@@ -18,5 +18,11 @@ public class SkuInfoSearchDTO extends BasePageSearchVO {
     private String searchValue;
     // 商品ID
     private String productId;
+    // 商品名称
+    private String skuName;
+    // 商品分类ID
+    private String categoryId;
+    // 商品货号
+    private String goodsNo;
 
 }

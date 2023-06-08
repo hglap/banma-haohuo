@@ -2,6 +2,7 @@ package com.ebanma.cloud.mall.web;
 
 import com.ebanma.cloud.common.dto.Result;
 import com.ebanma.cloud.common.dto.ResultGenerator;
+import com.ebanma.cloud.mall.model.dto.SkuAttachmentSearchDTO;
 import com.ebanma.cloud.mall.model.dto.SkuInfoSearchDTO;
 import com.ebanma.cloud.mall.service.SkuInfoService;
 import com.github.pagehelper.PageInfo;
@@ -30,23 +31,28 @@ public class SkuInfoController {
     @Resource
     private SkuInfoService skuInfoService;
 
-    @ApiOperation(value = "分页查询商品信息", notes = "分页查询商品信息", httpMethod = "POST")
+    @ApiOperation(value = "分页查询商品信息", notes = "【APP】分页查询商品信息", httpMethod = "POST")
     @PostMapping("/queryList")
     public Result<PageInfo> queryList(@RequestBody SkuInfoSearchDTO skuInfoSearchDTO){
         return ResultGenerator.genSuccessResult(skuInfoService.queryList(skuInfoSearchDTO));
     }
 
-    @ApiOperation(value = "查询商品详情", notes = "查询商品详情", httpMethod = "GET")
+    @ApiOperation(value = "查询商品详情", notes = "【APP】查询商品详情", httpMethod = "GET")
     @GetMapping("/queryById")
     public Result queryById(String id){
         return ResultGenerator.genSuccessResult(skuInfoService.queryById(id));
     }
 
-    @ApiOperation(value = "获取商品推荐精选", notes = "获取商品推荐精选", httpMethod = "POST")
+    @ApiOperation(value = "获取商品推荐精选", notes = "【APP】获取商品推荐精选", httpMethod = "POST")
     @PostMapping("/queryRecommendList")
     public Result queryRecommendList(@RequestBody SkuInfoSearchDTO skuInfoSearchDTO){
-        return null;
-//        return ResultGenerator.genSuccessResult(skuInfoService.queryRecommendList(skuInfoSearchDTO));
+        return ResultGenerator.genSuccessResult(skuInfoService.queryRecommendList(skuInfoSearchDTO));
+    }
+
+    @ApiOperation(value = "商品列表分页查询", notes = "【服务端】商品列表分页查询", httpMethod = "POST")
+    @PostMapping("/searchList")
+    public Result<PageInfo> searchList(@RequestBody SkuInfoSearchDTO skuInfoSearchDTO){
+        return ResultGenerator.genSuccessResult(skuInfoService.searchList(skuInfoSearchDTO));
     }
 
 }

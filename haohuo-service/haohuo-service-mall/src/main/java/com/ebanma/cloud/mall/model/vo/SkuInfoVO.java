@@ -107,6 +107,9 @@ public class SkuInfoVO {
      */
     private List<SkuAttachmentVO> attachmentVOList;
 
-
+    /**
+     * 商家名称
+     */
+    private String storeName;
 
 }

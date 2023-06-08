@@ -53,4 +53,7 @@ public class SkuAttachmentSearchDTO implements Serializable {
     private List<String> relationIdList;
 
 
+
+
+
 }

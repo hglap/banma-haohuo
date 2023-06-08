@@ -11,6 +11,7 @@ import com.ebanma.cloud.mall.model.enums.SkuRecordTypeEnum;
 import com.ebanma.cloud.mall.model.po.SkuInfoPO;
 import com.ebanma.cloud.mall.model.vo.SkuAttachmentVO;
 import com.ebanma.cloud.mall.model.vo.SkuInfoVO;
+import com.ebanma.cloud.mall.model.vo.SkuRecommendVO;
 import com.ebanma.cloud.mall.service.SkuAttachmentService;
 import com.ebanma.cloud.mall.service.SkuInfoService;
 import com.ebanma.cloud.mall.dao.SkuInfoMapper;
@@ -109,6 +110,44 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoMapper, SkuInfoPO>
         skuInfoVO.setAttachmentVOList(attachmentAlbumList);
 
         return skuInfoVO;
+    }
+
+    /**
+     * 查询推荐精选
+     * @param skuInfoSearchDTO
+     * @return
+     */
+    @Override
+    public SkuRecommendVO queryRecommendList(SkuInfoSearchDTO skuInfoSearchDTO) {
+        // TODO 调用推荐，获取商品对应的推荐精选帖子
+        return null;
+    }
+
+    @Override
+    public PageInfo searchList(SkuInfoSearchDTO skuInfoSearchDTO) {
+        PageHelper.startPage(skuInfoSearchDTO.getPageNum(), skuInfoSearchDTO.getPageSize());
+        List<SkuInfoPO> skuInfoPOList = skuInfoMapper.selectList(new LambdaQueryWrapper<SkuInfoPO>()
+                .eq(StringUtils.isNotEmpty(skuInfoSearchDTO.getCategoryId()), SkuInfoPO::getCategoryId, skuInfoSearchDTO.getCategoryId())
+                .like(StringUtils.isNotEmpty(skuInfoSearchDTO.getSkuName()), SkuInfoPO::getSkuName, skuInfoSearchDTO.getSkuName())
+                .like(StringUtils.isNotEmpty(skuInfoSearchDTO.getGoodsNo()), SkuInfoPO::getGoodsNo, skuInfoSearchDTO.getGoodsNo()));
+
+        PageInfo pageInfo = new PageInfo<>(skuInfoPOList);
+        List<SkuInfoPO> list = pageInfo.getList();
+        List<SkuInfoVO> skuInfoVOList = BeanUtil.copyToList(list, SkuInfoVO.class);
+        List<String> idList = skuInfoVOList.stream().map(SkuInfoVO::getId).collect(Collectors.toList());
+
+        /*查询商品图片*/
+        Map<String, List<SkuAttachmentVO>> attachmentMap = skuAttachmentService.getAttachmentMap(new SkuAttachmentSearchDTO()
+                .setRelationIdList(idList)
+                .setRelationType(SkuAttachmentRelationTypeEnum.PRODUCT_ALBUM.getName()));
+        skuInfoVOList.forEach(skuInfoVO -> {
+            skuInfoVO.setAttachmentVOList(attachmentMap.get(skuInfoVO.getId()));
+        });
+
+        //TODO 调用订单查询【商品销量】
+
+        pageInfo.setList(skuInfoVOList);
+        return pageInfo;
     }
 }
 
