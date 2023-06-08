@@ -1,55 +1,53 @@
 package com.ebanma.cloud.trans.web;
 
-import com.ebanma.cloud.common.core.Service;
 import com.ebanma.cloud.common.dto.Result;
 import com.ebanma.cloud.common.dto.ResultGenerator;
-import com.ebanma.cloud.trans.model.TransAccount;
-import com.ebanma.cloud.trans.service.TransAccountService;
+import com.ebanma.cloud.trans.model.TransRedPacket;
+import com.ebanma.cloud.trans.service.TransRedPacketService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.List;
 
 /**
-* Created by CodeGenerator on 2023/06/06.
+* Created by CodeGenerator on 2023/06/07.
 */
 @RestController
-@RequestMapping("/trans/account")
-public class TransAccountController {
+@RequestMapping("/trans/red/packet")
+public class TransRedPacketController {
     @Resource
-    private TransAccountService transAccountService;
+    private TransRedPacketService transRedPacketService;
 
     @PostMapping("/add")
-    public Result add(@RequestBody TransAccount transAccount) {
-        transAccountService.save(transAccount);
+    public Result add(@RequestBody TransRedPacket transRedPacket) {
+        transRedPacketService.save(transRedPacket);
         return ResultGenerator.genSuccessResult();
     }
 
     @PostMapping("/delete")
     public Result delete(@RequestParam Integer id) {
-        transAccountService.deleteById(id);
+        transRedPacketService.deleteById(id);
         return ResultGenerator.genSuccessResult();
     }
 
     @PostMapping("/update")
-    public Result update(@RequestBody TransAccount transAccount) {
-        transAccountService.update(transAccount);
+    public Result update(@RequestBody TransRedPacket transRedPacket) {
+        transRedPacketService.update(transRedPacket);
         return ResultGenerator.genSuccessResult();
     }
 
     @PostMapping("/detail")
     public Result detail(@RequestParam Integer id) {
-        TransAccount transAccount = transAccountService.findById(id);
-        return ResultGenerator.genSuccessResult(transAccount);
+        TransRedPacket transRedPacket = transRedPacketService.findById(id);
+        return ResultGenerator.genSuccessResult(transRedPacket);
     }
 
     @PostMapping("/list")
     public Result list(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "0") Integer size) {
         PageHelper.startPage(page, size);
-        List<TransAccount> list = transAccountService.findAll();
+        List<TransRedPacket> list = transRedPacketService.findAll();
         PageInfo pageInfo = new PageInfo(list);
         return ResultGenerator.genSuccessResult(pageInfo);
     }

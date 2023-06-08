@@ -15,4 +15,41 @@
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
   </resultMap>
+  <resultMap id="RM01" type="com.ebanma.cloud.trans.model.TransAccount">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="trans_id" jdbcType="VARCHAR" property="transId" />
+    <result column="init_amount" jdbcType="BIGINT" property="initAmount" />
+    <result column="balance" jdbcType="BIGINT" property="balance" />
+    <result column="freeze_Balance" jdbcType="BIGINT" property="freezeBalance" />
+    <result column="total_in_amount" jdbcType="BIGINT" property="totalInAmount" />
+    <result column="total_out_amount" jdbcType="BIGINT" property="totalOutAmount" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <collection property="redPacketList" ofType="com.ebanma.cloud.trans.model.RedPacket" columnPrefix="rp_">
+      <id column="id" property="id"/>
+      <result column="red_packet_id" property="redPacketId"/>
+      <result column="status" property="status"/>
+      <result column="red_packet_amount" property="redPacketAmount"/>
+      <result column="expire_time" property="expireTime"/>
+      <result column="create_on" property="createOn"/>
+      <result column="create_by" property="createBy"/>
+    </collection>
+  </resultMap>
+    <select id="findAccountWithRedPacketByTransId" resultMap="RM01">
+      SELECT
+        ta.*,
+        r.id AS rp_id,
+        r.red_packet_id AS rp_red_packet_id,
+        r.STATUS AS rp_status,
+        r.red_packet_amount AS rp_red_packet_amount,
+        r.expire_time AS rp_expire_time,
+        r.create_on AS rp_create_on,
+        r.create_by AS rp_create_by
+      FROM
+        trans_red_packet tr
+          LEFT JOIN red_packet r ON tr.red_packet_id = r.red_packet_id
+          LEFT JOIN trans_account ta ON ta.trans_id = tr.trans_id
+      WHERE
+        tr.trans_id = #{transId}
+    </select>
 </mapper>
