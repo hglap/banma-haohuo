@@ -2,7 +2,7 @@ package com.ebanma.cloud.order.web;
 
 import com.ebanma.cloud.common.dto.Result;
 import com.ebanma.cloud.common.dto.ResultGenerator;
-import com.ebanma.cloud.order.model.OrderDetail;
+import com.ebanma.cloud.order.feign.SkuInfoQueryDTO;
 import com.ebanma.cloud.order.model.OrderInfo;
 import com.ebanma.cloud.order.model.dto.OrderInfoDTO;
 import com.ebanma.cloud.order.service.OrderInfoService;
@@ -53,6 +53,12 @@ public class OrderInfoController {
             return ResultGenerator.genFailResult("操作失败");
         }
         return ResultGenerator.genSuccessResult();
+    }
+
+    @PostMapping("/querySkuSaleCount")
+    Result querySkuSaleCount(@RequestBody SkuInfoQueryDTO skuInfoQueryDTO){
+
+        return orderInfoService.querySkuSaleCount(skuInfoQueryDTO);
     }
 
     //@PostMapping("/add")

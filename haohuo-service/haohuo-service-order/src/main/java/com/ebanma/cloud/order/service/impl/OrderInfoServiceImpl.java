@@ -1,36 +1,28 @@
 package com.ebanma.cloud.order.service.impl;
 
 
-import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.ebanma.cloud.common.dto.Result;
+import com.ebanma.cloud.common.dto.ResultGenerator;
 import com.ebanma.cloud.common.util.BeanUtil;
 import com.ebanma.cloud.mall.api.openfeign.SkuInfoServiceFeign;
 import com.ebanma.cloud.mall.api.vo.SkuInfoVO;
 import com.ebanma.cloud.order.dao.OrderInfoMapper;
+import com.ebanma.cloud.order.feign.SkuInfoQueryDTO;
+import com.ebanma.cloud.order.feign.SkuSaleCountDTO;
 import com.ebanma.cloud.order.model.OrderInfo;
 import com.ebanma.cloud.order.model.dto.OrderInfoDTO;
 import com.ebanma.cloud.order.service.OrderInfoService;
 import com.ebanma.cloud.order.util.RedisUtil;
-import javafx.beans.binding.StringBinding;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.rocketmq.common.message.Message;
-import org.apache.rocketmq.spring.core.RocketMQTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
-import org.springframework.data.redis.core.script.RedisScript;
-import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
+import java.util.*;
 
 
 /**
@@ -107,6 +99,36 @@ public class OrderInfoServiceImpl implements OrderInfoService {
         }
         System.out.println(redisUtil.getRedisTemplate().opsForValue().get(lockKey));
         return 0;
+    }
+
+    @Override
+    public Result querySkuSaleCount(SkuInfoQueryDTO skuInfoQueryDTO) {
+
+        List<String> skuIdList = skuInfoQueryDTO.getSkuIDList();
+        if(CollectionUtils.isEmpty(skuIdList)){
+            return ResultGenerator.genFailResult("入参为空");
+        }
+        QueryWrapper queryWrapper = new QueryWrapper();
+        queryWrapper.in("sku_id", skuIdList);
+        List<OrderInfo> orderInfoList = orderInfoMapper.selectList(queryWrapper);
+        if(CollectionUtils.isEmpty(orderInfoList)){
+            return ResultGenerator.genFailResult("查询失败");
+        }
+        Map<String, SkuSaleCountDTO> map = new HashMap<>();
+        skuIdList.stream().forEach(skuId ->{
+            int count = 0;
+
+            for (OrderInfo orderInfo : orderInfoList) {
+                if (skuId.equals(orderInfo.getSkuId())){
+                    count += orderInfo.getSkuNum();
+                }
+            }
+            SkuSaleCountDTO skuSaleCountDTO = new SkuSaleCountDTO();
+            skuSaleCountDTO.setSkuId(skuId);
+            skuSaleCountDTO.setSkuSaleCount(count);
+            map.put(skuId,skuSaleCountDTO);
+        });
+        return ResultGenerator.genSuccessResult(map);
     }
 
     //@Override
