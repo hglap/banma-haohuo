@@ -1,7 +1,10 @@
 package com.ebanma.cloud.trans.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 @Table(name = "trans_account")
 public class TransAccount {
@@ -22,42 +25,55 @@ public class TransAccount {
      * 初始余额。普通用户为0，总账账户为10000000
      */
     @Column(name = "init_amount")
-    private Long initAmount;
+    private Long initAmount = 0L;
 
     /**
      * 当前余额
      */
-    private Long balance;
+    private Long balance = 0L;
 
     /**
      * 当前冻结余额
      */
     @Column(name = "freeze_Balance")
-    private Long freezeBalance;
+    private Long freezeBalance = 0L;
 
     /**
-     * 当前余额
+     * 总流入余额
      */
     @Column(name = "total_in_amount")
-    private Long totalInAmount;
+    private Long totalInAmount = 0L;
 
     /**
      * 总流出金额
      */
     @Column(name = "total_out_amount")
-    private Long totalOutAmount;
+    private Long totalOutAmount = 0L;
 
     /**
      * 创建时间
      */
     @Column(name = "create_time")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date createTime;
 
     /**
      * 修改时间
      */
     @Column(name = "modified_time")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date modifiedTime;
+
+    @Transient
+    private List<RedPacket> redPacketList;
+
+    public List<RedPacket> getRedPacketList() {
+        return redPacketList;
+    }
+
+    public void setRedPacketList(List<RedPacket> redPacketList) {
+        this.redPacketList = redPacketList;
+    }
 
     /**
      * 获取主键

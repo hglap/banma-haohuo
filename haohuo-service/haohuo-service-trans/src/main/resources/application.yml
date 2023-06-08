@@ -10,3 +10,9 @@ spring:
         group: 85ab69de-640b-4bb6-b62e-59d4bbcd7d93
       username: nacos
       password: nacos
+mybatis:
+  mapper-locations: mapper/*.xml
+
+logging:
+  level:
+    com.ebanma.cloud.trans.dao: debug
