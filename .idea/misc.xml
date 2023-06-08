@@ -43,17 +43,10 @@
       </set>
     </option>
   </component>
-<<<<<<< HEAD
-<<<<<<< HEAD
-
   <component name="ProjectRootManager" version="2" languageLevel="JDK_1_8" default="true" project-jdk-name="1.8" project-jdk-type="JavaSDK" />
-
-=======
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_8" default="true" project-jdk-name="1.8" project-jdk-type="JavaSDK" />
->>>>>>> a62faaaccca99bdd7fe6b2d8eaf6180fbf6a8cfe
-=======
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_8" project-jdk-name="1.8" project-jdk-type="JavaSDK" />
->>>>>>> 071e5a20c75ca23f6c51d8310e598106fe30ffc6
+  <component name="ProjectType">
+    <option name="id" value="jpab" />
+  </component>
   <component name="SuppressionsComponent">
     <option name="suppComments" value="[]" />
   </component>

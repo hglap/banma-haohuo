@@ -72,4 +72,9 @@ public abstract class AbstractService<T> implements Service<T> {
     public List<T> findAll() {
         return mapper.selectAll();
     }
+
+    public T findByUserId(String userId) {
+        return this.findBy("userId", userId);
+    }
+
 }
