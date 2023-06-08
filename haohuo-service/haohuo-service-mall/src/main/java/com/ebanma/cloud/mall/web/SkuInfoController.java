@@ -69,4 +69,16 @@ public class SkuInfoController {
         return ResultGenerator.genSuccessResult(skuInfoService.edit(skuInfoEditDTO));
     }
 
+    @ApiOperation(value = "商品上下架", notes = "【服务端】商品上下架", httpMethod = "GET")
+    @GetMapping("/editStatus")
+    public Result<Boolean> editStatus(@RequestParam("id")  String id , @RequestParam("useStatus")String useStatus){
+        return ResultGenerator.genSuccessResult(skuInfoService.editStatus(id,useStatus));
+    }
+
+    @ApiOperation(value = "商品删除", notes = "【服务端】商品删除", httpMethod = "GET")
+    @GetMapping("/del")
+    public Result<Boolean> del(@RequestParam("id")  String id ){
+        return ResultGenerator.genSuccessResult(skuInfoService.del(id));
+    }
+
 }

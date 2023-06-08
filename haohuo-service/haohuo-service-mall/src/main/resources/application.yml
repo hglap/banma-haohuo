@@ -3,6 +3,12 @@ server:
 spring:
   application:
     name: mall-service
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 30.16.95.140:8848
+      username: nacos
+      password: nacos
 #  datasource:
 #    druid:
 #      driver-class-name: com.mysql.cj.jdbc.Driver

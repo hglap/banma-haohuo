@@ -1,15 +1,14 @@
 package com.ebanma.cloud.mall.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.collection.CollectionUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ebanma.cloud.mall.model.dto.*;
 import com.ebanma.cloud.mall.model.enums.SkuAttachmentRelationTypeEnum;
 import com.ebanma.cloud.mall.model.enums.SkuRecordTypeEnum;
-import com.ebanma.cloud.mall.model.po.SkuAttachmentPO;
-import com.ebanma.cloud.mall.model.po.SkuDetailPO;
-import com.ebanma.cloud.mall.model.po.SkuInfoPO;
-import com.ebanma.cloud.mall.model.po.SkuInventoryPO;
+import com.ebanma.cloud.mall.model.enums.SkuUseStatusTypeEnum;
+import com.ebanma.cloud.mall.model.po.*;
 import com.ebanma.cloud.mall.model.vo.SkuAttachmentVO;
 import com.ebanma.cloud.mall.model.vo.SkuInfoVO;
 import com.ebanma.cloud.mall.model.vo.SkuRecommendVO;
@@ -50,6 +49,9 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoMapper, SkuInfoPO>
 
     @Autowired
     private SkuRecordService skuRecordService;
+
+    @Autowired
+    private SkuRecordServiceImpl skuRecordServiceImpl;
 
     @Autowired
     private SkuDetailServiceImpl skuDetailServiceImpl;
@@ -226,6 +228,11 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoMapper, SkuInfoPO>
         return true;
     }
 
+    /**
+     * 商品信息编辑
+     * @param skuInfoEditDTO
+     * @return
+     */
     @Override
     public Boolean edit(SkuInfoEditDTO skuInfoEditDTO) {
         //TODO 通过上下文获取商家ID
@@ -233,7 +240,10 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoMapper, SkuInfoPO>
 
         /* 查找排序为1的图片 */
         List<SkuAttachmentInsertDTO> attachmentAlbumList = skuInfoEditDTO.getAttachmentInfoList();
-        SkuAttachmentInsertDTO skuAttachmentInsertDTO = attachmentAlbumList.stream().filter(dto -> dto.getSeq().equals("1")).findFirst().orElse(null);
+        SkuAttachmentInsertDTO skuAttachmentInsertDTO = null;
+        if(CollectionUtil.isNotEmpty(attachmentAlbumList)){
+            skuAttachmentInsertDTO = attachmentAlbumList.stream().filter(dto -> dto.getSeq().equals("1")).findFirst().orElse(null);
+        }
         /* 插入商品信息 */
         SkuInfoPO skuInfoPO = BeanUtil.copyProperties(skuInfoEditDTO, SkuInfoPO.class);
         skuInfoPO.setSkuDefaultImg(skuAttachmentInsertDTO.getUrl());
@@ -243,9 +253,106 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoMapper, SkuInfoPO>
         SkuInventoryPO skuInventoryPO = skuInventoryServiceImpl.lambdaQuery().eq(SkuInventoryPO::getSkuId, skuInfoPO.getId()).one();
         skuInventoryServiceImpl.save(skuInventoryPO.setCurrentQua(skuInfoEditDTO.getCurrentQua()));
 
+        if(CollectionUtil.isNotEmpty(skuInfoEditDTO.getSkuDetailDTO())){
+            //删除原有参数
+            skuRecordServiceImpl.lambdaUpdate().eq(SkuRecordPO::getSkuId, skuInfoEditDTO.getSkuId())
+                    .eq(SkuRecordPO::getType, SkuRecordTypeEnum.PRODUCT_KEYWORDS)
+                    .set(SkuRecordPO::getDel, "1");
+            /* 插入商品参数 */
+            List<SkuDetailInsertDTO> skuDetailDTO = skuInfoEditDTO.getSkuDetailDTO();
+            List<SkuDetailPO> skuDetailPOList = BeanUtil.copyToList(skuDetailDTO, SkuDetailPO.class);
+            skuDetailPOList.forEach(skuDetailPO -> {
+                skuDetailPO.setSkuId(skuInfoPO.getId());
+            });
+            skuDetailServiceImpl.saveBatch(skuDetailPOList);
+        }
 
+
+        if(CollectionUtil.isNotEmpty(skuInfoEditDTO.getAttachmentInfoList())){
+            // 删除原有商品相册
+            skuAttachmentServiceImpl.lambdaUpdate().eq(SkuAttachmentPO::getRelationId, skuInfoEditDTO.getId())
+                    .eq(SkuAttachmentPO::getRelationType, SkuAttachmentRelationTypeEnum.PRODUCT_ALBUM.getName())
+                    .set(SkuAttachmentPO::getDel, "1");
+            /* 插入商品相册 */
+            List<SkuAttachmentPO> skuAttachmentPOList = BeanUtil.copyToList(attachmentAlbumList, SkuAttachmentPO.class);
+            skuAttachmentPOList.forEach(po->{
+                po.setRelationId(skuInfoPO.getId())
+                        .setRelationType(SkuAttachmentRelationTypeEnum.PRODUCT_ALBUM.getName());
+            });
+            skuAttachmentServiceImpl.saveBatch(skuAttachmentPOList);
+        }
+
+        if(skuInfoEditDTO.getDetailPhoto()!=null){
+            /* 删除原有商品图片 */
+            skuAttachmentServiceImpl.lambdaUpdate().eq(SkuAttachmentPO::getRelationId, skuInfoEditDTO.getId())
+                    .eq(SkuAttachmentPO::getRelationType, SkuAttachmentRelationTypeEnum.PRODUCT_DETAIL_IMAGE.getName())
+                    .set(SkuAttachmentPO::getDel, "1");
+            /* 插入商品详情图片 */
+            SkuAttachmentInsertDTO detailPhoto = skuInfoEditDTO.getDetailPhoto();
+            SkuAttachmentPO skuAttachmentDetailPhotoPO = BeanUtil.copyProperties(detailPhoto, SkuAttachmentPO.class);
+            skuAttachmentDetailPhotoPO.setRelationId(skuInfoPO.getId())
+                    .setRelationType(SkuAttachmentRelationTypeEnum.PRODUCT_DETAIL_IMAGE.getName());
+            skuAttachmentServiceImpl.save(skuAttachmentDetailPhotoPO);
+        }
+
+
+
+
+        if(StringUtils.isNotEmpty(skuInfoEditDTO.getKeyWordsList())){
+            /* 删除原有关键词 */
+            skuRecordServiceImpl.lambdaUpdate().eq(SkuRecordPO::getSkuId, skuInfoEditDTO)
+                    .eq(SkuRecordPO::getType, SkuRecordTypeEnum.PRODUCT_KEYWORDS)
+                    .set(SkuRecordPO::getDel, "1");
+            /* 插入关键词 */
+            String keyWordsList = skuInfoEditDTO.getKeyWordsList();
+            String[] wordsList = StringUtils.split(keyWordsList, " ");
+            List<SkuRecordInsertDTO> skuRecordInsertDTOList = new ArrayList<SkuRecordInsertDTO>();
+            for (int i = 0; i < wordsList.length; i++) {
+                SkuRecordInsertDTO dto = new SkuRecordInsertDTO();
+                dto.setType(SkuRecordTypeEnum.PRODUCT_KEYWORDS.getName() + "-" + wordsList[i])
+                        .setSkuId(skuInfoPO.getId());
+                skuRecordInsertDTOList.add(dto);
+            }
+            skuRecordService.addList(skuRecordInsertDTOList);
+        }
         return true ;
     }
+
+    /**
+     * 商品上下架
+     * @param id
+     * @param useStatus
+     * @return
+     */
+    @Override
+    public Boolean editStatus(String id, String useStatus) {
+        SkuInfoPO skuInfoPO = new SkuInfoPO();
+        skuInfoPO.setUseStatus(useStatus).setId(id);
+        updateById(skuInfoPO);
+        return true;
+    }
+
+    /**
+     * 商品删除
+     * @param id
+     * @return
+     */
+    @Override
+    public Boolean del(String id) {
+        /* 查询商品当前上下架状态 */
+
+        SkuInfoPO skuInfoPO = skuInfoMapper.selectById(id);
+        if(SkuUseStatusTypeEnum.USE.getCode().equals(skuInfoPO.getUseStatus())){
+            throw new RuntimeException("该商品为上架状态，无法删除");
+        }else{
+            skuInfoPO.setUseStatus(SkuUseStatusTypeEnum.UN_USE.getCode());
+            skuInfoMapper.updateById(skuInfoPO);
+        }
+
+        return true;
+    }
+
+
 }
 
 
