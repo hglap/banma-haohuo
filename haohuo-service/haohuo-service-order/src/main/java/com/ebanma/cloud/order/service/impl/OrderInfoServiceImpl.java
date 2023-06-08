@@ -3,8 +3,10 @@ package com.ebanma.cloud.order.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.ebanma.cloud.common.dto.Result;
 import com.ebanma.cloud.common.util.BeanUtil;
 import com.ebanma.cloud.mall.api.openfeign.SkuInfoServiceFeign;
+import com.ebanma.cloud.mall.api.vo.SkuInfoVO;
 import com.ebanma.cloud.order.dao.OrderInfoMapper;
 import com.ebanma.cloud.order.model.OrderInfo;
 import com.ebanma.cloud.order.model.dto.OrderInfoDTO;
@@ -46,6 +48,9 @@ public class OrderInfoServiceImpl implements OrderInfoService {
     @Autowired
     private RedisUtil redisUtil;
 
+    @Autowired
+    private SkuInfoServiceFeign skuInfoServiceFeign;
+
 
     //@Autowired
     //private RocketMQTemplate rocketMQTemplate;
@@ -67,9 +72,10 @@ public class OrderInfoServiceImpl implements OrderInfoService {
     @Override
     public OrderInfoDTO detail(Long id) {
         OrderInfo orderInfo = orderInfoMapper.selectById(id);
-
+        Result<SkuInfoVO> skuInfoVOResult = skuInfoServiceFeign.queryById(orderInfo.getSkuId());
         OrderInfoDTO orderInfoDTO = new OrderInfoDTO();
         BeanUtil.copyProperties(orderInfo,orderInfoDTO);
+        orderInfoDTO.setSkuInfoVO(skuInfoVOResult.getData());
         return orderInfoDTO;
     }
 

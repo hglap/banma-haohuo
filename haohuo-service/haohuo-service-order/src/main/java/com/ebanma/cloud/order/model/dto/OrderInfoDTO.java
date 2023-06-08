@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.extension.plugins.pagination.PageDTO;
 import com.ebanma.cloud.common.dto.Page;
+import com.ebanma.cloud.mall.api.vo.SkuInfoVO;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import java.math.BigDecimal;
@@ -70,6 +71,16 @@ public class OrderInfoDTO extends Page {
      * 订单描述(第三方支付用)
      */
     private String tradeBody;
+
+    private SkuInfoVO skuInfoVO;
+
+    public SkuInfoVO getSkuInfoVO() {
+        return skuInfoVO;
+    }
+
+    public void setSkuInfoVO(SkuInfoVO skuInfoVO) {
+        this.skuInfoVO = skuInfoVO;
+    }
 
     /**
      * 创建时间
