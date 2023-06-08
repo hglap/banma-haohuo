@@ -57,7 +57,7 @@ public class TransAccountLogController {
     }
 
     /**
-     * 账务查询
+     * 账务查询，包含红包及积分
      *
      * @param transAccountLogSearchVO
      * @return
