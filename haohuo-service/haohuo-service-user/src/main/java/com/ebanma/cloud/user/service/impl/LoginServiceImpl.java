@@ -36,8 +36,8 @@ public class LoginServiceImpl implements LoginService {
             return ResultGenerator.genUnRegisterResult("该手机号未注册");
         }
         //todo:使用redis获取生成的验证码
-        String smsCode = "4396";
-        if(userLogin.getSMSCode().equals(smsCode)){
+        String smsCode = "111111";
+        if(userLogin.getCode().equals(smsCode)){
             String token = JwtUtil.createJWT("appLogin",userLogin.getUserPhone(),null);
             return ResultGenerator.genSuccessResult(token);
         }
