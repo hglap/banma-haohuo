@@ -1,6 +1,7 @@
 package com.ebanma.cloud.user.service;
 
 import com.ebanma.cloud.common.dto.Result;
+import com.ebanma.cloud.user.model.Password;
 import com.ebanma.cloud.user.model.SMSCode;
 import com.ebanma.cloud.user.model.UserLogin;
 
@@ -16,4 +17,6 @@ public interface LoginService {
     Result platformPasswordLogin(UserLogin userLogin);
 
     Result getSMSCode(SMSCode smsCode);
+
+    Result updatePassword(Password password);
 }

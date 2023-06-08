@@ -53,7 +53,7 @@ public class ResultGenerator {
         return result;
     }
 
-    public static Result genFirstLoginResult(String message,String code) {
+    public static Result genFirstLoginResult(String message,String data) {
         Result result = new Result();
         result.setCode(ResultCode.UNREGISTER);
         if (!StringUtils.hasText(message)) {
@@ -61,7 +61,7 @@ public class ResultGenerator {
         } else {
             result.setMessage(message);
         }
-        result.setData(code);
+        result.setData(data);
         return result;
     }
 
