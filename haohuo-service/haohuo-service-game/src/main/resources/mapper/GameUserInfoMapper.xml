@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ebanma.cloud.game.dao.GameUserInfoMapper">
+  <resultMap id="BaseResultMap" type="com.ebanma.cloud.game.model.po.GameUserInfo">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="user_id" jdbcType="VARCHAR" property="userId" />
+    <result column="remain_times" jdbcType="INTEGER" property="remainTimes" />
+    <result column="total_win_points" jdbcType="INTEGER" property="totalWinPoints" />
+    <result column="total_red_packet" jdbcType="INTEGER" property="totalRedPacket" />
+    <result column="winning_times" jdbcType="INTEGER" property="winningTimes" />
+    <result column="total_draw_times" jdbcType="INTEGER" property="totalDrawTimes" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+  </resultMap>
+
+  <resultMap id="BaseResultMap2" type="com.ebanma.cloud.game.model.po.GameUserInfo">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="user_id" jdbcType="VARCHAR" property="userId" />
+    <result column="remain_times" jdbcType="INTEGER" property="remainTimes" />
+    <result column="total_win_points" jdbcType="INTEGER" property="totalWinPoints" />
+    <result column="total_red_packet" jdbcType="INTEGER" property="totalRedPacket" />
+    <result column="winning_times" jdbcType="INTEGER" property="winningTimes" />
+    <result column="total_draw_times" jdbcType="INTEGER" property="totalDrawTimes" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
+    <collection property="gameUserProp" ofType="com.ebanma.cloud.game.model.po.GameUserProp" >
+      <result column="propId" jdbcType="BIGINT" property="id" />
+      <result column="user_id" jdbcType="VARCHAR" property="userId" />
+      <result column="prop_type" jdbcType="VARCHAR" property="propType" />
+      <result column="prop_code" jdbcType="VARCHAR" property="propCode" />
+      <result column="prop_remain_count" jdbcType="INTEGER" property="propRemainCount" />
+    </collection>
+  </resultMap>
+  <select id="getUserInfo" resultMap="BaseResultMap2">
+    SELECT
+      t1.*,t2.id as propId, t2.prop_type,t2.prop_code ,t2.prop_remain_count
+    FROM
+      game_user_info t1
+        LEFT JOIN game_user_prop t2 ON t1.user_id = t2.user_id
+    WHERE
+      t1.user_id = #{id}
+  </select>
+</mapper>

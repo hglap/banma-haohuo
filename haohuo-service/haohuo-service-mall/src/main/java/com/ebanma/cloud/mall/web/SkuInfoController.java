@@ -2,56 +2,71 @@ package com.ebanma.cloud.mall.web;
 
 import com.ebanma.cloud.common.dto.Result;
 import com.ebanma.cloud.common.dto.ResultGenerator;
-import com.ebanma.cloud.mall.model.SkuInfo;
+import com.ebanma.cloud.mall.model.dto.SkuAttachmentSearchDTO;
+import com.ebanma.cloud.mall.model.dto.SkuInfoEditDTO;
+import com.ebanma.cloud.mall.model.dto.SkuInfoInsertDTO;
+import com.ebanma.cloud.mall.model.dto.SkuInfoSearchDTO;
 import com.ebanma.cloud.mall.service.SkuInfoService;
-import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import java.util.List;
 
 /**
-* Created by CodeGenerator on 2023/06/06.
-*/
+ * @author: why
+ * @date: 2023/6/7
+ * @time: 15:00
+ * @description:
+ */
+@Validated
+@Api(value = "商品信息管理", tags = "商品信息管理")
 @RestController
-@RequestMapping("/sku/info")
+@RequestMapping("/product")
 public class SkuInfoController {
+    private Logger logger = LoggerFactory.getLogger(SkuInfoController.class);
+
     @Resource
     private SkuInfoService skuInfoService;
 
+    @ApiOperation(value = "分页查询商品信息", notes = "【APP】分页查询商品信息", httpMethod = "POST")
+    @PostMapping("/queryList")
+    public Result<PageInfo> queryList(@RequestBody SkuInfoSearchDTO skuInfoSearchDTO){
+        return ResultGenerator.genSuccessResult(skuInfoService.queryList(skuInfoSearchDTO));
+    }
+
+    @ApiOperation(value = "查询商品详情", notes = "【APP】查询商品详情", httpMethod = "GET")
+    @GetMapping("/queryById")
+    public Result queryById(String id){
+        return ResultGenerator.genSuccessResult(skuInfoService.queryById(id));
+    }
+
+    @ApiOperation(value = "获取商品推荐精选", notes = "【APP】获取商品推荐精选", httpMethod = "POST")
+    @PostMapping("/queryRecommendList")
+    public Result queryRecommendList(@RequestBody SkuInfoSearchDTO skuInfoSearchDTO){
+        return ResultGenerator.genSuccessResult(skuInfoService.queryRecommendList(skuInfoSearchDTO));
+    }
+
+    @ApiOperation(value = "商品列表分页查询", notes = "【服务端】商品列表分页查询", httpMethod = "POST")
+    @PostMapping("/searchList")
+    public Result<PageInfo> searchList(@RequestBody SkuInfoSearchDTO skuInfoSearchDTO){
+        return ResultGenerator.genSuccessResult(skuInfoService.searchList(skuInfoSearchDTO));
+    }
+
+    @ApiOperation(value = "商品信息新增", notes = "【服务端】商品信息新增", httpMethod = "POST")
     @PostMapping("/add")
-    public Result add(SkuInfo skuInfo) {
-        skuInfoService.save(skuInfo);
-        return ResultGenerator.genSuccessResult();
+    public Result<Boolean> add(@RequestBody SkuInfoInsertDTO skuInfoInsertDTO){
+        return ResultGenerator.genSuccessResult(skuInfoService.add(skuInfoInsertDTO));
     }
 
-    @PostMapping("/delete")
-    public Result delete(@RequestParam Integer id) {
-        skuInfoService.deleteById(id);
-        return ResultGenerator.genSuccessResult();
+    @ApiOperation(value = "商品信息编辑", notes = "【服务端】商品信息编辑", httpMethod = "POST")
+    @PostMapping("/edit")
+    public Result<Boolean> edit(@RequestBody SkuInfoEditDTO skuInfoEditDTO){
+        return ResultGenerator.genSuccessResult(skuInfoService.edit(skuInfoEditDTO));
     }
 
-    @PostMapping("/update")
-    public Result update(SkuInfo skuInfo) {
-        skuInfoService.update(skuInfo);
-        return ResultGenerator.genSuccessResult();
-    }
-
-    @PostMapping("/detail")
-    public Result detail(@RequestParam Integer id) {
-        SkuInfo skuInfo = skuInfoService.findById(id);
-        return ResultGenerator.genSuccessResult(skuInfo);
-    }
-
-    @PostMapping("/list")
-    public Result list(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "0") Integer size) {
-        PageHelper.startPage(page, size);
-        List<SkuInfo> list = skuInfoService.findAll();
-        PageInfo pageInfo = new PageInfo(list);
-        return ResultGenerator.genSuccessResult(pageInfo);
-    }
 }

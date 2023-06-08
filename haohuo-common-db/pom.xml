@@ -61,12 +61,12 @@
             <artifactId>mapper-spring-boot-starter</artifactId>
             <version>2.0.4</version>
         </dependency>
-<!--        &lt;!&ndash;mybatis分页插件&ndash;&gt;-->
-<!--        <dependency>-->
-<!--            <groupId>com.github.pagehelper</groupId>-->
-<!--            <artifactId>pagehelper-spring-boot-starter</artifactId>-->
-<!--            <version>1.2.3</version>-->
-<!--        </dependency>-->
+        <!--mybatis分页插件-->
+        <dependency>
+            <groupId>com.github.pagehelper</groupId>
+            <artifactId>pagehelper-spring-boot-starter</artifactId>
+            <version>1.4.5</version>
+        </dependency>
 <!--        <dependency>-->
 <!--            <groupId>org.mybatis</groupId>-->
 <!--            <artifactId>mybatis-spring</artifactId>-->
@@ -80,13 +80,17 @@
 <!--        <dependency>-->
 <!--            <groupId>tk.mybatis</groupId>-->
 <!--            <artifactId>mapper</artifactId>-->
-<!--            <version>3.4.2</version>-->
+<!--            <version>4.2.2</version>-->
 <!--        </dependency>-->
         <dependency>
-            <groupId>com.github.pagehelper</groupId>
-            <artifactId>pagehelper</artifactId>
-            <version>4.2.1</version>
+            <groupId>org.mybatis.spring.boot</groupId>
+            <artifactId>mybatis-spring-boot-starter</artifactId>
         </dependency>
+<!--        <dependency>-->
+<!--            <groupId>com.github.pagehelper</groupId>-->
+<!--            <artifactId>pagehelper</artifactId>-->
+<!--            <version>4.2.1</version>-->
+<!--        </dependency>-->
         <!--阿里 FastJson依赖-->
         <dependency>
             <groupId>com.alibaba</groupId>
