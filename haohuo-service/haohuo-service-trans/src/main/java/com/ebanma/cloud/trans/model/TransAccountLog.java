@@ -1,6 +1,10 @@
 package com.ebanma.cloud.trans.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import javax.persistence.*;
+import java.math.BigDecimal;
+import java.util.Date;
 
 @Table(name = "trans_account_log")
 public class TransAccountLog {
@@ -20,6 +24,7 @@ public class TransAccountLog {
     /**
      * 流水值
      */
+    @Column(name = "amount")
     private Integer amount;
 
     /**
@@ -38,7 +43,7 @@ public class TransAccountLog {
      * 实抵金额
      */
     @Column(name = "actual_amount")
-    private Double actualAmount;
+    private BigDecimal actualAmount;
 
     /**
      * 描述
@@ -65,13 +70,27 @@ public class TransAccountLog {
      * 创建时间
      */
     @Column(name = "create_on")
-    private String createOn;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    private Date createOn;
 
     /**
      * 创建人
      */
     @Column(name = "create_by")
     private String createBy;
+
+    /**
+     * 红包实体
+     */
+    private RedPacket redPacket;
+
+    public RedPacket getRedPacket() {
+        return redPacket;
+    }
+
+    public void setRedPacket(RedPacket redPacket) {
+        this.redPacket = redPacket;
+    }
 
     /**
      * 获取主键
@@ -168,7 +187,7 @@ public class TransAccountLog {
      *
      * @return actual_amount - 实抵金额
      */
-    public Double getActualAmount() {
+    public BigDecimal getActualAmount() {
         return actualAmount;
     }
 
@@ -177,7 +196,7 @@ public class TransAccountLog {
      *
      * @param actualAmount 实抵金额
      */
-    public void setActualAmount(Double actualAmount) {
+    public void setActualAmount(BigDecimal actualAmount) {
         this.actualAmount = actualAmount;
     }
 
@@ -258,7 +277,7 @@ public class TransAccountLog {
      *
      * @return create_on - 创建时间
      */
-    public String getCreateOn() {
+    public Date getCreateOn() {
         return createOn;
     }
 
@@ -267,7 +286,7 @@ public class TransAccountLog {
      *
      * @param createOn 创建时间
      */
-    public void setCreateOn(String createOn) {
+    public void setCreateOn(Date createOn) {
         this.createOn = createOn;
     }
 

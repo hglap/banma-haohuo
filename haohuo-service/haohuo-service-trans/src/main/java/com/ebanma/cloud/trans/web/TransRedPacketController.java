@@ -2,8 +2,8 @@ package com.ebanma.cloud.trans.web;
 
 import com.ebanma.cloud.common.dto.Result;
 import com.ebanma.cloud.common.dto.ResultGenerator;
-import com.ebanma.cloud.trans.model.RedPacket;
-import com.ebanma.cloud.trans.service.RedPacketService;
+import com.ebanma.cloud.trans.model.TransRedPacket;
+import com.ebanma.cloud.trans.service.TransRedPacketService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.springframework.web.bind.annotation.*;
@@ -12,42 +12,42 @@ import javax.annotation.Resource;
 import java.util.List;
 
 /**
-* Created by CodeGenerator on 2023/06/06.
+* Created by CodeGenerator on 2023/06/07.
 */
 @RestController
-@RequestMapping("/red/packet")
-public class RedPacketController {
+@RequestMapping("/trans/red/packet")
+public class TransRedPacketController {
     @Resource
-    private RedPacketService redPacketService;
+    private TransRedPacketService transRedPacketService;
 
     @PostMapping("/add")
-    public Result add(@RequestBody RedPacket redPacket) {
-        redPacketService.save(redPacket);
+    public Result add(@RequestBody TransRedPacket transRedPacket) {
+        transRedPacketService.save(transRedPacket);
         return ResultGenerator.genSuccessResult();
     }
 
     @PostMapping("/delete")
     public Result delete(@RequestParam Integer id) {
-        redPacketService.deleteById(id);
+        transRedPacketService.deleteById(id);
         return ResultGenerator.genSuccessResult();
     }
 
     @PostMapping("/update")
-    public Result update(@RequestBody RedPacket redPacket) {
-        redPacketService.update(redPacket);
+    public Result update(@RequestBody TransRedPacket transRedPacket) {
+        transRedPacketService.update(transRedPacket);
         return ResultGenerator.genSuccessResult();
     }
 
     @PostMapping("/detail")
     public Result detail(@RequestParam Integer id) {
-        RedPacket redPacket = redPacketService.findById(id);
-        return ResultGenerator.genSuccessResult(redPacket);
+        TransRedPacket transRedPacket = transRedPacketService.findById(id);
+        return ResultGenerator.genSuccessResult(transRedPacket);
     }
 
     @PostMapping("/list")
     public Result list(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "0") Integer size) {
         PageHelper.startPage(page, size);
-        List<RedPacket> list = redPacketService.findAll();
+        List<TransRedPacket> list = transRedPacketService.findAll();
         PageInfo pageInfo = new PageInfo(list);
         return ResultGenerator.genSuccessResult(pageInfo);
     }

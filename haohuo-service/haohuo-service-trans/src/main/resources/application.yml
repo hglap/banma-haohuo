@@ -3,3 +3,9 @@ server:
 spring:
   application:
     name: trans-service
+mybatis:
+  mapper-locations: mapper/*.xml
+
+logging:
+  level:
+    com.ebanma.cloud.trans.dao: debug

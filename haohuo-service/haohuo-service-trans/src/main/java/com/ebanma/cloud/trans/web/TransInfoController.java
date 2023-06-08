@@ -20,6 +20,11 @@ public class TransInfoController {
     @Resource
     private TransInfoService transInfoService;
 
+    /**
+     * 新增账户，增加用户信息表，初始化账务余额主表
+     * @param transInfo
+     * @return
+     */
     @PostMapping("/add")
     public Result add(@RequestBody TransInfo transInfo) {
         transInfoService.save(transInfo);
