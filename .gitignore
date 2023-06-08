@@ -36,3 +36,5 @@ build/
 
 ### Mac OS ###
 .DS_Store
+/.idea/smartfox/common_info.xml
+/.idea/vcs.xml
