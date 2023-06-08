@@ -1,13 +1,17 @@
 package com.ebanma.cloud.game.model.po;
 
+import com.ebanma.cloud.game.model.vo.GamePresentRuleVO;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Date;
 
 @Table(name = "game_user_record")
 @Data
-public class GameUserRecord {
+@NoArgsConstructor
+public class GameUserRecord implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -38,4 +42,13 @@ public class GameUserRecord {
      */
     @Column(name = "modified_time")
     private Date modifiedTime;
+
+    public GameUserRecord(String userId, GamePresentRuleVO presentDraw) {
+        this.userId = userId;
+        this.presentType = presentDraw.getPresentType();
+        this.presentCount = presentDraw.getPresentCount();
+        this.createTime = new Date();
+        this.modifiedTime = new Date();
+    }
+
 }

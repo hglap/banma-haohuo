@@ -8,6 +8,7 @@
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="user_id" jdbcType="VARCHAR" property="userId" />
     <result column="prop_type" jdbcType="VARCHAR" property="propType" />
+    <result column="prop_code" jdbcType="INTEGER" property="propCode" />
     <result column="prop_remain_count" jdbcType="INTEGER" property="propRemainCount" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />

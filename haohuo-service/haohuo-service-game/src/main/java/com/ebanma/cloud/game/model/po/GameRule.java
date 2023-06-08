@@ -1,16 +1,14 @@
 package com.ebanma.cloud.game.model.po;
 
-import jdk.nashorn.internal.objects.annotations.Getter;
-import jdk.nashorn.internal.objects.annotations.Setter;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
 
 @Table(name = "game_rule")
 @Data
-public class GameRule {
+public class GameRule implements Serializable {
     /**
      * id
      */

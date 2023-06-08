@@ -1,13 +1,18 @@
 package com.ebanma.cloud.game.service.impl;
 
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.ebanma.cloud.common.core.AbstractService;
 import com.ebanma.cloud.common.core.ServiceException;
+import com.ebanma.cloud.common.enums.GameEggEnum;
+import com.ebanma.cloud.common.enums.GamePriceOrPropEnum;
+import com.ebanma.cloud.common.enums.GameRedisEnum;
 import com.ebanma.cloud.game.dao.GameRuleMapper;
 import com.ebanma.cloud.game.model.po.GameRule;
-import com.ebanma.cloud.game.service.GameRuleService;
-import com.ebanma.cloud.game.util.AliasMethod;
+import com.ebanma.cloud.game.model.po.GameUserInfo;
 import com.ebanma.cloud.game.model.vo.GameEggRuleVO;
 import com.ebanma.cloud.game.model.vo.GamePresentRuleVO;
+import com.ebanma.cloud.game.service.GameRuleService;
+import com.ebanma.cloud.game.service.GameUserPropService;
+import com.ebanma.cloud.game.util.AliasMethod;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,6 +22,7 @@ import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 
@@ -25,17 +31,54 @@ import java.util.stream.Collectors;
  */
 @Service
 @Transactional
-public class GameRuleServiceImpl extends ServiceImpl<GameRuleMapper,GameRule> implements GameRuleService {
+public class GameRuleServiceImpl extends AbstractService<GameRule> implements GameRuleService {
 
-
-    public static final String GAME_RULE="GameRules";
-
-    @Resource
-    private GameRuleMapper gameRuleMapper;
 
     @Resource
     private RedisTemplate<String, List<GameEggRuleVO>> redisTemplate;
 
+    @Resource
+    private GameRuleMapper gameRuleMapper;
+
+
+    @Resource
+    private GameUserPropService gameUserPropService;
+
+    @Override
+    public List<GameEggRuleVO> getGameRules(GameUserInfo userInfo, int propCode) {
+        List<GameEggRuleVO> gameRules = this.getGameRules();
+        //如果使用道具
+        //获取使用道具类型枚举
+        GamePriceOrPropEnum userProp=GamePriceOrPropEnum.getGamePropByValue(propCode);
+        if ( userProp != null && !userProp.equals(GamePriceOrPropEnum.NULL) ) {
+            userInfo.getGameUserProp().forEach( m ->{
+                //如果道具匹配 且 道具大于0
+                if (userProp.getValue()-m.getPropCode()==0 && m.getPropRemainCount() > 0) {
+                    //道具数量减一
+                    m.setPropRemainCount(m.getPropRemainCount() - 1);
+                    //记录用户使用的道具,方便后续更新数据库
+                    userInfo.setUseGameUserProp(m);
+                    //更新数据库
+                    gameUserPropService.update(m);
+                    //使用道具类型判断
+                    switch (Objects.requireNonNull(GamePriceOrPropEnum.getGamePropByValue(propCode))) {
+                        case A:
+                            usePropA(gameRules);
+                            break;
+                        case B:
+                            usePropB(gameRules);
+                            break;
+                        case C:
+                            usePropC(gameRules);
+                            break;
+                    }
+                }
+
+            });
+        }
+
+        return gameRules;
+    }
 
     /**
      * 获取游戏规则
@@ -47,19 +90,19 @@ public class GameRuleServiceImpl extends ServiceImpl<GameRuleMapper,GameRule> im
     @Override
     public List<GameEggRuleVO> getGameRules() {
         //1.从从Redis中获取游戏规则
-        List<GameEggRuleVO> gameEggRuleVOS = redisTemplate.opsForValue().get(GAME_RULE);
+        List<GameEggRuleVO> gameEggRuleVOS = redisTemplate.opsForValue().get(GameRedisEnum.GAME_RULE.getKey());
         //2.判断redis里是否存在,如果没有进行数据库查询
         if( gameEggRuleVOS == null ){
             //2.1查询
-            Map<String, List<GameRule>> map = this.list().stream().collect(Collectors.groupingBy(GameRule::getEggType));
+            Map<String, List<GameRule>> map = this.findAll().stream().collect(Collectors.groupingBy(GameRule::getEggType));
             //2.2数据处理
             List<GameEggRuleVO> newGameEggRuleVOS = new ArrayList<>();
-            map.forEach( (kye, value) -> {
+            map.values().forEach( (value) -> {
                 newGameEggRuleVOS.add( new GameEggRuleVO(value) );
             });
             //2.3储存进Redis
             if ( !CollectionUtils.isEmpty(newGameEggRuleVOS) ) {
-                redisTemplate.opsForValue().set( GAME_RULE ,newGameEggRuleVOS);
+                redisTemplate.opsForValue().set( GameRedisEnum.GAME_RULE.getKey(),newGameEggRuleVOS);
             }
             gameEggRuleVOS=newGameEggRuleVOS;
         }
@@ -94,4 +137,71 @@ public class GameRuleServiceImpl extends ServiceImpl<GameRuleMapper,GameRule> im
         AliasMethod method = new AliasMethod(list);
         return presentRuleVOS.get(method.next());
     }
+
+
+    /**
+     * 使用道具-列奥德罗的愤怒
+     * 列奥德罗是风暴之主，可以主动降下一道闪电，打碎一枚假蛋。
+     * 此次砸蛋动作内假蛋概率减少10%，银蛋概率增加10%。
+     *
+     * @param ruleVOS 规则vos
+     */
+    private  void usePropA(List<GameEggRuleVO> ruleVOS ){
+        ruleVOS.forEach( m -> {
+            //如果银蛋,概率增加10%
+            if (GameEggEnum.SILVER_EGG.getEggType().equals(m.getEggType())) {
+                m.setEggOdd( m.getEggOdd()+0.1d);
+            }
+            //如果为假蛋,概率减少10%
+            if (GameEggEnum.FAKE_EGG.getEggType().equals(m.getEggType())) {
+                m.setEggOdd( m.getEggOdd() - 0.1d);
+            }
+        });
+
+
+    }
+
+    /**
+     * 使用道具-阿西曼尼斯的幸运
+     * 砸蛋游戏内的道具：阿西曼尼斯是黑夜女神，可以掌管好运与厄运，
+     * 使用祝福后此次砸蛋动作内，如果砸中金蛋必然是5元无门槛红包，如果砸中银蛋必然是50积分奖励。
+     *
+     * @param ruleVOS 规则vos
+     */
+    private  void usePropB(List<GameEggRuleVO> ruleVOS ){
+        ruleVOS.forEach( m -> {
+            //如果金蛋,必然是5元红包
+            if (GameEggEnum.GOLDEN_EGG.getEggType().equals(m.getEggType())) {
+                m.getPresentRuleVOS().clear();
+                m.getPresentRuleVOS().add(new GamePresentRuleVO(GamePriceOrPropEnum.RED_PACKET.getKey(),5,1d));
+            }
+            //如果为银蛋,必然为50积分
+            if (GameEggEnum.SILVER_EGG.getEggType().equals(m.getEggType())) {
+                m.getPresentRuleVOS().clear();
+                m.getPresentRuleVOS().add(new GamePresentRuleVO(GamePriceOrPropEnum.POINT.getKey(),50,1d));
+            }
+        });
+    }
+
+    /**
+     * 使用道具-奥赛库斯的正义
+     * 奥赛库斯是契约之神，他的正义会让玩家受到保护。
+     * 使用后此次砸蛋动作内，幸运锤概率减少10%，天使蛋概率增加10%。
+     *
+     * @param ruleVOS 规则vos
+     */
+    private  void usePropC(List<GameEggRuleVO> ruleVOS ){
+        ruleVOS.forEach( m -> {
+            //如果幸运锤,概率-10%
+            if (GameEggEnum.LUCKY_EGG.getEggType().equals(m.getEggType())) {
+                m.setEggOdd( m.getEggOdd() - 0.1d);
+            }
+            //如果为天使蛋,概率增加10%
+            if (GameEggEnum.ANGEL_EGG.getEggType().equals(m.getEggType())) {
+                m.setEggOdd( m.getEggOdd() + 0.1d);
+            }
+        });
+    }
+
+
 }

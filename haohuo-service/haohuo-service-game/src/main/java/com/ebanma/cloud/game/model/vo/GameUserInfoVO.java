@@ -5,6 +5,7 @@ import com.ebanma.cloud.game.model.po.GameUserProp;
 import io.swagger.annotations.ApiModel;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -14,7 +15,7 @@ import java.util.List;
  */
 @Data
 @ApiModel( value ="GameUserInfoVO", description="用户游戏信息" )
-public class GameUserInfoVO {
+public class GameUserInfoVO implements Serializable {
 
 
     /**
@@ -43,5 +44,8 @@ public class GameUserInfoVO {
         this.remainTimes = gameUserInfo.getRemainTimes();
         this.totalWinPoints = gameUserInfo.getTotalWinPoints();
         this.totalRedPacket = gameUserInfo.getTotalRedPacket();
+        this.gameUserProp = gameUserInfo.getGameUserProp();
     }
+
+
 }

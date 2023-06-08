@@ -1,13 +1,16 @@
 package com.ebanma.cloud.game;
 
 import com.ebanma.cloud.game.model.po.GameRule;
+import com.ebanma.cloud.game.model.po.GameUserInfo;
 import com.ebanma.cloud.game.service.GameRuleService;
+import com.ebanma.cloud.game.service.GameUserInfoService;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.List;
+import java.util.concurrent.locks.Condition;
 
 /**
  * @author banma-
@@ -19,13 +22,15 @@ import java.util.List;
 public class GameRuleTest {
 
     @Autowired
-    GameRuleService gameRuleService;
+    private  GameRuleService gameRuleService;
+    @Autowired
+    private GameUserInfoService gameUserInfoService;
 
     @org.junit.Test
     public  void test1() {
 
-        List<GameRule> all = gameRuleService.list();
-        System.out.println(all);
+        GameUserInfo userInfo = gameUserInfoService.findBy("userId", "100");
+        System.out.println(userInfo);
     }
 
 }

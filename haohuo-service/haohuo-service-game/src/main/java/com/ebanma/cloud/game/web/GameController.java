@@ -25,17 +25,6 @@ public class GameController {
     private GameService gameService;
 
     /**
-     * 获取抽奖界面详细信息
-     *
-     * @return {@link Result}
-     */
-    @ApiOperation("获取抽奖界面详细信息")
-    @PostMapping("/details")
-    public Result details( String userId) {
-        return ResultGenerator.genSuccessResult( gameService.details(userId));
-    };
-
-    /**
      * 抽奖--获取抽奖结果
      *
      * @return {@link Result}
@@ -43,7 +32,11 @@ public class GameController {
     @ApiOperation("抽奖--获取抽奖结果")
     @PostMapping("/result")
     public Result result(GameDrawDto gameDrawDto) {
-        return ResultGenerator.genSuccessResult( gameService.result(gameDrawDto));
+        try {
+            return ResultGenerator.genSuccessResult( gameService.result(gameDrawDto));
+        }catch (Exception e) {
+            return ResultGenerator.genFailResult(e.getMessage());
+        }
     };
 
 }

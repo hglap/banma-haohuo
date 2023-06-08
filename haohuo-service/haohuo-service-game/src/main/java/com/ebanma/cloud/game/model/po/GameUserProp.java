@@ -1,13 +1,16 @@
 package com.ebanma.cloud.game.model.po;
 
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Date;
 
 @Table(name = "game_user_prop")
 @Data
-public class GameUserProp {
+@NoArgsConstructor
+public class GameUserProp  implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -20,6 +23,11 @@ public class GameUserProp {
      */
     @Column(name = "prop_type")
     private String propType;
+    /**
+     * 道具编码
+     */
+    @Column(name = "prop_code")
+    private Integer propCode;
 
     /**
      * 道具剩余数量

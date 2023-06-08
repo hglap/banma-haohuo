@@ -1,6 +1,6 @@
 package com.ebanma.cloud.game.service.impl;
 
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.ebanma.cloud.common.core.AbstractService;
 import com.ebanma.cloud.game.dao.GameUserPropMapper;
 import com.ebanma.cloud.game.model.po.GameUserProp;
 import com.ebanma.cloud.game.service.GameUserPropService;
@@ -16,7 +16,7 @@ import java.util.List;
  */
 @Service
 @Transactional
-public class GameUserPropServiceImpl extends ServiceImpl<GameUserPropMapper,GameUserProp> implements GameUserPropService {
+public class GameUserPropServiceImpl extends AbstractService<GameUserProp> implements GameUserPropService {
     @Resource
     private GameUserPropMapper gameUserPropMapper;
 

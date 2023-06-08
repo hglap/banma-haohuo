@@ -1,9 +1,7 @@
 package com.ebanma.cloud.game.dao;
 
+import com.ebanma.cloud.common.core.Mapper;
 import com.ebanma.cloud.game.model.po.GameUserProp;
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import org.apache.ibatis.annotations.Mapper;
 
-@Mapper
-public interface GameUserPropMapper extends BaseMapper<GameUserProp> {
+public interface GameUserPropMapper extends Mapper<GameUserProp> {
 }

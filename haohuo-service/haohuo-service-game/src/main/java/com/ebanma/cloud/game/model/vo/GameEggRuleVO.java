@@ -3,7 +3,10 @@ package com.ebanma.cloud.game.model.vo;
 import com.ebanma.cloud.game.model.po.GameRule;
 import io.swagger.annotations.ApiModel;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -13,7 +16,8 @@ import java.util.List;
  */
 @Data
 @ApiModel( value ="GameEggRuleVO", description="抽奖蛋概率控制" )
-public class GameEggRuleVO {
+@NoArgsConstructor
+public class GameEggRuleVO implements Serializable {
 
 
     /**
@@ -34,6 +38,7 @@ public class GameEggRuleVO {
     public GameEggRuleVO(List<GameRule> gameRules ) {
         this.eggType = gameRules.get(0).getEggType();
         this.eggOdd = gameRules.get(0).getEggOdd();
+        this.presentRuleVOS = new ArrayList<>();
         gameRules.forEach( m -> {
             this.presentRuleVOS.add( new GamePresentRuleVO(m));
         });

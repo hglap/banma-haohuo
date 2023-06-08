@@ -3,6 +3,9 @@ package com.ebanma.cloud.game.model.vo;
 import com.ebanma.cloud.game.model.po.GameRule;
 import io.swagger.annotations.ApiModel;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.io.Serializable;
 
 /**
  * 概率控制
@@ -11,7 +14,8 @@ import lombok.Data;
  */
 @Data
 @ApiModel( value ="GamePresentRuleVO", description="抽奖奖品概率控制" )
-public class GamePresentRuleVO {
+@NoArgsConstructor
+public class GamePresentRuleVO implements Serializable {
 
 
     /**
@@ -39,5 +43,11 @@ public class GamePresentRuleVO {
         this.presentType = gameRules.getPresentType();
         this.presentCount = gameRules.getPresentCount();
         this.presentOdd = gameRules.getPresentOdd();
+    }
+
+    public GamePresentRuleVO(String presentType, Integer presentCount, Double presentOdd) {
+        this.presentType = presentType;
+        this.presentCount = presentCount;
+        this.presentOdd = presentOdd;
     }
 }
