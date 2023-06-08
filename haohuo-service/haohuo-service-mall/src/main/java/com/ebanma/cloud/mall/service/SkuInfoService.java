@@ -28,4 +28,8 @@ public interface SkuInfoService extends IService<SkuInfoPO> {
     Boolean add(SkuInfoInsertDTO skuInfoInsertDTO);
 
     Boolean edit(SkuInfoEditDTO skuInfoEditDTO);
+
+    Boolean editStatus(String id, String useStatus);
+
+    Boolean del(String id);
 }

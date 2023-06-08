@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
  * @time: 14:12
  * @description:
  */
-@FeignClient(value = "" ,path="/product")
+@FeignClient(value = "mall-service" ,path="/product")
 public interface SkuInfoServiceFeign {
 
     @GetMapping("/queryById")
