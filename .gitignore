@@ -15,7 +15,7 @@ target/
 .idea/dataSources.xml
 .idea/misc.xml
 .gitignore
-
+.idea\smartfox\common_info.xml
 ### Eclipse ###
 .apt_generated
 .classpath
