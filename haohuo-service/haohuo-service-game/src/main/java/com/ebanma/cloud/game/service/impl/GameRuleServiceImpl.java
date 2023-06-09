@@ -32,7 +32,7 @@ import java.util.stream.Collectors;
  */
 @Service
 @Transactional
-public class GameRuleServiceImpl extends AbstractService<GameRule> implements GameRuleService {
+public class  GameRuleServiceImpl extends AbstractService<GameRule> implements GameRuleService {
 
     private static final int  REMAIN_TIMES = 100;
 
