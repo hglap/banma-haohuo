@@ -19,7 +19,7 @@ import java.util.List;
 * Created by CodeGenerator on 2023/06/06.
 */
 @RestController
-@RequestMapping("/address")
+@RequestMapping("/address/actual")
 public class AddressController {
     @Resource
     private AddressService addressService;
