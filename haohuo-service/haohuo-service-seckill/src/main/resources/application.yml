@@ -7,6 +7,6 @@ spring:
     nacos:
       discovery:
         server-addr: 30.16.95.140:8848
-        group: 85ab69de-640b-4bb6-b62e-59d4bbcd7d93
+        namespace: 7bdad1e8-52f0-4905-814a-d413d6d819e5
       username: nacos
       password: nacos
