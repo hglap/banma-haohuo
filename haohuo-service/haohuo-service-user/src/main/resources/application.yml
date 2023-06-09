@@ -3,3 +3,6 @@ server:
 spring:
   application:
     name: user-service
+logging:
+  level:
+    com.ebanma.cloud.user.dao: debug
