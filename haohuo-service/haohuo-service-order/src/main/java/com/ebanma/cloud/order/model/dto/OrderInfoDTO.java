@@ -12,6 +12,27 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 public class OrderInfoDTO extends Page {
+
+    private int pageNum;
+
+    private int pageSize;
+
+    public int getPageNum() {
+        return pageNum;
+    }
+
+    public void setPageNum(int pageNum) {
+        this.pageNum = pageNum;
+    }
+
+    public int getPageSize() {
+        return pageSize;
+    }
+
+    public void setPageSize(int pageSize) {
+        this.pageSize = pageSize;
+    }
+
     /**
      * 主键
      */

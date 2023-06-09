@@ -7,14 +7,14 @@ spring:
     nacos:
       discovery:
         server-addr: 30.16.95.140:8848
-        group: 85ab69de-640b-4bb6-b62e-59d4bbcd7d93
+        namespace: 3f19e8e1-250f-455f-a1f4-eb2609f2573d
       username: nacos
       password: nacos
   redis:
-    host: 30.16.95.140
-#    host: 127.0.0.1
+#    host: 30.16.95.140
+    host: 127.0.0.1
     port: 6379
-    password: admin
+    password:
     database: 1
 #    cluster:
 #      nodes: 30.16.95.140:6379

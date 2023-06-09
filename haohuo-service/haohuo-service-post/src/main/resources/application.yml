@@ -22,3 +22,5 @@ fdfs:
     height: 150
   pool:
     max-total: 200
+mybatis:
+  mapper-locations: mapper/*.xml

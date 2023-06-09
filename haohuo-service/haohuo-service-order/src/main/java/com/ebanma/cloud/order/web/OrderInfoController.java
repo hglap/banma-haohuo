@@ -2,7 +2,7 @@ package com.ebanma.cloud.order.web;
 
 import com.ebanma.cloud.common.dto.Result;
 import com.ebanma.cloud.common.dto.ResultGenerator;
-import com.ebanma.cloud.order.model.OrderDetail;
+import com.ebanma.cloud.order.feign.SkuInfoQueryDTO;
 import com.ebanma.cloud.order.model.OrderInfo;
 import com.ebanma.cloud.order.model.dto.OrderInfoDTO;
 import com.ebanma.cloud.order.service.OrderInfoService;
@@ -18,6 +18,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/order/info")
+@CrossOrigin
 public class OrderInfoController {
     @Resource
     private OrderInfoService orderInfoService;
@@ -30,7 +31,7 @@ public class OrderInfoController {
 
     @PostMapping("/list")
     public Result list(@RequestBody OrderInfoDTO orderInfoDTO) {
-        PageHelper.startPage((int) orderInfoDTO.getCurrentpage(), (int) orderInfoDTO.getSize());
+        PageHelper.startPage(orderInfoDTO.getPageNum(), orderInfoDTO.getPageSize());
         List<OrderInfoDTO> list = orderInfoService.queryAll(orderInfoDTO);
         PageInfo pageInfo = new PageInfo(list);
         return ResultGenerator.genSuccessResult(pageInfo);
@@ -53,6 +54,12 @@ public class OrderInfoController {
             return ResultGenerator.genFailResult("操作失败");
         }
         return ResultGenerator.genSuccessResult();
+    }
+
+    @PostMapping("/querySkuSaleCount")
+    Result querySkuSaleCount(@RequestBody SkuInfoQueryDTO skuInfoQueryDTO){
+
+        return orderInfoService.querySkuSaleCount(skuInfoQueryDTO);
     }
 
     //@PostMapping("/add")

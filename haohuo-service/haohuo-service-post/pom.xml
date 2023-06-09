@@ -6,9 +6,8 @@
     <dependencies>
         <dependency>
             <groupId>com.baomidou</groupId>
-            <artifactId>mybatis-plus-extension</artifactId>
-            <version>3.5.2</version>
-            <scope>compile</scope>
+            <artifactId>mybatis-plus-boot-starter</artifactId>
+            <version>3.5.3</version>
         </dependency>
         <dependency>
             <groupId>com.github.tobato</groupId>
@@ -16,6 +15,8 @@
             <version>1.27.2</version>
             <scope>compile</scope>
         </dependency>
+
+
     </dependencies>
     <parent>
         <groupId>com.ebanma.cloud</groupId>
