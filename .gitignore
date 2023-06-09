@@ -8,14 +8,11 @@ target/
 .idea/jarRepositories.xml
 .idea/compiler.xml
 .idea/libraries/
-.idea/*
+.idea/smartfox/common_info.xml
 *.iws
 *.iml
 *.ipr
-.idea/dataSources.xml
-.idea/misc.xml
-.gitignore
-.idea\smartfox\common_info.xml
+
 ### Eclipse ###
 .apt_generated
 .classpath
@@ -40,4 +37,3 @@ build/
 
 ### Mac OS ###
 .DS_Store
-.idea/
