@@ -96,6 +96,7 @@ public class GameRuleServiceImpl extends AbstractService<GameRule> implements Ga
     @Override
     public GameEggRuleVO getEggDrawByGuaranteed(List<GameEggRuleVO> gameRules) {
         //1.上锁
+        GameEggRuleVO gameEggRuleVO = null;
         RLock lock = redissonClient.getLock(GameRedisEnum.DRAW_LOCK.getKey());
         try {
             //2.获取抽奖次数
@@ -110,14 +111,47 @@ public class GameRuleServiceImpl extends AbstractService<GameRule> implements Ga
                     }
                 }
             }
+            //断言不为空
+            assert gameDrawVO != null :"金蛋保底错误";
 
-            //进行剩余次数-1
-            if (gameDrawVO != null && gameDrawVO.getGuaranteedTimes() > 0) {
+            //3.保底判断
+            if( gameDrawVO.getGuaranteedTimes()-gameDrawVO.getWinning() ==0){
+                //3.1 如果金蛋次数==保底要求次数
+                //金蛋个数以满足,更新概率
+
+                //抽奖
+                gameEggRuleVO = getEggDraw(gameRules);
+
+            }else if(gameDrawVO.getGuaranteedTimes() - gameDrawVO.getWinning() == gameDrawVO.getRemainTimes()){
+
+                //3.2如果还需要出的金蛋个人 == 剩余抽奖次数,则必出金蛋
+                for( GameEggRuleVO m :gameRules){
+                    //如果为金蛋
+                    if (GameEggEnum.GOLDEN_EGG.getEggType().equals(m.getEggType())) {
+                        gameEggRuleVO = m;
+                        break;
+                    }
+                }
+            }else {
+                //正常抽奖
+                gameEggRuleVO = getEggDraw(gameRules);
+            }
+
+            //4.抽奖次数更新
+            if ( gameDrawVO.getGuaranteedTimes() > 1) {
+                //4.1.1如果还有剩余次数进行次数-1;
                 gameDrawVO.setRemainTimes(gameDrawVO.getGuaranteedTimes() - 1);
+                //4.1.2 金蛋则win+1
+                if (GameEggEnum.GOLDEN_EGG.getEggType().equals(gameEggRuleVO.getEggType())) {
+                    gameDrawVO.setWinning(gameDrawVO.getWinning() + 1);
+                }
+            }else if( gameDrawVO.getGuaranteedTimes() == 1 ) {
+                //4.2 如果已经为1,则重置次数
+                gameDrawVO.resetting();
             }
-            if( gameDrawVO.getGuaranteedTimes()-gameDrawVO.getWinning()>0){
+            //更新redis
+            redisTemplate.opsForValue().set(GameRedisEnum.DRAW_INFO, gameDrawVO);
 
-            }
 
         }catch (Exception e) {
             throw e;
@@ -126,7 +160,7 @@ public class GameRuleServiceImpl extends AbstractService<GameRule> implements Ga
                 lock.unlock();
             }
         }
-        return null;
+        return gameEggRuleVO;
     }
 
     /**
