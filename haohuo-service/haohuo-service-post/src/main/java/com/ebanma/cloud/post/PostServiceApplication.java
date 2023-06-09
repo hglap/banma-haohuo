@@ -13,7 +13,7 @@ import org.springframework.jmx.support.RegistrationPolicy;
 @Import(FdfsClientConfig.class)
 @SpringBootApplication
 //@EnableDiscoveryClient
-//@MapperScan(basePackages = {"com.ebanma.cloud.post.dao", "com.ebanma.cloud.common.core"})
+@MapperScan(basePackages = {"com.ebanma.cloud.post.dao"})
 public class PostServiceApplication {
 
     public static void main(String[] args) {

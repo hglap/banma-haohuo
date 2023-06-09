@@ -9,4 +9,5 @@ import com.ebanma.cloud.trans.model.TransAccount;
  */
 public interface TransAccountService extends Service<TransAccount> {
 
+    TransAccount findAccountWithRedPacketByTransId(String transId);
 }

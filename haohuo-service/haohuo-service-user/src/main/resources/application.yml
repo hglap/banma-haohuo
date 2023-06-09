@@ -2,10 +2,14 @@ server:
   port: 8081
 spring:
   application:
-    name: haohuo-user
+    name: user-service
   cloud:
     nacos:
       discovery:
-        server-addr: 127.0.0.1:8848
+        server-addr: 30.16.95.140:8848
+        group: 85ab69de-640b-4bb6-b62e-59d4bbcd7d93
       username: nacos
       password: nacos
+mybatis:
+  mapper-locations: mapper/*.xml
+

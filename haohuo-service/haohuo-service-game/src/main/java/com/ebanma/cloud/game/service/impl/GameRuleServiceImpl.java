@@ -8,6 +8,7 @@ import com.ebanma.cloud.common.enums.GameRedisEnum;
 import com.ebanma.cloud.game.dao.GameRuleMapper;
 import com.ebanma.cloud.game.model.po.GameRule;
 import com.ebanma.cloud.game.model.po.GameUserInfo;
+import com.ebanma.cloud.game.model.vo.GameDrawVO;
 import com.ebanma.cloud.game.model.vo.GameEggRuleVO;
 import com.ebanma.cloud.game.model.vo.GamePresentRuleVO;
 import com.ebanma.cloud.game.service.GameRuleService;
@@ -33,9 +34,12 @@ import java.util.stream.Collectors;
 @Transactional
 public class GameRuleServiceImpl extends AbstractService<GameRule> implements GameRuleService {
 
+    private static final int  REMAIN_TIMES = 100;
 
+//    @Autowired
+//    private RedissonClient redissonClient;
     @Resource
-    private RedisTemplate<String, List<GameEggRuleVO>> redisTemplate;
+    private RedisTemplate redisTemplate;
 
     @Resource
     private GameRuleMapper gameRuleMapper;
@@ -81,6 +85,82 @@ public class GameRuleServiceImpl extends AbstractService<GameRule> implements Ga
     }
 
     /**
+     * 保底抽奖
+     *
+     * @param gameRules 游戏规则
+     * @return {@link GameEggRuleVO}
+     */
+    @Override
+    public GameEggRuleVO getEggDrawByGuaranteed(List<GameEggRuleVO> gameRules) {
+        //1.上锁
+        GameEggRuleVO gameEggRuleVO = null;
+//        RLock lock = redissonClient.getLock(GameRedisEnum.DRAW_LOCK.getKey());
+        try {
+            //2.获取抽奖次数
+            GameDrawVO gameDrawVO = (GameDrawVO) redisTemplate.opsForValue().get(GameRedisEnum.DRAW_INFO);
+            //2.1如果没有信息，新建对象
+            if (gameDrawVO == null) {
+                //获取金蛋概率
+                for(GameEggRuleVO m :gameRules){
+                    if (m.getEggType().equals(GameEggEnum.GOLDEN_EGG.getEggType())) {
+                        gameDrawVO = new GameDrawVO(REMAIN_TIMES,m.getEggOdd());
+                        redisTemplate.opsForValue().set(GameRedisEnum.DRAW_INFO,gameDrawVO);
+                    }
+                }
+            }
+            //断言不为空
+            assert gameDrawVO != null :"金蛋保底错误";
+
+            //3.保底判断
+            if( gameDrawVO.getGuaranteedTimes()-gameDrawVO.getWinning() ==0){
+                //3.1 如果金蛋次数==保底要求次数
+                //金蛋个数以满足,更新概率
+
+                //抽奖
+                gameEggRuleVO = getEggDraw(gameRules);
+
+            }else if(gameDrawVO.getGuaranteedTimes() - gameDrawVO.getWinning() == gameDrawVO.getRemainTimes()){
+
+                //3.2如果还需要出的金蛋个人 == 剩余抽奖次数,则必出金蛋
+                for( GameEggRuleVO m :gameRules){
+                    //如果为金蛋
+                    if (GameEggEnum.GOLDEN_EGG.getEggType().equals(m.getEggType())) {
+                        gameEggRuleVO = m;
+                        break;
+                    }
+                }
+            }else {
+                //正常抽奖
+                gameEggRuleVO = getEggDraw(gameRules);
+            }
+
+            //4.抽奖次数更新
+            if ( gameDrawVO.getGuaranteedTimes() > 1) {
+                //4.1.1如果还有剩余次数进行次数-1;
+                gameDrawVO.setRemainTimes(gameDrawVO.getGuaranteedTimes() - 1);
+                //4.1.2 金蛋则win+1
+                if (GameEggEnum.GOLDEN_EGG.getEggType().equals(gameEggRuleVO.getEggType())) {
+                    gameDrawVO.setWinning(gameDrawVO.getWinning() + 1);
+                }
+            }else if( gameDrawVO.getGuaranteedTimes() == 1 ) {
+                //4.2 如果已经为1,则重置次数
+                gameDrawVO.resetting();
+            }
+            //更新redis
+            redisTemplate.opsForValue().set(GameRedisEnum.DRAW_INFO, gameDrawVO);
+
+
+        }catch (Exception e) {
+            throw e;
+        }finally {
+//            if(lock != null && lock.isHeldByCurrentThread()) {
+//                lock.unlock();
+//            }
+        }
+        return gameEggRuleVO;
+    }
+
+    /**
      * 获取游戏规则
      * 1.首先从Redis中获取,
      * 2.Redis中没有数据时,进行数据库查询,数据处理并缓存进Redis
@@ -90,7 +170,7 @@ public class GameRuleServiceImpl extends AbstractService<GameRule> implements Ga
     @Override
     public List<GameEggRuleVO> getGameRules() {
         //1.从从Redis中获取游戏规则
-        List<GameEggRuleVO> gameEggRuleVOS = redisTemplate.opsForValue().get(GameRedisEnum.GAME_RULE.getKey());
+        List<GameEggRuleVO> gameEggRuleVOS = (List<GameEggRuleVO>) redisTemplate.opsForValue().get(GameRedisEnum.GAME_RULE.getKey());
         //2.判断redis里是否存在,如果没有进行数据库查询
         if( gameEggRuleVOS == null ){
             //2.1查询

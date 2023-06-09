@@ -8,6 +8,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import lombok.Data;
+import lombok.experimental.Accessors;
 
 /**
  * 
@@ -16,6 +17,7 @@ import lombok.Data;
  */
 @TableName(value ="sku_info")
 @Data
+@Accessors(chain = true)
 public class SkuInfoPO extends BasePO implements Serializable {
 
     /**

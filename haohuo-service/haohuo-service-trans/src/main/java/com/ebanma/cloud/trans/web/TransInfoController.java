@@ -6,10 +6,7 @@ import com.ebanma.cloud.trans.model.TransInfo;
 import com.ebanma.cloud.trans.service.TransInfoService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -23,8 +20,13 @@ public class TransInfoController {
     @Resource
     private TransInfoService transInfoService;
 
+    /**
+     * 新增账户，增加用户信息表，初始化账务余额主表
+     * @param transInfo
+     * @return
+     */
     @PostMapping("/add")
-    public Result add(TransInfo transInfo) {
+    public Result add(@RequestBody TransInfo transInfo) {
         transInfoService.save(transInfo);
         return ResultGenerator.genSuccessResult();
     }
@@ -36,7 +38,7 @@ public class TransInfoController {
     }
 
     @PostMapping("/update")
-    public Result update(TransInfo transInfo) {
+    public Result update(@RequestBody TransInfo transInfo) {
         transInfoService.update(transInfo);
         return ResultGenerator.genSuccessResult();
     }

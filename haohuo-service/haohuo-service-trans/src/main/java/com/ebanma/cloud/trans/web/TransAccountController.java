@@ -1,15 +1,14 @@
 package com.ebanma.cloud.trans.web;
 
+import com.ebanma.cloud.common.core.Service;
 import com.ebanma.cloud.common.dto.Result;
 import com.ebanma.cloud.common.dto.ResultGenerator;
 import com.ebanma.cloud.trans.model.TransAccount;
 import com.ebanma.cloud.trans.service.TransAccountService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -24,7 +23,7 @@ public class TransAccountController {
     private TransAccountService transAccountService;
 
     @PostMapping("/add")
-    public Result add(TransAccount transAccount) {
+    public Result add(@RequestBody TransAccount transAccount) {
         transAccountService.save(transAccount);
         return ResultGenerator.genSuccessResult();
     }
@@ -36,7 +35,7 @@ public class TransAccountController {
     }
 
     @PostMapping("/update")
-    public Result update(TransAccount transAccount) {
+    public Result update(@RequestBody TransAccount transAccount) {
         transAccountService.update(transAccount);
         return ResultGenerator.genSuccessResult();
     }

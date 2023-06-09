@@ -1,17 +1,15 @@
 package com.ebanma.cloud.post.dao;
 
-import com.ebanma.cloud.post.model.PostComment;
+import com.ebanma.cloud.post.model.po.PostCommentPO;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import org.apache.ibatis.annotations.Mapper;
 
 /**
-* @author banma-
+* @author banma-0163
 * @description 针对表【post_comment】的数据库操作Mapper
-* @createDate 2023-06-06 15:47:55
-* @Entity com.ebanma.cloud.post.domain.PostComment
+* @createDate 2023-06-06 19:10:08
+* @Entity com.ebanma.cloud.post.model.po.PostComment
 */
-@Mapper
-public interface PostCommentMapper extends BaseMapper<PostComment> {
+public interface PostCommentMapper extends BaseMapper<PostCommentPO> {
 
 }
 
