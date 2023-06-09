@@ -28,5 +28,6 @@
     <result column="red_packet_id" jdbcType="VARCHAR" property="redPacketId" />
     <result column="order_price" jdbcType="VARCHAR" property="orderPrice" />
     <result column="merchant_id" jdbcType="VARCHAR" property="merchantId" />
+    <result column="delivery_no" jdbcType="VARCHAR" property="deliveryNo" />
   </resultMap>
 </mapper>

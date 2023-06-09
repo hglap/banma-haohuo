@@ -95,6 +95,17 @@ public class OrderInfoDTO extends Page {
 
     private SkuInfoVO skuInfoVO;
 
+    private String deliveryNo;
+
+
+    public String getDeliveryNo() {
+        return deliveryNo;
+    }
+
+    public void setDeliveryNo(String deliveryNo) {
+        this.deliveryNo = deliveryNo;
+    }
+
     public SkuInfoVO getSkuInfoVO() {
         return skuInfoVO;
     }
