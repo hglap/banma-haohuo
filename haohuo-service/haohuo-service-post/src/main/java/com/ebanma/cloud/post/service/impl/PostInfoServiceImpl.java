@@ -6,6 +6,7 @@ import com.ebanma.cloud.post.model.dto.PostSearchDto;
 import com.ebanma.cloud.post.model.po.PostInfoPO;
 import com.ebanma.cloud.post.model.vo.PostInfoVO;
 import com.ebanma.cloud.post.dao.PostInfoMapper;
+import com.ebanma.cloud.post.service.PostInfoService;
 import com.github.tobato.fastdfs.service.FastFileStorageClient;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -29,7 +30,7 @@ import java.util.stream.Stream;
 */
 @Service
 public class PostInfoServiceImpl extends ServiceImpl<PostInfoMapper, PostInfoPO>
-    implements PostInfoService{
+    implements PostInfoService {
 
     @Resource
     private FastFileStorageClient fastFileStorageClient;
