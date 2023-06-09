@@ -11,7 +11,7 @@
 
     <artifactId>haohuo-gateway-app</artifactId>
 
-    <packaging>pom</packaging>
+<!--    <packaging>pom</packaging>-->
 
     <description>
         网关的相关模块的父工程

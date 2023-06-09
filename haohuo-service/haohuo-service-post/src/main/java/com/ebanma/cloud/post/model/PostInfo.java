@@ -1,52 +1,55 @@
 package com.ebanma.cloud.post.model;
 
-import javax.persistence.*;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+import java.io.Serializable;
 import java.util.Date;
+import lombok.Data;
 
-@Table(name = "post_info")
-public class PostInfo {
+/**
+ * 推荐帖信息表
+ * @TableName post_info
+ */
+@TableName(value ="post_info")
+@Data
+public class PostInfo implements Serializable {
     /**
      * 主键
      */
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @TableId(type = IdType.AUTO)
     private Long id;
 
     /**
      * 帖子ID
      */
-    @Column(name = "post_id")
     private String postId;
 
     /**
      * 用户ID
      */
-    @Column(name = "user_id")
     private String userId;
 
     /**
      * 用户昵称
      */
-    @Column(name = "nick_name")
     private String nickName;
 
     /**
      * 用户头像
      */
-    @Column(name = "head_img")
     private String headImg;
 
     /**
      * 帖子标题
      */
-    @Column(name = "post_title")
-    private String postTitle;
+    private String title;
 
     /**
-     * 帖子内容
+     * 帖子内容(内容key)
      */
-    @Column(name = "post_content")
-    private String postContent;
+    private String content;
 
     /**
      * 使用状态（1正常 0非正常）
@@ -56,288 +59,123 @@ public class PostInfo {
     /**
      * 标签列表
      */
-    @Column(name = "tag_ids")
-    private String tagIds;
+    private String topic;
 
     /**
-     * 帖子点赞数量
+     * 图片url数组
      */
-    @Column(name = "praise_count")
-    private Integer praiseCount;
-
-    /**
-     * 帖子评论数量
-     */
-    @Column(name = "reply_count")
-    private Integer replyCount;
+    private String img;
 
     /**
      * 商品链接
      */
-    @Column(name = "sku_url")
-    private String skuUrl;
+    private String sku;
+
+    /**
+     * 帖子点赞数量
+     */
+    private Integer likes;
+
+    /**
+     * 阅读量
+     */
+    private Integer views;
+
+    /**
+     * 帖子评论数量
+     */
+    private Integer comments;
 
     /**
      * 创建时间
      */
-    @Column(name = "create_time")
     private Date createTime;
 
     /**
      * 修改时间
      */
-    @Column(name = "modified_time")
     private Date modifiedTime;
 
-    /**
-     * 获取主键
-     *
-     * @return id - 主键
-     */
-    public Long getId() {
-        return id;
+    @TableField(exist = false)
+    private static final long serialVersionUID = 1L;
+
+    @Override
+    public boolean equals(Object that) {
+        if (this == that) {
+            return true;
+        }
+        if (that == null) {
+            return false;
+        }
+        if (getClass() != that.getClass()) {
+            return false;
+        }
+        PostInfo other = (PostInfo) that;
+        return (this.getId() == null ? other.getId() == null : this.getId().equals(other.getId()))
+            && (this.getPostId() == null ? other.getPostId() == null : this.getPostId().equals(other.getPostId()))
+            && (this.getUserId() == null ? other.getUserId() == null : this.getUserId().equals(other.getUserId()))
+            && (this.getNickName() == null ? other.getNickName() == null : this.getNickName().equals(other.getNickName()))
+            && (this.getHeadImg() == null ? other.getHeadImg() == null : this.getHeadImg().equals(other.getHeadImg()))
+            && (this.getTitle() == null ? other.getTitle() == null : this.getTitle().equals(other.getTitle()))
+            && (this.getContent() == null ? other.getContent() == null : this.getContent().equals(other.getContent()))
+            && (this.getStatus() == null ? other.getStatus() == null : this.getStatus().equals(other.getStatus()))
+            && (this.getTopic() == null ? other.getTopic() == null : this.getTopic().equals(other.getTopic()))
+            && (this.getImg() == null ? other.getImg() == null : this.getImg().equals(other.getImg()))
+            && (this.getSku() == null ? other.getSku() == null : this.getSku().equals(other.getSku()))
+            && (this.getLikes() == null ? other.getLikes() == null : this.getLikes().equals(other.getLikes()))
+            && (this.getViews() == null ? other.getViews() == null : this.getViews().equals(other.getViews()))
+            && (this.getComments() == null ? other.getComments() == null : this.getComments().equals(other.getComments()))
+            && (this.getCreateTime() == null ? other.getCreateTime() == null : this.getCreateTime().equals(other.getCreateTime()))
+            && (this.getModifiedTime() == null ? other.getModifiedTime() == null : this.getModifiedTime().equals(other.getModifiedTime()));
     }
 
-    /**
-     * 设置主键
-     *
-     * @param id 主键
-     */
-    public void setId(Long id) {
-        this.id = id;
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((getId() == null) ? 0 : getId().hashCode());
+        result = prime * result + ((getPostId() == null) ? 0 : getPostId().hashCode());
+        result = prime * result + ((getUserId() == null) ? 0 : getUserId().hashCode());
+        result = prime * result + ((getNickName() == null) ? 0 : getNickName().hashCode());
+        result = prime * result + ((getHeadImg() == null) ? 0 : getHeadImg().hashCode());
+        result = prime * result + ((getTitle() == null) ? 0 : getTitle().hashCode());
+        result = prime * result + ((getContent() == null) ? 0 : getContent().hashCode());
+        result = prime * result + ((getStatus() == null) ? 0 : getStatus().hashCode());
+        result = prime * result + ((getTopic() == null) ? 0 : getTopic().hashCode());
+        result = prime * result + ((getImg() == null) ? 0 : getImg().hashCode());
+        result = prime * result + ((getSku() == null) ? 0 : getSku().hashCode());
+        result = prime * result + ((getLikes() == null) ? 0 : getLikes().hashCode());
+        result = prime * result + ((getViews() == null) ? 0 : getViews().hashCode());
+        result = prime * result + ((getComments() == null) ? 0 : getComments().hashCode());
+        result = prime * result + ((getCreateTime() == null) ? 0 : getCreateTime().hashCode());
+        result = prime * result + ((getModifiedTime() == null) ? 0 : getModifiedTime().hashCode());
+        return result;
     }
 
-    /**
-     * 获取帖子ID
-     *
-     * @return post_id - 帖子ID
-     */
-    public String getPostId() {
-        return postId;
-    }
-
-    /**
-     * 设置帖子ID
-     *
-     * @param postId 帖子ID
-     */
-    public void setPostId(String postId) {
-        this.postId = postId;
-    }
-
-    /**
-     * 获取用户ID
-     *
-     * @return user_id - 用户ID
-     */
-    public String getUserId() {
-        return userId;
-    }
-
-    /**
-     * 设置用户ID
-     *
-     * @param userId 用户ID
-     */
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
-
-    /**
-     * 获取用户昵称
-     *
-     * @return nick_name - 用户昵称
-     */
-    public String getNickName() {
-        return nickName;
-    }
-
-    /**
-     * 设置用户昵称
-     *
-     * @param nickName 用户昵称
-     */
-    public void setNickName(String nickName) {
-        this.nickName = nickName;
-    }
-
-    /**
-     * 获取用户头像
-     *
-     * @return head_img - 用户头像
-     */
-    public String getHeadImg() {
-        return headImg;
-    }
-
-    /**
-     * 设置用户头像
-     *
-     * @param headImg 用户头像
-     */
-    public void setHeadImg(String headImg) {
-        this.headImg = headImg;
-    }
-
-    /**
-     * 获取帖子标题
-     *
-     * @return post_title - 帖子标题
-     */
-    public String getPostTitle() {
-        return postTitle;
-    }
-
-    /**
-     * 设置帖子标题
-     *
-     * @param postTitle 帖子标题
-     */
-    public void setPostTitle(String postTitle) {
-        this.postTitle = postTitle;
-    }
-
-    /**
-     * 获取帖子内容
-     *
-     * @return post_content - 帖子内容
-     */
-    public String getPostContent() {
-        return postContent;
-    }
-
-    /**
-     * 设置帖子内容
-     *
-     * @param postContent 帖子内容
-     */
-    public void setPostContent(String postContent) {
-        this.postContent = postContent;
-    }
-
-    /**
-     * 获取使用状态（1正常 0非正常）
-     *
-     * @return status - 使用状态（1正常 0非正常）
-     */
-    public String getStatus() {
-        return status;
-    }
-
-    /**
-     * 设置使用状态（1正常 0非正常）
-     *
-     * @param status 使用状态（1正常 0非正常）
-     */
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    /**
-     * 获取标签列表
-     *
-     * @return tag_ids - 标签列表
-     */
-    public String getTagIds() {
-        return tagIds;
-    }
-
-    /**
-     * 设置标签列表
-     *
-     * @param tagIds 标签列表
-     */
-    public void setTagIds(String tagIds) {
-        this.tagIds = tagIds;
-    }
-
-    /**
-     * 获取帖子点赞数量
-     *
-     * @return praise_count - 帖子点赞数量
-     */
-    public Integer getPraiseCount() {
-        return praiseCount;
-    }
-
-    /**
-     * 设置帖子点赞数量
-     *
-     * @param praiseCount 帖子点赞数量
-     */
-    public void setPraiseCount(Integer praiseCount) {
-        this.praiseCount = praiseCount;
-    }
-
-    /**
-     * 获取帖子评论数量
-     *
-     * @return reply_count - 帖子评论数量
-     */
-    public Integer getReplyCount() {
-        return replyCount;
-    }
-
-    /**
-     * 设置帖子评论数量
-     *
-     * @param replyCount 帖子评论数量
-     */
-    public void setReplyCount(Integer replyCount) {
-        this.replyCount = replyCount;
-    }
-
-    /**
-     * 获取商品链接
-     *
-     * @return sku_url - 商品链接
-     */
-    public String getSkuUrl() {
-        return skuUrl;
-    }
-
-    /**
-     * 设置商品链接
-     *
-     * @param skuUrl 商品链接
-     */
-    public void setSkuUrl(String skuUrl) {
-        this.skuUrl = skuUrl;
-    }
-
-    /**
-     * 获取创建时间
-     *
-     * @return create_time - 创建时间
-     */
-    public Date getCreateTime() {
-        return createTime;
-    }
-
-    /**
-     * 设置创建时间
-     *
-     * @param createTime 创建时间
-     */
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
-    }
-
-    /**
-     * 获取修改时间
-     *
-     * @return modified_time - 修改时间
-     */
-    public Date getModifiedTime() {
-        return modifiedTime;
-    }
-
-    /**
-     * 设置修改时间
-     *
-     * @param modifiedTime 修改时间
-     */
-    public void setModifiedTime(Date modifiedTime) {
-        this.modifiedTime = modifiedTime;
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(getClass().getSimpleName());
+        sb.append(" [");
+        sb.append("Hash = ").append(hashCode());
+        sb.append(", id=").append(id);
+        sb.append(", postId=").append(postId);
+        sb.append(", userId=").append(userId);
+        sb.append(", nickName=").append(nickName);
+        sb.append(", headImg=").append(headImg);
+        sb.append(", title=").append(title);
+        sb.append(", content=").append(content);
+        sb.append(", status=").append(status);
+        sb.append(", topic=").append(topic);
+        sb.append(", img=").append(img);
+        sb.append(", sku=").append(sku);
+        sb.append(", likes=").append(likes);
+        sb.append(", views=").append(views);
+        sb.append(", comments=").append(comments);
+        sb.append(", createTime=").append(createTime);
+        sb.append(", modifiedTime=").append(modifiedTime);
+        sb.append(", serialVersionUID=").append(serialVersionUID);
+        sb.append("]");
+        return sb.toString();
     }
 }

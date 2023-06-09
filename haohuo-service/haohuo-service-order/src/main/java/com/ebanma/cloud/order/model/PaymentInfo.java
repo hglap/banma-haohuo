@@ -1,63 +1,69 @@
 package com.ebanma.cloud.order.model;
 
-import javax.persistence.*;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import java.math.BigDecimal;
 import java.util.Date;
 
-@Table(name = "payment_info")
+@TableName(value = "payment_info")
 public class PaymentInfo {
     /**
      * 编号
      */
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @TableId(value = "id", type= IdType.ASSIGN_ID)
     private Long id;
 
     /**
      * 对外业务编号
      */
-    @Column(name = "out_trade_no")
+    @TableField(value = "out_trade_no")
     private String outTradeNo;
 
     /**
      * 订单编号
      */
-    @Column(name = "order_id")
+    @TableField(value = "order_id")
     private String orderId;
 
     /**
      * 用户编号
      */
-    @Column(name = "user_id")
+    @TableField(value = "user_id")
     private String userId;
 
     /**
      * 支付宝交易流水编号
      */
-    @Column(name = "alipay_trade_no")
+    @TableField(value = "alipay_trade_no")
     private String alipayTradeNo;
 
     /**
      * 支付金额
      */
-    @Column(name = "total_amount")
+    @TableField(value = "total_amount")
     private BigDecimal totalAmount;
 
     /**
      * 交易内容
      */
+    @TableField(value = "subject")
     private String subject;
 
     /**
      * 支付方式
      */
-    @Column(name = "payment_type")
+    @TableField(value = "payment_type")
     private String paymentType;
 
     /**
      * 支付时间
      */
-    @Column(name = "payment_time")
+    @TableField(value = "payment_time")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date paymentTime;
 
     /**

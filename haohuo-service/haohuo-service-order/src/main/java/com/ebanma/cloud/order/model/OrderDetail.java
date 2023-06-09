@@ -1,58 +1,61 @@
 package com.ebanma.cloud.order.model;
 
-import javax.persistence.*;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
+
 import java.math.BigDecimal;
 import java.util.Date;
 
-@Table(name = "order_detail")
+@TableName(value = "order_detail")
 public class OrderDetail {
     /**
      * 主键
      */
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @TableId(value = "id", type= IdType.ASSIGN_ID)
     private Long id;
 
     /**
      * 订单编号
      */
-    @Column(name = "order_id")
+    @TableField(value = "order_id")
     private String orderId;
 
     /**
      * sku_id
      */
-    @Column(name = "sku_id")
+    @TableField(value = "sku_id")
     private String skuId;
 
     /**
      * sku名称（冗余)
      */
-    @Column(name = "sku_name")
+    @TableField(value = "sku_name")
     private String skuName;
 
     /**
      * 图片地址（冗余)
      */
-    @Column(name = "sku_img")
+    @TableField(value = "sku_img")
     private String skuImg;
 
     /**
      * 购买价格(下单时sku价格）
      */
-    @Column(name = "order_price")
+    @TableField(value = "order_price")
     private BigDecimal orderPrice;
 
     /**
      * 购买个数
      */
-    @Column(name = "sku_num")
+    @TableField(value = "sku_num")
     private String skuNum;
 
     /**
      * 创建时间
      */
-    @Column(name = "create_time")
+    @TableField(value = "create_time")
     private Date createTime;
 
     /**

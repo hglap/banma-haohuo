@@ -3,3 +3,29 @@ server:
 spring:
   application:
     name: order-service
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 30.16.95.140:8848
+        group: 85ab69de-640b-4bb6-b62e-59d4bbcd7d93
+      username: nacos
+      password: nacos
+  redis:
+    host: 30.16.95.140
+#    host: 127.0.0.1
+    port: 6379
+    password: admin
+    database: 1
+#    cluster:
+#      nodes: 30.16.95.140:6379
+
+#rocketmq:
+##  rocketmq的命名服务器，格式为 host:port;host:port
+#  name-server: 30.16.95.140:9090
+#  producer:
+##    生产者组名
+#    group: hgl-order
+##    发送消息超时时间
+#    send-message-timeout: 3000
+
+

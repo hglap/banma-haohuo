@@ -1,9 +1,10 @@
 package com.ebanma.cloud.common.dto;
 
+
 import java.io.Serializable;
 import java.util.List;
 
-public class Page <T> implements Serializable{
+public class Page <T> implements Serializable {
 
 	// 页数（第几页）
 	private long currentpage;
