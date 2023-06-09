@@ -7,7 +7,6 @@ import com.ebanma.cloud.post.model.dto.PostSearchDto;
 import com.ebanma.cloud.post.model.po.PostInfoPO;
 import com.ebanma.cloud.post.model.vo.PostInfoSearchVO;
 import com.ebanma.cloud.post.model.vo.PostInfoVO;
-import com.ebanma.cloud.post.service.PostInfoService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.springframework.web.bind.annotation.*;
