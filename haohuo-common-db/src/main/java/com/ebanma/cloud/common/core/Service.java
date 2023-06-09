@@ -3,6 +3,7 @@ package com.ebanma.cloud.common.core;
 import org.apache.ibatis.exceptions.TooManyResultsException;
 import tk.mybatis.mapper.entity.Condition;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 
 /**
@@ -19,4 +20,6 @@ public interface Service<T> {
     List<T> findByIds(String ids);//通过多个ID查找//eg：ids -> “1,2,3,4”
     List<T> findByCondition(Condition condition);//根据条件查找
     List<T> findAll();//获取所有
+
+
 }

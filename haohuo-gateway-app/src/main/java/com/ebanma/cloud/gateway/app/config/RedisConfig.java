@@ -20,6 +20,9 @@ import java.lang.reflect.Method;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * @author banma-0197
+ */
 @Configuration
 @EnableCaching
 @AutoConfigureAfter(RedisAutoConfiguration.class)
@@ -42,6 +45,7 @@ public class RedisConfig extends CachingConfigurerSupport {
     }
 
     @Bean
+    @Override
     public CacheManager cacheManager() {
         RedisCacheManager.RedisCacheManagerBuilder builder = RedisCacheManager.RedisCacheManagerBuilder
                 .fromConnectionFactory(lettuceConnectionFactory);
@@ -56,6 +60,7 @@ public class RedisConfig extends CachingConfigurerSupport {
     }
 
     @Bean
+    @Override
     public KeyGenerator keyGenerator() {
         return new KeyGenerator() {
             @Override

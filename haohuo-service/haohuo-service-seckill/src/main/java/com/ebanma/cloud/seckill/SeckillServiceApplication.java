@@ -1,12 +1,13 @@
 package com.ebanma.cloud.seckill;
 
+import org.springframework.context.annotation.ComponentScan;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-//import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
+
+//@EnableDiscoveryClient
 
 @SpringBootApplication
-//@EnableDiscoveryClient
 @MapperScan(basePackages = {"com.ebanma.cloud.seckill.dao", "com.ebanma.cloud.common.core"})
 public class SeckillServiceApplication {
 
@@ -15,3 +16,4 @@ public class SeckillServiceApplication {
     }
 
 }
+

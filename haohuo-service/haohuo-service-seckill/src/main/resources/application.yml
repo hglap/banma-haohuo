@@ -3,3 +3,17 @@ server:
 spring:
   application:
     name: seckill-service
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/seckill
+    username: root
+    password: root
+mybatis:
+  mapper-locations: mapper/*.xml
+  configuration:
+    map-underscore-to-camel-case: true
+logging:
+  level:
+    com.ebanma.cloud.seckill.dao: debug
+
+
