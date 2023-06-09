@@ -4,6 +4,6 @@
     <option name="branch" value="dev-sx" />
     <option name="gitUrl" value="git@gitlab.alibaba-inc.com:banma-faw-tech/haohuo.git" />
     <option name="localBranch" value="dev-sx" />
-    <option name="revision" value="f44ffb56adb7a53a9fb63e876de8db72b1fc23a8" />
+    <option name="revision" value="a75d04f65fedd720f3874e83248cbd6816d0a61c" />
   </component>
 </project>
