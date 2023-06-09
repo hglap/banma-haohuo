@@ -69,7 +69,7 @@ public class GameServiceImpl implements GameService {
             //3.获取抽奖概率
             //3.1 Redis中获取抽奖概率控制,
             //3.2 并根据使用的道具,进行概率修正
-            List<GameEggRuleVO> gameRules = gameRuleService.getGameRules(userInfo, gameDrawDto.getPropType());
+            List<GameEggRuleVO> gameRules = gameRuleService.getGameRules(userInfo, gameDrawDto.getPropCode());
 
             //4.金蛋保底控制方法
             GameEggRuleVO eggDraw = gameRuleService.getEggDraw(gameRules);
