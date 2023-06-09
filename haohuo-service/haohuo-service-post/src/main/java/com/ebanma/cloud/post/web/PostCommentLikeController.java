@@ -2,7 +2,7 @@ package com.ebanma.cloud.post.web;
 
 import com.ebanma.cloud.common.dto.Result;
 import com.ebanma.cloud.common.dto.ResultGenerator;
-import com.ebanma.cloud.post.model.PostCommentLike;
+import com.ebanma.cloud.post.model.po.PostCommentLikePO;
 import com.ebanma.cloud.post.service.PostCommentLikeService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -24,7 +24,7 @@ public class PostCommentLikeController {
     private PostCommentLikeService postCommentLikeService;
 
     @PostMapping("/add")
-    public Result add(PostCommentLike postCommentLike) {
+    public Result add(PostCommentLikePO postCommentLike) {
         postCommentLikeService.save(postCommentLike);
         return ResultGenerator.genSuccessResult();
     }
@@ -36,21 +36,21 @@ public class PostCommentLikeController {
     }
 
     @PostMapping("/update")
-    public Result update(PostCommentLike postCommentLike) {
+    public Result update(PostCommentLikePO postCommentLike) {
         postCommentLikeService.updateById(postCommentLike);
         return ResultGenerator.genSuccessResult();
     }
 
     @PostMapping("/detail")
     public Result detail(@RequestParam Integer id) {
-        PostCommentLike postCommentLike = postCommentLikeService.getById(id);
+        PostCommentLikePO postCommentLike = postCommentLikeService.getById(id);
         return ResultGenerator.genSuccessResult(postCommentLike);
     }
 
     @PostMapping("/list")
     public Result list(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "0") Integer size) {
         PageHelper.startPage(page, size);
-        List<PostCommentLike> list = postCommentLikeService.list();
+        List<PostCommentLikePO> list = postCommentLikeService.list();
         PageInfo pageInfo = new PageInfo(list);
         return ResultGenerator.genSuccessResult(pageInfo);
     }

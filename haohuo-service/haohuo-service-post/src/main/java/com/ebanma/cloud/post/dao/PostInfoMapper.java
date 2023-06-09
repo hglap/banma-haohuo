@@ -1,17 +1,15 @@
 package com.ebanma.cloud.post.dao;
 
-import com.ebanma.cloud.post.model.PostInfo;
+import com.ebanma.cloud.post.model.po.PostInfoPO;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import org.apache.ibatis.annotations.Mapper;
 
 /**
-* @author banma-
+* @author banma-0163
 * @description 针对表【post_info(推荐帖信息表)】的数据库操作Mapper
-* @createDate 2023-06-06 15:47:55
-* @Entity com.ebanma.cloud.post.domain.PostInfo
+* @createDate 2023-06-06 19:10:57
+* @Entity com.ebanma.cloud.post.model.po.PostInfo
 */
-@Mapper
-public interface PostInfoMapper extends BaseMapper<PostInfo> {
+public interface PostInfoMapper extends BaseMapper<PostInfoPO> {
 
 }
 

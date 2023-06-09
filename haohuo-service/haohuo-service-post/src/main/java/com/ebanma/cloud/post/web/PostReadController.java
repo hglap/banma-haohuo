@@ -2,7 +2,7 @@ package com.ebanma.cloud.post.web;
 
 import com.ebanma.cloud.common.dto.Result;
 import com.ebanma.cloud.common.dto.ResultGenerator;
-import com.ebanma.cloud.post.model.PostRead;
+import com.ebanma.cloud.post.model.po.PostReadPO;
 import com.ebanma.cloud.post.service.PostReadService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -24,7 +24,7 @@ public class PostReadController {
     private PostReadService postReadService;
 
     @PostMapping("/add")
-    public Result add(PostRead postRead) {
+    public Result add(PostReadPO postRead) {
         postReadService.save(postRead);
         return ResultGenerator.genSuccessResult();
     }
@@ -36,21 +36,21 @@ public class PostReadController {
     }
 
     @PostMapping("/update")
-    public Result update(PostRead postRead) {
+    public Result update(PostReadPO postRead) {
         postReadService.updateById(postRead);
         return ResultGenerator.genSuccessResult();
     }
 
     @PostMapping("/detail")
     public Result detail(@RequestParam Integer id) {
-        PostRead postRead = postReadService.getById(id);
+        PostReadPO postRead = postReadService.getById(id);
         return ResultGenerator.genSuccessResult(postRead);
     }
 
     @PostMapping("/list")
     public Result list(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "0") Integer size) {
         PageHelper.startPage(page, size);
-        List<PostRead> list = postReadService.list();
+        List<PostReadPO> list = postReadService.list();
         PageInfo pageInfo = new PageInfo(list);
         return ResultGenerator.genSuccessResult(pageInfo);
     }
