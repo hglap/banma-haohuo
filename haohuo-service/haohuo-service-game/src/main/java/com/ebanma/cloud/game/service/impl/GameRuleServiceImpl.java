@@ -14,9 +14,6 @@ import com.ebanma.cloud.game.model.vo.GamePresentRuleVO;
 import com.ebanma.cloud.game.service.GameRuleService;
 import com.ebanma.cloud.game.service.GameUserPropService;
 import com.ebanma.cloud.game.util.AliasMethod;
-import org.redisson.api.RLock;
-import org.redisson.api.RedissonClient;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,8 +36,8 @@ public class GameRuleServiceImpl extends AbstractService<GameRule> implements Ga
 
     private static final int  REMAIN_TIMES = 100;
 
-    @Autowired
-    private RedissonClient redissonClient;
+//    @Autowired
+//    private RedissonClient redissonClient;
     @Resource
     private RedisTemplate redisTemplate;
 
@@ -97,7 +94,7 @@ public class GameRuleServiceImpl extends AbstractService<GameRule> implements Ga
     public GameEggRuleVO getEggDrawByGuaranteed(List<GameEggRuleVO> gameRules) {
         //1.上锁
         GameEggRuleVO gameEggRuleVO = null;
-        RLock lock = redissonClient.getLock(GameRedisEnum.DRAW_LOCK.getKey());
+//        RLock lock = redissonClient.getLock(GameRedisEnum.DRAW_LOCK.getKey());
         try {
             //2.获取抽奖次数
             GameDrawVO gameDrawVO = (GameDrawVO) redisTemplate.opsForValue().get(GameRedisEnum.DRAW_INFO);
@@ -156,9 +153,9 @@ public class GameRuleServiceImpl extends AbstractService<GameRule> implements Ga
         }catch (Exception e) {
             throw e;
         }finally {
-            if(lock != null && lock.isHeldByCurrentThread()) {
-                lock.unlock();
-            }
+//            if(lock != null && lock.isHeldByCurrentThread()) {
+//                lock.unlock();
+//            }
         }
         return gameEggRuleVO;
     }
