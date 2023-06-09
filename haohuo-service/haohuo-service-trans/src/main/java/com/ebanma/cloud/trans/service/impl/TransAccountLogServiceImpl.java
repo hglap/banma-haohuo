@@ -63,6 +63,7 @@ public class TransAccountLogServiceImpl extends AbstractService<TransAccountLog>
     public void record(TransAccountLog transAccountLog) throws Exception {
         //1.幂等，流水号由业务流水号、交易类型、用户id、流水值拼接而成
         String userId = StringUtils.isBlank(transAccountLog.getUserId()) ? "001" : transAccountLog.getUserId();
+        transAccountLog.setUserId(userId);
         String serialNumber = transAccountLog.getBizSerialNumber() + transAccountLog.getLogType() + userId + transAccountLog.getAmount();
         Condition condition = new Condition(TransOrder.class);
         condition.createCriteria().andEqualTo("serialNumber", serialNumber);
