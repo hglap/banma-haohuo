@@ -7,6 +7,7 @@ import com.ebanma.cloud.trans.vo.TransAccountLogVO;
 import com.ebanma.cloud.trans.model.TransAccountLog;
 import com.ebanma.cloud.trans.service.TransAccountLogService;
 import com.github.pagehelper.PageHelper;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -51,7 +52,7 @@ public class TransAccountLogController {
      * @return
      */
     @PostMapping("/updateTrans")
-    public Result updateTrans(@RequestBody TransAccountLog transAccountLog) throws Exception {
+    public Result updateTrans(@Validated @RequestBody TransAccountLog transAccountLog) throws Exception {
         transAccountLogService.record(transAccountLog);
         return ResultGenerator.genSuccessResult();
     }

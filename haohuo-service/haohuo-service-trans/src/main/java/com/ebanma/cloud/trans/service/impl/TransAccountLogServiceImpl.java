@@ -1,15 +1,18 @@
 package com.ebanma.cloud.trans.service.impl;
 
 import com.ebanma.cloud.common.core.AbstractService;
-import com.ebanma.cloud.trans.vo.TransAccountLogDTO;
-import com.ebanma.cloud.trans.vo.TransAccountLogSearchVO;
-import com.ebanma.cloud.trans.vo.TransAccountLogVO;
+import com.ebanma.cloud.common.exception.MallException;
 import com.ebanma.cloud.trans.dao.TransAccountLogMapper;
 import com.ebanma.cloud.trans.model.*;
 import com.ebanma.cloud.trans.service.*;
+import com.ebanma.cloud.trans.vo.TransAccountLogDTO;
+import com.ebanma.cloud.trans.vo.TransAccountLogSearchVO;
+import com.ebanma.cloud.trans.vo.TransAccountLogVO;
 import com.github.pagehelper.PageInfo;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Condition;
@@ -39,10 +42,16 @@ public class TransAccountLogServiceImpl extends AbstractService<TransAccountLog>
     private RedPacketService redPacketService;
 
     @Resource
+    private TransOrderService transOrderService;
+
+    @Resource
     private TransRedPacketService transRedPacketService;
 
     @Resource
     private TransAccountLogMapper transAccountLogMapper;
+
+    @Resource
+    private StringRedisTemplate stringRedisTemplate;
 
     /**
      * 账务增减
@@ -52,12 +61,36 @@ public class TransAccountLogServiceImpl extends AbstractService<TransAccountLog>
      */
     @Override
     public void record(TransAccountLog transAccountLog) throws Exception {
-        //TODO 入参校验注解化
-        //TODO
-        //1.幂等，分布式锁或者订单表？
-
-        //2.查询账户
+        //1.幂等，流水号由业务流水号、交易类型、用户id、流水值拼接而成
         String userId = StringUtils.isBlank(transAccountLog.getUserId()) ? "001" : transAccountLog.getUserId();
+        String serialNumber = transAccountLog.getBizSerialNumber() + transAccountLog.getLogType() + userId + transAccountLog.getAmount();
+        Condition condition = new Condition(TransOrder.class);
+        condition.createCriteria().andEqualTo("serialNumber", serialNumber);
+        List<TransOrder> transOrders = transOrderService.findByCondition(condition);
+        TransOrder transOrder;
+        if (transOrders.size() > 0) {
+            Integer orderStatus = transOrders.get(0).getOrderStatus();
+            //状态：下单，有相同订单并发中；成功，此次为重复订单。此次请求需要中止。
+            if (orderStatus == 0 || orderStatus == 1) {
+                return;
+            }
+            if (orderStatus == 2) {
+                transOrder = transOrders.get(0);
+                transOrder.setOrderStatus(0);
+                transOrderService.update(transOrder);
+            } else {
+                MallException.fail("账务订单异常");
+                return;
+            }
+        } else {
+            transOrder = new TransOrder();
+            BeanUtils.copyProperties(transAccountLog, transOrder);
+            transOrder.setId(null);
+            transOrder.setSerialNumber(serialNumber);
+            transOrder.setOrderStatus(0);
+            transOrderService.save(transOrder);
+        }
+        //2.查询账户
         //3.如果账户不存在，需要新建
         if (transInfoService.findBy("userId", userId) == null) {
             //此次作出修改，创建账户不再区分积分与红包，此处账户类型均为混合账户。且默认code为0003，账户名为userId与code的拼接值。
@@ -76,20 +109,43 @@ public class TransAccountLogServiceImpl extends AbstractService<TransAccountLog>
         //4.校验交易值是否满足扣减
         //5.账务事务增减及流水记录
         Integer bizType = transAccountLog.getBizType();
-        if (bizType == null) {
-            //TODO 全局异常处理器。自定义业务异常
-            throw new Exception("代币类型不能为空");
-        } else if (bizType == 0) {
-            TransAccount transAccount = checkPoints(transAccountLog);
-            transPoints(transAccountLog, transAccount);
-        } else if (bizType == 1) {
-            TransAccount transAccount = checkRedPacket(transAccountLog);
-            transRedPacket(transAccountLog, transAccount);
-        } else {
-            //TODO 全局异常处理器。自定义业务异常
-            throw new Exception("代币类型错误");
+        String userLockKey = null;
+        try {
+            //上锁，防止统一用户并发操作查询与增减导致的错误
+            userLockKey = "userLock:" + serialNumber;
+            Boolean lock = stringRedisTemplate.opsForValue().setIfAbsent(userLockKey, "lock");
+            if (lock) {
+                if (bizType == null) {
+                    transOrder.setOrderStatus(2);
+                    transOrderService.update(transOrder);
+                    MallException.fail("代币类型不能为空");
+                } else if (bizType == 0) {
+                    TransAccount transAccount = checkPoints(transAccountLog);
+                    transPoints(transAccountLog, transAccount);
+                } else if (bizType == 1) {
+                    TransAccount transAccount = checkRedPacket(transAccountLog);
+                    transRedPacket(transAccountLog, transAccount);
+                } else {
+                    MallException.fail("代币类型错误");
+                }
+            } else {
+                MallException.fail("业务繁忙，请稍后重试");
+            }
+        } catch (Exception e) {
+            transOrder.setOrderStatus(2);
+            transOrderService.update(transOrder);
+            throw e;
+        } finally {
+            //解锁
+            if (StringUtils.isNotBlank(userLockKey)) {
+                String lockValue = stringRedisTemplate.opsForValue().get(userLockKey);
+                if (lockValue.equals("lock")) {
+                    stringRedisTemplate.delete(userLockKey);
+                }
+            }
         }
-        //6.解锁
+        transOrder.setOrderStatus(1);
+        transOrderService.update(transOrder);
 
     }
 
@@ -111,8 +167,7 @@ public class TransAccountLogServiceImpl extends AbstractService<TransAccountLog>
         //过滤代币类型
         Integer bizType = transAccountLogSearchVO.getBizType();
         if (bizType == null || (bizType != 0 && bizType != 1)) {
-            //TODO 自定义异常
-            throw new Exception("代币类型错误！");
+            MallException.fail("代币类型错误");
         }
         List<TransAccountLog> filterResult = transAccountLogs.stream()
                 .filter(item -> Objects.equals(item.getBizType(), bizType))
@@ -256,40 +311,34 @@ public class TransAccountLogServiceImpl extends AbstractService<TransAccountLog>
      */
     private TransAccount checkRedPacket(TransAccountLog transAccountLog) throws Exception {
         if (transAccountLog.getLogType() == null) {
-            //TODO 自定义业务异常
-            throw new Exception("交易类型不能为空");
+            MallException.fail("交易类型不能为空");
         } else if (transAccountLog.getLogType() == 0) {
             //TODO 总账户阈值扣减校验
             return transAccountService.findBy("transId", transAccountLog.getTransId());
         } else if (transAccountLog.getLogType() == 1) {
-            TransAccount transAccount;
-            try {
-                transAccount = transAccountService.findAccountWithRedPacketByTransId(transAccountLog.getTransId());
-            } catch (Exception e) {
-                throw new Exception("红包扣减数据错误");
-            }
+            TransAccount transAccount = transAccountService.findAccountWithRedPacketByTransId(transAccountLog.getTransId());
             List<RedPacket> redPacketList = transAccount.getRedPacketList();
             List<RedPacket> filterList = redPacketList.stream()
                     .filter(item -> Objects.equals(item.getRedPacketId(), transAccountLog.getRedPacketId()))
                     .collect(Collectors.toList());
             if (filterList.size() == 0) {
-                throw new Exception("红包不存在");
+                MallException.fail("红包不存在");
             }
             RedPacket redPacket = filterList.get(0);
             //校验红包过期
             if (redPacket.getStatus() != 0) {
-                throw new Exception("红包已过期或已使用");
+                MallException.fail("红包已过期或已使用");
             }
             //校验抵扣金额超标
             BigDecimal redPacketAmount = new BigDecimal(redPacket.getRedPacketAmount());
             if (redPacketAmount.compareTo(transAccountLog.getActualAmount()) < 0) {
-                throw new Exception("实际抵扣金额不得超出红包上限");
+                MallException.fail("实际抵扣金额不得超出红包上限");
             }
             return transAccount;
         } else {
-            //TODO 自定义业务异常
-            throw new Exception("交易类型错误");
+            MallException.fail("交易类型错误");
         }
+        return null;
     }
 
     /**
@@ -299,8 +348,7 @@ public class TransAccountLogServiceImpl extends AbstractService<TransAccountLog>
      */
     private TransAccount checkPoints(TransAccountLog transAccountLog) throws Exception {
         if (transAccountLog.getLogType() == null) {
-            //TODO 自定义业务异常
-            throw new Exception("交易类型不能为空");
+            MallException.fail("交易类型不能为空");
         } else if (transAccountLog.getLogType() == 0) {
             //TODO 总账户阈值扣减校验
             Condition condition = new Condition(TransAccount.class);
@@ -314,13 +362,13 @@ public class TransAccountLogServiceImpl extends AbstractService<TransAccountLog>
             List<TransAccount> transAccountList = transAccountService.findByCondition(condition);
             TransAccount transAccount = transAccountList.get(0);
             if (transAccount.getBalance() < transAccountLog.getAmount()) {
-                throw new Exception("积分不足");
+                MallException.fail("积分不足");
             }
             return transAccount;
         } else {
-            //TODO 自定义业务异常
-            throw new Exception("交易类型错误");
+            MallException.fail("交易类型错误");
         }
+        return null;
     }
 
     /**
