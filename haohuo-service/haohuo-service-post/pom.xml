@@ -9,6 +9,9 @@
             <artifactId>mybatis-plus-extension</artifactId>
             <version>3.5.2</version>
             <scope>compile</scope>
+            <exclusions>
+
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.github.tobato</groupId>
@@ -16,6 +19,8 @@
             <version>1.27.2</version>
             <scope>compile</scope>
         </dependency>
+
+
     </dependencies>
     <parent>
         <groupId>com.ebanma.cloud</groupId>
