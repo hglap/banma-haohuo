@@ -12,6 +12,8 @@ import com.ebanma.cloud.game.model.vo.GamePresentRuleVO;
 import com.ebanma.cloud.game.model.vo.GamePrizeVO;
 import com.ebanma.cloud.game.service.*;
 import lombok.extern.slf4j.Slf4j;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,9 +34,8 @@ import java.util.concurrent.TimeUnit;
 public class GameServiceImpl implements GameService {
 
 
-//    @Autowired
-//    private RedissonClient redissonClient;
-
+    @Resource
+    private RedissonClient redissonClient;
     @Resource
     private RedisTemplate<String, GameUserInfo> redisTemplate;
 
@@ -55,7 +56,7 @@ public class GameServiceImpl implements GameService {
     @Override
     public GamePrizeVO result(GameDrawDto gameDrawDto) {
         //1.用户锁-避免用户重复提交抽奖
-//        RLock userLock = redissonClient.getLock(GameRedisEnum.USER_LOCK+gameDrawDto.getUserId());
+        RLock userLock = redissonClient.getLock(GameRedisEnum.USER_LOCK+gameDrawDto.getUserId());
 
         try {
             //2.判断用户抽奖次数
@@ -68,7 +69,7 @@ public class GameServiceImpl implements GameService {
             //3.获取抽奖概率
             //3.1 Redis中获取抽奖概率控制,
             //3.2 并根据使用的道具,进行概率修正
-            List<GameEggRuleVO> gameRules = gameRuleService.getGameRules(userInfo, gameDrawDto.getPropType());
+            List<GameEggRuleVO> gameRules = gameRuleService.getGameRules(userInfo, gameDrawDto.getPropCode());
 
             //4.金蛋保底控制方法
             GameEggRuleVO eggDraw = gameRuleService.getEggDraw(gameRules);
@@ -124,9 +125,9 @@ public class GameServiceImpl implements GameService {
 //            throw new ServiceException("用户抽奖时发生异常", e );
         }finally {
             //10.用户锁解锁
-//            if (userLock.isLocked() && userLock.isHeldByCurrentThread()) {
-//                userLock.unlock();
-//            }
+            if (userLock.isLocked() && userLock.isHeldByCurrentThread()) {
+                userLock.unlock();
+            }
         }
     }
 

@@ -19,5 +19,5 @@ public class GameDrawDto {
     /**
      * 道具类型
      */
-    private int propType;
+    private int propCode;
 }
