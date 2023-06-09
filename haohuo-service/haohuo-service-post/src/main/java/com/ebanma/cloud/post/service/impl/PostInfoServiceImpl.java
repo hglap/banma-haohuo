@@ -1,9 +1,9 @@
 package com.ebanma.cloud.post.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.ebanma.cloud.post.dao.PostInfoMapper;
 import com.ebanma.cloud.post.model.PostInfo;
 import com.ebanma.cloud.post.service.PostInfoService;
-import com.ebanma.cloud.post.dao.PostInfoMapper;
 import org.springframework.stereotype.Service;
 
 /**
