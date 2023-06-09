@@ -19,6 +19,10 @@ public class GameDrawVO implements Serializable {
 
 
     /**
+     * 总次数
+     */
+    private Integer totalTimes;
+    /**
      * 剩余次数
      */
     private Integer remainTimes;
@@ -29,20 +33,33 @@ public class GameDrawVO implements Serializable {
      */
     private Integer guaranteedTimes;
 
+
     /**
      * 是否已经出现金蛋
      */
     private Integer winning;
 
-    public GameDrawVO(int remainTimes, Double eggOdd) {
-        this.remainTimes = remainTimes;
+    public GameDrawVO(int totalTimes, Double eggOdd) {
+        this.totalTimes = totalTimes;
+        this.remainTimes = totalTimes;
         this.guaranteedTimes = new Long(Math.round(eggOdd)).intValue();
         this.winning = 0;
     }
 
-    public GameDrawVO(Integer remainTimes, int guaranteedTimes) {
-        this.remainTimes = remainTimes;
+    public GameDrawVO(Integer totalTimes, int guaranteedTimes) {
+        this.totalTimes = totalTimes;
+        this.remainTimes = totalTimes;
         this.guaranteedTimes = guaranteedTimes;
         this.winning = 0;
     }
+
+
+    /**
+     * 重置
+     */
+    public void resetting(){
+        this.remainTimes = this.totalTimes;
+        this.winning = 0;
+    }
+
 }
