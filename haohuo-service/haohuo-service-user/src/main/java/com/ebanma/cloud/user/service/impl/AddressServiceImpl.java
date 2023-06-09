@@ -62,4 +62,61 @@ public class AddressServiceImpl extends AbstractService<Address> implements Addr
         }
         addressMapper.updateByPrimaryKeySelective(address);
     }
+
+    /**
+     * 以下为单地址需求的方法
+     *
+     * 增加与修改（单表）
+     *
+     * @param address
+     */
+    @Override
+    public void addAndUpdate(Address address) {
+        Condition condition = new Condition(Address.class);
+        condition.createCriteria().andEqualTo("userId", address.getUserId());
+        List<Address> addresses = addressMapper.selectByCondition(condition);
+        if (StringUtils.isBlank(address.getIsDefault())) {
+            address.setIsDefault("0");
+        }
+        if (addresses.size() == 0) {
+            //新增
+            addressMapper.insertSelective(address);
+        } else {
+            //修改
+            address.setId(addresses.get(0).getId());
+            addressMapper.updateByPrimaryKeySelective(address);
+        }
+    }
+
+    /**
+     *
+     * 删除（单表）
+     *
+     * @param userId
+     */
+    @Override
+    public void deleteByUserId(String userId) {
+        Condition condition = new Condition(Address.class);
+        condition.createCriteria().andEqualTo("userId", userId);
+        List<Address> addresses = addressMapper.selectByCondition(condition);
+        if (addresses.size() > 0) {
+            addressMapper.deleteByPrimaryKey(addresses.get(0));
+        }
+    }
+
+
+    /**
+     *
+     * 查询（单表）
+     *
+     * @param userId
+     * @return
+     */
+
+    @Override
+    public Address findByUserId(String userId) {
+        Condition condition = new Condition(Address.class);
+        condition.createCriteria().andEqualTo("userId", userId);
+        return addressMapper.selectByCondition(condition).get(0);
+    }
 }
