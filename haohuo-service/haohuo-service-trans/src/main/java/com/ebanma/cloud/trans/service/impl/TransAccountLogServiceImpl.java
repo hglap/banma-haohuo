@@ -57,7 +57,7 @@ public class TransAccountLogServiceImpl extends AbstractService<TransAccountLog>
         //1.幂等，分布式锁或者订单表？
 
         //2.查询账户
-        String userId = transAccountLog.getUserId() == null ? "001" : transAccountLog.getUserId();
+        String userId = StringUtils.isBlank(transAccountLog.getUserId()) ? "001" : transAccountLog.getUserId();
         //3.如果账户不存在，需要新建
         if (transInfoService.findBy("userId", userId) == null) {
             //此次作出修改，创建账户不再区分积分与红包，此处账户类型均为混合账户。且默认code为0003，账户名为userId与code的拼接值。
@@ -103,7 +103,7 @@ public class TransAccountLogServiceImpl extends AbstractService<TransAccountLog>
     @Override
     public TransAccountLogVO searchByCondition(TransAccountLogSearchVO transAccountLogSearchVO) throws Exception {
         //分页查询明细
-        String userId = transAccountLogSearchVO.getUserId() == null ? "001" : transAccountLogSearchVO.getUserId();
+        String userId = StringUtils.isBlank(transAccountLogSearchVO.getUserId()) ? "001" : transAccountLogSearchVO.getUserId();
         String transId = userId + "0003";
         TransAccountLog transAccountLog = new TransAccountLog();
         transAccountLog.setTransId(transId);
