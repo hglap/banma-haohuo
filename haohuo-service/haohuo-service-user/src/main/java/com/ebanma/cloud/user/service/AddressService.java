@@ -9,4 +9,7 @@ import com.ebanma.cloud.user.model.Address;
  */
 public interface AddressService extends Service<Address> {
 
+    void saveAddress(Address address);
+
+    void updateAddress(Address address);
 }

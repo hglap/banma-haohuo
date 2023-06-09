@@ -44,8 +44,13 @@
                     <artifactId>mybatis-spring</artifactId>
                     <groupId>org.mybatis</groupId>
                 </exclusion>
+
+
             </exclusions>
         </dependency>
+
+
+
         <dependency>
             <groupId>com.ebanma.cloud</groupId>
             <artifactId>haohuo-service-mall-api</artifactId>
