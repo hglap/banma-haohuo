@@ -16,8 +16,6 @@ import org.springframework.scripting.support.ResourceScriptSource;
 public class LuaScriptLoad {
 
     /**
-     * 注意泛型用Long
-     * 否则会报 io.lettuce.core.output.ValueOutput does not support set(long)
      * @return
      */
     @Bean

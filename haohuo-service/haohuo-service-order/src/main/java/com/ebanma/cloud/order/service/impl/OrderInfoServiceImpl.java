@@ -54,6 +54,18 @@ public class OrderInfoServiceImpl implements OrderInfoService {
         if(StringUtils.isNotBlank(orderInfoDTO.getUserId())){
             queryWrapper.eq("user_id",orderInfoDTO.getUserId());
         }
+        if(StringUtils.isNotBlank(orderInfoDTO.getOrderId())){
+            queryWrapper.like("order_id",orderInfoDTO.getOrderId());
+        }
+        if(StringUtils.isNotBlank(orderInfoDTO.getConsignee())){
+            queryWrapper.like("consignee",orderInfoDTO.getConsignee());
+        }
+        if(StringUtils.isNotBlank(orderInfoDTO.getConsigneeTel())){
+            queryWrapper.like("consignee_tel",orderInfoDTO.getConsigneeTel());
+        }
+        if(StringUtils.isNotBlank(orderInfoDTO.getOrderStatus())){
+            queryWrapper.like("order_status",orderInfoDTO.getOrderStatus());
+        }
         if(StringUtils.isNotBlank(orderInfoDTO.getMerchantId())){
             queryWrapper.eq("merchant_id",orderInfoDTO.getMerchantId());
         }
@@ -87,12 +99,12 @@ public class OrderInfoServiceImpl implements OrderInfoService {
         keyList.add(lockKey);
         Object execute = redisUtil.getRedisTemplate().execute(redisScript, keyList, 2+"");
 
-
         if ("1".equals(execute.toString())) {
             // 成功后，发送消息
             //rocketMQTemplate.syncSend("hgl-order-topic"
             //        ,MessageBuilder.withPayload("测试消息").build(),3000,3);
             System.out.println("扣减库存成功");
+
         } else {
             // 失败后返回结果
             System.out.println("扣减库存失败");

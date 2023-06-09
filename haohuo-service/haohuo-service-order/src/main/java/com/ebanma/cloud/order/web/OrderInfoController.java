@@ -18,6 +18,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/order/info")
+@CrossOrigin
 public class OrderInfoController {
     @Resource
     private OrderInfoService orderInfoService;
@@ -30,7 +31,7 @@ public class OrderInfoController {
 
     @PostMapping("/list")
     public Result list(@RequestBody OrderInfoDTO orderInfoDTO) {
-        PageHelper.startPage((int) orderInfoDTO.getCurrentpage(), (int) orderInfoDTO.getSize());
+        PageHelper.startPage(orderInfoDTO.getPageNum(), orderInfoDTO.getPageSize());
         List<OrderInfoDTO> list = orderInfoService.queryAll(orderInfoDTO);
         PageInfo pageInfo = new PageInfo(list);
         return ResultGenerator.genSuccessResult(pageInfo);
