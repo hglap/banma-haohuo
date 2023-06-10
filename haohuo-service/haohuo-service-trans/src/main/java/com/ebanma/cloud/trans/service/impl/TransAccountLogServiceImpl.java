@@ -61,7 +61,7 @@ public class TransAccountLogServiceImpl extends AbstractService<TransAccountLog>
      */
     @Override
     public void record(TransAccountLog transAccountLog) throws Exception {
-        //1.幂等，流水号由业务流水号、交易类型、用户id、流水值拼接而成
+        //1.新建订单作幂等，流水号由业务流水号、交易类型、用户id、流水值拼接而成
         String userId = StringUtils.isBlank(transAccountLog.getUserId()) ? "001" : transAccountLog.getUserId();
         transAccountLog.setUserId(userId);
         String serialNumber = transAccountLog.getBizSerialNumber() + transAccountLog.getLogType() + userId + transAccountLog.getAmount();
@@ -91,8 +91,7 @@ public class TransAccountLogServiceImpl extends AbstractService<TransAccountLog>
             transOrder.setOrderStatus(0);
             transOrderService.save(transOrder);
         }
-        //2.查询账户
-        //3.如果账户不存在，需要新建
+        //2.查询账户，如果账户不存在，需要新建
         if (transInfoService.findBy("userId", userId) == null) {
             //此次作出修改，创建账户不再区分积分与红包，此处账户类型均为混合账户。且默认code为0003，账户名为userId与code的拼接值。
             TransInfo transInfo = new TransInfo();
@@ -107,8 +106,7 @@ public class TransAccountLogServiceImpl extends AbstractService<TransAccountLog>
         if (StringUtils.isBlank(transAccountLog.getTransId())) {
             transAccountLog.setTransId(userId + "0003");
         }
-        //4.校验交易值是否满足扣减
-        //5.账务事务增减及流水记录
+        //3.校验交易值是否满足扣减；操作账务事务增减及流水记录
         Integer bizType = transAccountLog.getBizType();
         String userLockKey = null;
         try {
@@ -145,9 +143,9 @@ public class TransAccountLogServiceImpl extends AbstractService<TransAccountLog>
                 }
             }
         }
+        //4.账务订单状态维护
         transOrder.setOrderStatus(1);
         transOrderService.update(transOrder);
-
     }
 
     /**

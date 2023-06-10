@@ -4,12 +4,10 @@ import com.ebanma.cloud.common.dto.Result;
 import com.ebanma.cloud.common.dto.ResultGenerator;
 import com.ebanma.cloud.user.model.ProdLifetime;
 import com.ebanma.cloud.user.service.ProdLifetimeService;
+import com.ebanma.cloud.user.vo.ShoppingProdLifeTime;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -24,7 +22,7 @@ public class ProdLifetimeController {
     private ProdLifetimeService prodLifetimeService;
 
     @PostMapping("/add")
-    public Result add(ProdLifetime prodLifetime) {
+    public Result add(@RequestBody ProdLifetime prodLifetime) {
         prodLifetimeService.save(prodLifetime);
         return ResultGenerator.genSuccessResult();
     }
@@ -36,7 +34,7 @@ public class ProdLifetimeController {
     }
 
     @PostMapping("/update")
-    public Result update(ProdLifetime prodLifetime) {
+    public Result update(@RequestBody ProdLifetime prodLifetime) {
         prodLifetimeService.update(prodLifetime);
         return ResultGenerator.genSuccessResult();
     }
@@ -53,5 +51,11 @@ public class ProdLifetimeController {
         List<ProdLifetime> list = prodLifetimeService.findAll();
         PageInfo pageInfo = new PageInfo(list);
         return ResultGenerator.genSuccessResult(pageInfo);
+    }
+
+    @PostMapping("/getShoppingLevel")
+    public Result ShoppingLevel(@RequestParam String userId) {
+        ShoppingProdLifeTime shoppingProdLifeTime = prodLifetimeService.getShoppingProdLifeTime(userId);
+        return ResultGenerator.genSuccessResult(shoppingProdLifeTime);
     }
 }
