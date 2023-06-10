@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
  * @version $ Id: UpdateTrans, v 0.1 2023/06/08 22:48 banma-0193 Exp $
  */
 
-@FeignClient(value = "mall-service" ,path="/trans/account")
+@FeignClient(value = "trans-service" ,path="/trans/account")
 public interface TransFeign {
 
     /**
