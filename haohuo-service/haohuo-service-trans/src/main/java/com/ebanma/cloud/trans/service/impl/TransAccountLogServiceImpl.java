@@ -9,9 +9,9 @@ import com.ebanma.cloud.trans.vo.TransAccountLogDTO;
 import com.ebanma.cloud.trans.vo.TransAccountLogSearchVO;
 import com.ebanma.cloud.trans.vo.TransAccountLogVO;
 import com.github.pagehelper.PageInfo;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,6 +30,7 @@ import java.util.stream.Collectors;
  */
 @Service
 @Transactional
+@Slf4j
 public class TransAccountLogServiceImpl extends AbstractService<TransAccountLog> implements TransAccountLogService {
 
     @Resource
@@ -80,6 +81,7 @@ public class TransAccountLogServiceImpl extends AbstractService<TransAccountLog>
                 transOrder.setOrderStatus(0);
                 transOrderService.update(transOrder);
             } else {
+                log.error("账务订单异常，账务订单为{}", transOrders.get(0));
                 MallException.fail("账务订单异常");
                 return;
             }
@@ -125,6 +127,7 @@ public class TransAccountLogServiceImpl extends AbstractService<TransAccountLog>
                     TransAccount transAccount = checkRedPacket(transAccountLog);
                     transRedPacket(transAccountLog, transAccount);
                 } else {
+                    log.error("账务流水请求的代币类型为{}", bizType);
                     MallException.fail("代币类型错误");
                 }
             } else {
@@ -166,6 +169,7 @@ public class TransAccountLogServiceImpl extends AbstractService<TransAccountLog>
         //过滤代币类型
         Integer bizType = transAccountLogSearchVO.getBizType();
         if (bizType == null || (bizType != 0 && bizType != 1)) {
+            log.error("账务查询请求的代币类型为{}", bizType);
             MallException.fail("代币类型错误");
         }
         List<TransAccountLog> filterResult = transAccountLogs.stream()
@@ -326,15 +330,18 @@ public class TransAccountLogServiceImpl extends AbstractService<TransAccountLog>
             RedPacket redPacket = filterList.get(0);
             //校验红包过期
             if (redPacket.getStatus() != 0) {
+                log.error("所要使用的红包状态为{}", redPacket.getStatus());
                 MallException.fail("红包已过期或已使用");
             }
             //校验抵扣金额超标
             BigDecimal redPacketAmount = new BigDecimal(redPacket.getRedPacketAmount());
             if (redPacketAmount.compareTo(transAccountLog.getActualAmount()) < 0) {
+                log.error("所要使用的红包额度为{}，想要抵扣的金额为{}", redPacketAmount, transAccountLog.getActualAmount());
                 MallException.fail("实际抵扣金额不得超出红包上限");
             }
             return transAccount;
         } else {
+            log.error("红包账务流水交易类型为{}（0增加，1扣减）", transAccountLog.getLogType());
             MallException.fail("交易类型错误");
         }
         return null;
@@ -361,10 +368,12 @@ public class TransAccountLogServiceImpl extends AbstractService<TransAccountLog>
             List<TransAccount> transAccountList = transAccountService.findByCondition(condition);
             TransAccount transAccount = transAccountList.get(0);
             if (transAccount.getBalance() < transAccountLog.getAmount()) {
+                log.error("拥有的可用积分为{}，想要使用的积分为{}", transAccount.getBalance(), transAccountLog.getAmount());
                 MallException.fail("积分不足");
             }
             return transAccount;
         } else {
+            log.error("积分账务流水交易类型为{}（0增加，1扣减）", transAccountLog.getLogType());
             MallException.fail("交易类型错误");
         }
         return null;
