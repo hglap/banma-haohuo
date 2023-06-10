@@ -4,6 +4,7 @@ import com.ebanma.cloud.common.dto.Result;
 import com.ebanma.cloud.common.dto.ResultGenerator;
 import com.ebanma.cloud.user.model.ProdLifetime;
 import com.ebanma.cloud.user.service.ProdLifetimeService;
+import com.ebanma.cloud.user.vo.ProdLifeTime;
 import com.ebanma.cloud.user.vo.ShoppingProdLifeTime;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -53,9 +54,29 @@ public class ProdLifetimeController {
         return ResultGenerator.genSuccessResult(pageInfo);
     }
 
+    /**
+     * 购物成长等级查询的接口
+     *
+     * @param userId
+     * @return
+     */
     @PostMapping("/getShoppingLevel")
     public Result ShoppingLevel(@RequestParam String userId) {
         ShoppingProdLifeTime shoppingProdLifeTime = prodLifetimeService.getShoppingProdLifeTime(userId);
         return ResultGenerator.genSuccessResult(shoppingProdLifeTime);
+    }
+
+    /**
+     * 产品帐（登录、购物等级详情数据）查询通用接口
+     *
+     * @param userId
+     * @param principalType
+     * @param productCode
+     * @return
+     */
+    @PostMapping("/getProdDetail")
+    public Result ShoppingLevel(@RequestParam String userId, String principalType, String productCode) {
+        ProdLifeTime prodLifeTime = prodLifetimeService.getProdLifeTime(userId, principalType, productCode);
+        return ResultGenerator.genSuccessResult(prodLifeTime);
     }
 }
