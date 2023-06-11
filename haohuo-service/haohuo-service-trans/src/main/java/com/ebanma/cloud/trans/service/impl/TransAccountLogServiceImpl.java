@@ -18,10 +18,8 @@ import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Condition;
 
 import javax.annotation.Resource;
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 
@@ -35,24 +33,23 @@ public class TransAccountLogServiceImpl extends AbstractService<TransAccountLog>
 
     @Resource
     private TransInfoService transInfoService;
-
     @Resource
     private TransAccountService transAccountService;
-
-    @Resource
-    private RedPacketService redPacketService;
-
     @Resource
     private TransOrderService transOrderService;
-
-    @Resource
-    private TransRedPacketService transRedPacketService;
-
     @Resource
     private TransAccountLogMapper transAccountLogMapper;
-
     @Resource
     private StringRedisTemplate stringRedisTemplate;
+    @Resource
+    private final Map<String, TransStrategy> strategyMap = new ConcurrentHashMap<>();
+
+    //通过构造方法将策略注入策略池
+    public TransAccountLogServiceImpl(Map<String, TransStrategy> strategyMap) {
+        this.strategyMap.clear();
+        this.strategyMap.putAll(strategyMap);
+    }
+
 
     /**
      * 账务增减
@@ -120,16 +117,14 @@ public class TransAccountLogServiceImpl extends AbstractService<TransAccountLog>
                     transOrder.setOrderStatus(2);
                     transOrderService.update(transOrder);
                     MallException.fail("代币类型不能为空");
-                } else if (bizType == 0) {
-                    TransAccount transAccount = checkPoints(transAccountLog);
-                    transPoints(transAccountLog, transAccount);
-                } else if (bizType == 1) {
-                    TransAccount transAccount = checkRedPacket(transAccountLog);
-                    transRedPacket(transAccountLog, transAccount);
-                } else {
+                }
+                //策略模式对积分或红包进行操作更改
+                TransStrategy transStrategy = strategyMap.get(Integer.toString(bizType));
+                if (transStrategy == null) {
                     log.error("账务流水请求的代币类型为{}", bizType);
                     MallException.fail("代币类型错误");
                 }
+                transStrategy.doTrans(transAccountLog);
             } else {
                 MallException.fail("业务繁忙，请稍后重试");
             }
@@ -168,45 +163,21 @@ public class TransAccountLogServiceImpl extends AbstractService<TransAccountLog>
         List<TransAccountLog> transAccountLogs = transAccountLogMapper.searchLogsWithRedPacket(transAccountLog);
         //过滤代币类型
         Integer bizType = transAccountLogSearchVO.getBizType();
-        if (bizType == null || (bizType != 0 && bizType != 1)) {
-            log.error("账务查询请求的代币类型为{}", bizType);
-            MallException.fail("代币类型错误");
+        if (bizType == null) {
+            MallException.fail("代币类型不能为空");
         }
         List<TransAccountLog> filterResult = transAccountLogs.stream()
                 .filter(item -> Objects.equals(item.getBizType(), bizType))
                 .collect(Collectors.toList());
         List<TransAccountLogDTO> list = new ArrayList<>();
-        //积分，过滤增加或支出或全部，且封装DTO
-        if (bizType == 0) {
-            if (transAccountLogSearchVO.getLogType() != null) {
-                filterResult = filterResult.stream()
-                        .filter(item -> Objects.equals(item.getLogType(), transAccountLogSearchVO.getLogType()))
-                        .collect(Collectors.toList());
+        if (filterResult != null) {
+            //策略模式加载红包或者积分
+            TransStrategy transStrategy = strategyMap.get(Integer.toString(bizType));
+            if (transStrategy == null) {
+                log.error("账务查询请求的代币类型为{}", bizType);
+                MallException.fail("代币类型错误");
             }
-            for (int i = 0; i < filterResult.size(); i++) {
-                TransAccountLogDTO transAccountLogDTO = new TransAccountLogDTO();
-                BeanUtils.copyProperties(filterResult.get(i), transAccountLogDTO);
-                list.add(transAccountLogDTO);
-            }
-        }
-        //红包，过滤未使用、已使用、已过期、7日内过期(独有)
-        if (bizType == 1) {
-            Integer redPacketStatus = transAccountLogSearchVO.getRedPacketStatus();
-            //封装返回DTO，更新红包过期状态
-            List<TransAccountLog> logs = filterResult.stream().filter(item -> item.getLogType() == 0).collect(Collectors.toList());
-            for (int i = 0; i < logs.size(); i++) {
-                TransAccountLogDTO transAccountLogDTO = new TransAccountLogDTO();
-                BeanUtils.copyProperties(logs.get(i), transAccountLogDTO);
-                if (logs.get(i).getRedPacket() != null) {
-                    transAccountLogDTO = updateDTOAndRedPacket(logs.get(i).getRedPacket(), transAccountLogDTO);
-                }
-                list.add(transAccountLogDTO);
-            }
-            if (redPacketStatus != null) {
-                list = list.stream()
-                        .filter(item -> Objects.equals(item.getRedPacketStatus(), redPacketStatus))
-                        .collect(Collectors.toList());
-            }
+            list = transStrategy.doSearchTrans(filterResult, transAccountLogSearchVO);
         }
         PageInfo pageInfo = new PageInfo(list);
         //查询并返回总积分
@@ -215,182 +186,5 @@ public class TransAccountLogServiceImpl extends AbstractService<TransAccountLog>
         TransAccount transAccount = transAccountService.findByCondition(condition).get(0);
         TransAccountLogVO transAccountLogVO = new TransAccountLogVO(transId, transAccount.getBalance(), pageInfo);
         return transAccountLogVO;
-    }
-
-    /**
-     * 账务查询时更新红包状态及DTO
-     *
-     * @param redPacket
-     * @param transAccountLogDTO
-     */
-    private TransAccountLogDTO updateDTOAndRedPacket(RedPacket redPacket, TransAccountLogDTO transAccountLogDTO) {
-        Date expireTime = redPacket.getExpireTime();
-        Integer status = redPacket.getStatus();
-        transAccountLogDTO.setRedPacketExpireTime(expireTime);
-        transAccountLogDTO.setRedPacketStatus(status);
-        //红包状态未使用的，需要重新校验红包状态
-        if (status == 0) {
-            long time = (expireTime.getTime() - new Date().getTime());
-            if (time <= 0) {
-                //更新DTO状态及红包状态
-                transAccountLogDTO.setRedPacketStatus(2);
-                redPacket.setStatus(2);
-                redPacketService.update(redPacket);
-            }
-            if (time <= 1000 * 60 * 60 * 24 * 7) {
-                //更新DTO状态
-                transAccountLogDTO.setRedPacketStatus(3);
-            }
-        }
-        return transAccountLogDTO;
-    }
-
-    /**
-     * 红包增减及流水记录
-     *
-     * @param transAccountLog
-     */
-    private void transRedPacket(TransAccountLog transAccountLog, TransAccount transAccount) {
-        //增加红包
-        if (transAccountLog.getLogType() == 0) {
-            //根据金额创建红包
-            RedPacket redPacket = new RedPacket();
-            String uuid = UUID.randomUUID().toString();
-            redPacket.setRedPacketId(uuid);
-            redPacket.setRedPacketAmount(transAccountLog.getAmount());
-            redPacket.setStatus(0);
-            redPacket.setExpireTime(getMonthDate(new Date(), 1));
-            redPacket.setCreateOn(new Date());
-            redPacket.setCreateBy(transAccountLog.getTransId());
-            //增加红包及账户红包关系表
-            redPacketService.save(redPacket);
-            TransRedPacket transRedPacket = new TransRedPacket();
-            transRedPacket.setTransId(transAccountLog.getTransId());
-            transRedPacket.setRedPacketId(uuid);
-            transRedPacketService.save(transRedPacket);
-            //流水记录中记录红包id
-            transAccountLog.setRedPacketId(uuid);
-        } else {
-            //使用红包
-            List<RedPacket> redPacketList = transAccount.getRedPacketList();
-            List<RedPacket> filter = redPacketList.stream()
-                    .filter(item -> Objects.equals(item.getRedPacketId(), transAccountLog.getRedPacketId()))
-                    .collect(Collectors.toList());
-            RedPacket redPacket = filter.get(0);
-            redPacket.setStatus(1);
-            redPacketService.update(redPacket);
-            //流水值设置为红包的理论金额
-            transAccountLog.setAmount(redPacket.getRedPacketAmount());
-        }
-        //账务流水记录
-        transAccountLogMapper.insertSelective(transAccountLog);
-    }
-
-    /**
-     * 积分增减及流水记录
-     *
-     * @param transAccountLog
-     */
-    private void transPoints(TransAccountLog transAccountLog, TransAccount transAccount) {
-        //增加积分
-        if (transAccountLog.getLogType() == 0) {
-            transAccount.setBalance(transAccount.getBalance() + transAccountLog.getAmount());
-            transAccount.setTotalInAmount(transAccount.getTotalInAmount() + transAccountLog.getAmount());
-        } else {
-            //减少积分
-            transAccount.setBalance(transAccount.getBalance() - transAccountLog.getAmount());
-            transAccount.setTotalOutAmount(transAccount.getTotalOutAmount() + transAccountLog.getAmount());
-        }
-        //账务余额表更新
-        transAccountService.update(transAccount);
-        //账务流水记录
-        transAccountLogMapper.insertSelective(transAccountLog);
-    }
-
-    /**
-     * 确认红包扣减是否满足
-     *
-     * @param transAccountLog
-     */
-    private TransAccount checkRedPacket(TransAccountLog transAccountLog) throws Exception {
-        if (transAccountLog.getLogType() == null) {
-            MallException.fail("交易类型不能为空");
-        } else if (transAccountLog.getLogType() == 0) {
-            //TODO 总账户阈值扣减校验
-            return transAccountService.findBy("transId", transAccountLog.getTransId());
-        } else if (transAccountLog.getLogType() == 1) {
-            TransAccount transAccount = transAccountService.findAccountWithRedPacketByTransId(transAccountLog.getTransId());
-            List<RedPacket> redPacketList = transAccount.getRedPacketList();
-            List<RedPacket> filterList = redPacketList.stream()
-                    .filter(item -> Objects.equals(item.getRedPacketId(), transAccountLog.getRedPacketId()))
-                    .collect(Collectors.toList());
-            if (filterList.size() == 0) {
-                MallException.fail("红包不存在");
-            }
-            RedPacket redPacket = filterList.get(0);
-            //校验红包过期
-            if (redPacket.getStatus() != 0) {
-                log.error("所要使用的红包状态为{}", redPacket.getStatus());
-                MallException.fail("红包已过期或已使用");
-            }
-            //校验抵扣金额超标
-            BigDecimal redPacketAmount = new BigDecimal(redPacket.getRedPacketAmount());
-            if (redPacketAmount.compareTo(transAccountLog.getActualAmount()) < 0) {
-                log.error("所要使用的红包额度为{}，想要抵扣的金额为{}", redPacketAmount, transAccountLog.getActualAmount());
-                MallException.fail("实际抵扣金额不得超出红包上限");
-            }
-            return transAccount;
-        } else {
-            log.error("红包账务流水交易类型为{}（0增加，1扣减）", transAccountLog.getLogType());
-            MallException.fail("交易类型错误");
-        }
-        return null;
-    }
-
-    /**
-     * 确认积分扣减是否满足
-     *
-     * @param transAccountLog
-     */
-    private TransAccount checkPoints(TransAccountLog transAccountLog) throws Exception {
-        if (transAccountLog.getLogType() == null) {
-            MallException.fail("交易类型不能为空");
-        } else if (transAccountLog.getLogType() == 0) {
-            //TODO 总账户阈值扣减校验
-            Condition condition = new Condition(TransAccount.class);
-            condition.createCriteria().andEqualTo("transId", transAccountLog.getTransId());
-            List<TransAccount> transAccountList = transAccountService.findByCondition(condition);
-            TransAccount transAccount = transAccountList.get(0);
-            return transAccount;
-        } else if (transAccountLog.getLogType() == 1) {
-            Condition condition = new Condition(TransAccount.class);
-            condition.createCriteria().andEqualTo("transId", transAccountLog.getTransId());
-            List<TransAccount> transAccountList = transAccountService.findByCondition(condition);
-            TransAccount transAccount = transAccountList.get(0);
-            if (transAccount.getBalance() < transAccountLog.getAmount()) {
-                log.error("拥有的可用积分为{}，想要使用的积分为{}", transAccount.getBalance(), transAccountLog.getAmount());
-                MallException.fail("积分不足");
-            }
-            return transAccount;
-        } else {
-            log.error("积分账务流水交易类型为{}（0增加，1扣减）", transAccountLog.getLogType());
-            MallException.fail("交易类型错误");
-        }
-        return null;
-    }
-
-    /**
-     * 获取startDate之后一个月的时间
-     *
-     * @param startDate
-     * @param month
-     * @return
-     */
-    private Date getMonthDate(Date startDate, int month) {
-        LocalDateTime localDateTime = startDate.toInstant()
-                .atZone(ZoneId.systemDefault())
-                .toLocalDateTime().plusMonths(month);
-        Date date = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
-        return date;
     }
 }
