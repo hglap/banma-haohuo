@@ -23,6 +23,7 @@
   <insert id="saveActivity">
     insert into activity (id,start_date,start_time,duration,stock,create_user_name,create_user_id,create_time,seckill_status,version,amount)
     values (#{id}, #{startDate}, #{startTime}, #{duration}, #{amount}, #{createUserName}, #{createUserId}, #{createTime},1,1, #{amount})
+
   </insert>
   <select id="searchBypage" resultType="com.ebanma.cloud.seckill.model.po.Activity">
       select <include refid="Base_Column_List"></include>
@@ -36,4 +37,7 @@
       </if>
     </where>
     </select>
+  <select id="countStatusIsUNPUBLISHED" resultType="java.lang.Integer">
+    select count(0) from activity where seckill_status = 1;
+  </select>
 </mapper>

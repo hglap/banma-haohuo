@@ -7,13 +7,14 @@ import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Date;
 
 @Data
-public class Activity {
+public class Activity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -23,14 +24,14 @@ public class Activity {
      */
 //    @Column(name = "start_date")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT-8")
-    private Date startDate;
+    private LocalDate startDate;
 
     /**
      * 开始时间
      */
 //    @Column(name = "start_time")
     @JsonFormat(pattern = "HH:mm:ss",timezone = "GMT-8")
-    private Date startTime;
+    private LocalTime startTime;
 
     /**
      * 持续时间
@@ -77,5 +78,20 @@ public class Activity {
 //    @Column(name = "create_user_name")
     private String createUserName;
 
+    public Activity(Long id, LocalDate startDate, LocalTime startTime, Integer duration, Integer stock, Date createTime, String createUserId, Integer seckillStatus, Integer version, Integer amount, String createUserName) {
+        this.id = id;
+        this.startDate = startDate;
+        this.startTime = startTime;
+        this.duration = duration;
+        this.stock = stock;
+        this.createTime = createTime;
+        this.createUserId = createUserId;
+        this.seckillStatus = seckillStatus;
+        this.version = version;
+        this.amount = amount;
+        this.createUserName = createUserName;
+    }
 
+    public Activity() {
+    }
 }

@@ -5,24 +5,35 @@ import com.ebanma.cloud.common.core.AbstractService;
 import com.ebanma.cloud.common.util.BeanUtil;
 import com.ebanma.cloud.common.util.IdWorker;
 import com.ebanma.cloud.seckill.dao.ActivityMapper;
+import com.ebanma.cloud.seckill.model.BusinessException;
 import com.ebanma.cloud.seckill.model.dto.ActivitySaveDto;
 import com.ebanma.cloud.seckill.model.dto.ActivitySearchInfoDto;
+import com.ebanma.cloud.seckill.model.dto.SeckillMessageDto;
 import com.ebanma.cloud.seckill.model.po.Activity;
+import com.ebanma.cloud.seckill.model.vo.ActivityGetInfoVo;
 import com.ebanma.cloud.seckill.model.vo.ActivitySearchInfoVo;
+import com.ebanma.cloud.seckill.model.vo.SeckillGit;
 import com.ebanma.cloud.seckill.service.ActivityService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.redis.core.BoundListOperations;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.support.SendResult;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.concurrent.ListenableFutureCallback;
 
 import javax.annotation.Resource;
-import javax.xml.crypto.Data;
 import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -35,15 +46,19 @@ import java.util.concurrent.TimeUnit;
  * @date 2023/06/06
  */
 @Service
-@Transactional(rollbackFor = RuntimeException.class)
 public class ActivityServiceImpl extends AbstractService<Activity> implements ActivityService {
+
+    private Logger log = LoggerFactory.getLogger(ActivityServiceImpl.class);
 
     @Resource
     private ActivityMapper activityMapper;
 
-
     @Resource
-    private RedisTemplate redisTemplate;
+    private RedisTemplate<String,Object> redisTemplate;
+
+    private StringBuilder stringBuilder = new StringBuilder();
+
+    private IdWorker id;
 
     @Override
     public PageInfo searchInfoBypage(ActivitySearchInfoDto activitySearchInfoDto) {
@@ -58,17 +73,146 @@ public class ActivityServiceImpl extends AbstractService<Activity> implements Ac
 
     @Override
     public int saveActivity(ActivitySaveDto saveDto) {
-        IdWorker id = new IdWorker();
-        Activity activity = new Activity();
-        BeanUtils.copyProperties(saveDto, activity);
-        activity.setId(id.nextId());
-        activity.setCreateTime(new Date());
-        redisTemplate.opsForValue().set("activity", JSON.toJSONString(saveDto),20, TimeUnit.HOURS);
-        return activityMapper.saveActivity(activity);
+
+        Activity activity = new Activity(
+                id.nextId(),
+                saveDto.getStartDate(),
+                saveDto.getStartTime(),
+                saveDto.getDuration(),
+                0,
+                new Date(),
+                saveDto.getCreateUserId()+"",
+                1,
+                1,
+                (int) saveDto.getAmount(),
+                saveDto.getCreateUserName()
+        );
+        return this.saveActivityByTransaction(activity);
+    }
+
+    @Transactional(isolation = Isolation.READ_COMMITTED,rollbackFor = RuntimeException.class)
+    public int saveActivityByTransaction(Activity activity){
+       int i = activityMapper.saveActivity(activity);
+       int num = activityMapper.countStatusIsUNPUBLISHED();
+       if(i == 0){
+           throw new BusinessException("新增失败");
+       }else if(num > 1){
+           throw new BusinessException("已存在待发布活动，无法新增");
+       }
+        LocalDateTime start = LocalDateTime.of(activity.getStartDate(),activity.getStartTime());
+        long endTimeMillis = start.toInstant(ZoneOffset.UTC).toEpochMilli()+activity.getDuration()* 1000L;
+        long during =endTimeMillis- System.currentTimeMillis();
+       redisTemplate.opsForValue().set("activity", activity,during, TimeUnit.MILLISECONDS);
+       redisTemplate.opsForValue().set("activityEndTimeMillis", endTimeMillis,during, TimeUnit.MILLISECONDS);
+       this.getGiftList(activity.getAmount(),during);
+       return i;
+    }
+
+    private void getGiftList(long amount, long during) {
+        for(int i = 0; i < amount; i++) {
+            redisTemplate.opsForList().rightPush("ActivityGift","积分"+i);
+        }
+        redisTemplate.expire("ActivityGift",during,TimeUnit.MILLISECONDS);
     }
 
     @Override
     public Object getRedisInfo(String activity) {
-        return redisTemplate.opsForValue().get(activity);
+        System.out.println("_______________________________");
+        BoundListOperations<String,Object> bound = redisTemplate.boundListOps("ActivityGift");
+        Activity activity1 = (Activity) redisTemplate.opsForValue().get("activity");
+        String path = (String)redisTemplate.opsForHash().get("userPaths", "cui");
+        System.out.println("path :" +path);
+        System.out.println(JSON.toJSONString(activity1));
+        System.out.println(bound.range(1,20).toString());
+        bound.rightPop();
+        return  bound.rightPop();
+    }
+
+    @Override
+    public ActivityGetInfoVo getInfo(String userId) {
+        ActivityGetInfoVo vo = new ActivityGetInfoVo();
+        // 查询redis中有没有待发布活动
+        Activity activity = (Activity) redisTemplate.opsForValue().get("activity");
+        if(activity == null){
+            throw new BusinessException("无待发布活动");
+        }
+        // 生产path
+        String path = stringBuilder.append(activity.getId()).append("*").append("userId").append("*").append("seckill").toString();
+        // 将path存入redis中
+        if(redisTemplate.opsForHash().putIfAbsent("userPaths",userId,path)){
+            long during = this.getDuration();
+            redisTemplate.expire("userPaths",during,TimeUnit.MILLISECONDS);
+        };
+        BeanUtils.copyProperties(activity,vo);
+        vo.setPath(path);
+        vo.setActivityId(activity.getId());
+        return vo;
+    }
+
+    @Resource
+    private RedissonClient redissonClient;
+
+
+    @Override
+    public SeckillGit seckill(String path, String userId, long activityId) {
+       RLock redissonLock = redissonClient.getLock("seckill");
+        SeckillGit seckillGit = new SeckillGit();
+        try {
+            // TODO 获取分布式锁
+            redissonLock.lock();
+            // TODO 获取奖品
+            BoundListOperations<String,Object> bound = redisTemplate.boundListOps("ActivityGift");
+            String gitName = (String) bound.rightPop();
+            // TODO 将path 放入redis中
+            if(gitName != null){
+                redisTemplate.opsForSet().add("getGitPaths",path);
+                redisTemplate.expire("getGitPaths",getDuration(),TimeUnit.MILLISECONDS);
+            }else{
+               seckillGit.setGitName("空");
+               return seckillGit;
+            }
+            // TODO 生产消息
+            SeckillMessageDto seckillMessageDto = new SeckillMessageDto(
+                    id.nextId(),
+                    userId,
+                    activityId,
+                    new Date(),
+                    gitName
+            );
+            // TODO 将消息发送到kafka中，并校验返回值
+            sendMessage(JSON.toJSONString(seckillMessageDto));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }finally {
+            // TODO 释放锁
+            redissonLock.unlock();
+        }
+        // TODO 返回奖品
+        seckillGit.setGitName(path);
+        return seckillGit;
+    }
+
+    @Resource
+    private KafkaTemplate<String, Object> kafkaTemplate;
+
+    public boolean sendMessage(String msg) {
+        kafkaTemplate.send("seckill", msg).addCallback(new ListenableFutureCallback<SendResult<String, Object>>() {
+            @Override
+            public void onFailure(Throwable ex) {
+                log.error("发送消息失败：{}" , ex.getMessage());
+            }
+            @Override
+            public void onSuccess(SendResult<String, Object> result) {
+
+            }
+        });
+        return true;
+    }
+
+    private long getDuration() {
+        long end = (long)redisTemplate.opsForValue().get("activityEndTimeMillis");
+        long during =end - System.currentTimeMillis();
+        log.info("during:{};end:{};now:{}",during,end,new Date());
+        return during;
     }
 }

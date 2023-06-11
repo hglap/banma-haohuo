@@ -79,7 +79,7 @@ public class ValidMallUserTokenGlobalFilter implements GlobalFilter, Ordered {
     }
 
     Mono<Void> wrapErrorResponse(ServerWebExchange exchange, GatewayFilterChain chain) {
-        Result result = ResultGenerator.genErrorResult(ResultCode.UNAUTHORIZED, "无权限访问");
+        Result result = ResultGenerator.genErrorResult(ResultCode.UNAUTHORIZED.code(), "无权限访问");
         ObjectMapper mapper = new ObjectMapper();
         ObjectNode resultNode = mapper.valueToTree(result);
         byte[] bytes = resultNode.toString().getBytes(StandardCharsets.UTF_8);

@@ -1,14 +1,16 @@
 package com.ebanma.cloud.seckill;
 
 import org.springframework.context.annotation.ComponentScan;
-import org.mybatis.spring.annotation.MapperScan;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
+import tk.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 //@EnableDiscoveryClient
 
 @SpringBootApplication
-@MapperScan(basePackages = {"com.ebanma.cloud.seckill.dao", "com.ebanma.cloud.common.core"})
+@EnableTransactionManagement
+@MapperScan(basePackages = {"com.ebanma.cloud.seckill.dao"})
 public class SeckillServiceApplication {
 
     public static void main(String[] args) {

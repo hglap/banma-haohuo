@@ -14,4 +14,6 @@ public interface ActivityMapper extends Mapper<Activity> {
     List<Activity> searchBypage(@Param("createUserName") String createUserName,@Param("createTime") LocalDateTime createTime);
 
     int saveActivity(Activity saveDto);
+
+    int countStatusIsUNPUBLISHED();
 }
