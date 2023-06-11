@@ -15,12 +15,8 @@ import lombok.Data;
  */
 @TableName(value ="sku_store_info")
 @Data
-public class SkuStoreInfoPO implements Serializable {
-    /**
-     * 
-     */
-    @TableId
-    private String id;
+public class SkuStoreInfoPO extends BasePO implements Serializable {
+
 
     /**
      * 商家名称
@@ -47,30 +43,7 @@ public class SkuStoreInfoPO implements Serializable {
      */
     private String useStatus;
 
-    /**
-     * 
-     */
-    private Long version;
 
-    /**
-     * 
-     */
-    private Date createTime;
-
-    /**
-     * 
-     */
-    private String createUser;
-
-    /**
-     * 
-     */
-    private Date lastModified;
-
-    /**
-     * 
-     */
-    private String lastModifyUser;
 
     /**
      * 删除标记 0未删除 1已删除
@@ -79,5 +52,6 @@ public class SkuStoreInfoPO implements Serializable {
     private String del;
 
     @TableField(exist = false)
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = -7904316305047672258L;
+
 }
