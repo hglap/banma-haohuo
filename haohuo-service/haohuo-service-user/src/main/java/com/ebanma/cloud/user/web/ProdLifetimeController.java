@@ -2,9 +2,8 @@ package com.ebanma.cloud.user.web;
 
 import com.ebanma.cloud.common.dto.Result;
 import com.ebanma.cloud.common.dto.ResultGenerator;
-import com.ebanma.cloud.user.model.ProdLifetime;
 import com.ebanma.cloud.user.service.ProdLifetimeService;
-import com.ebanma.cloud.user.vo.ProdLifeTime;
+import com.ebanma.cloud.user.vo.ProdLifetimeVO;
 import com.ebanma.cloud.user.vo.ShoppingProdLifeTime;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -23,7 +22,7 @@ public class ProdLifetimeController {
     private ProdLifetimeService prodLifetimeService;
 
     @PostMapping("/add")
-    public Result add(@RequestBody ProdLifetime prodLifetime) {
+    public Result add(@RequestBody com.ebanma.cloud.user.model.ProdLifetime prodLifetime) {
         prodLifetimeService.save(prodLifetime);
         return ResultGenerator.genSuccessResult();
     }
@@ -35,21 +34,21 @@ public class ProdLifetimeController {
     }
 
     @PostMapping("/update")
-    public Result update(@RequestBody ProdLifetime prodLifetime) {
+    public Result update(@RequestBody com.ebanma.cloud.user.model.ProdLifetime prodLifetime) {
         prodLifetimeService.update(prodLifetime);
         return ResultGenerator.genSuccessResult();
     }
 
     @PostMapping("/detail")
     public Result detail(@RequestParam Integer id) {
-        ProdLifetime prodLifetime = prodLifetimeService.findById(id);
+        com.ebanma.cloud.user.model.ProdLifetime prodLifetime = prodLifetimeService.findById(id);
         return ResultGenerator.genSuccessResult(prodLifetime);
     }
 
     @PostMapping("/list")
     public Result list(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "0") Integer size) {
         PageHelper.startPage(page, size);
-        List<ProdLifetime> list = prodLifetimeService.findAll();
+        List<com.ebanma.cloud.user.model.ProdLifetime> list = prodLifetimeService.findAll();
         PageInfo pageInfo = new PageInfo(list);
         return ResultGenerator.genSuccessResult(pageInfo);
     }
@@ -76,7 +75,7 @@ public class ProdLifetimeController {
      */
     @PostMapping("/getProdDetail")
     public Result ShoppingLevel(@RequestParam String userId, String principalType, String productCode) {
-        ProdLifeTime prodLifeTime = prodLifetimeService.getProdLifeTime(userId, principalType, productCode);
-        return ResultGenerator.genSuccessResult(prodLifeTime);
+        ProdLifetimeVO prodLifeTimeVO = prodLifetimeService.getProdLifeTime(userId, principalType, productCode);
+        return ResultGenerator.genSuccessResult(prodLifeTimeVO);
     }
 }

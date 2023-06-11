@@ -9,4 +9,5 @@ import com.ebanma.cloud.user.model.UserInfo;
  */
 public interface UserInfoService extends Service<UserInfo> {
 
+    UserInfo getUserInfo(String userId);
 }

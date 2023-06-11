@@ -5,7 +5,7 @@ package com.ebanma.cloud.user.vo;
  * @version $ Id: ShoppingProdLifeTime, v 0.1 2023/06/10 18:08 banma-0193 Exp $
  */
 
-public class ProdLifeTime {
+public class ProdLifetimeVO {
     //等级
     private Long rank;
     //当前量

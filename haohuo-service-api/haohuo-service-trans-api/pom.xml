@@ -11,4 +11,12 @@
 
     <artifactId>haohuo-service-trans-api</artifactId>
 
+    <dependencies>
+        <dependency>
+            <groupId>com.github.pagehelper</groupId>
+            <artifactId>pagehelper</artifactId>
+            <version>4.2.1</version>
+        </dependency>
+    </dependencies>
+
 </project>
