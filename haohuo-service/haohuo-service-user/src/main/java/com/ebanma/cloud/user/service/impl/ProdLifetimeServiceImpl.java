@@ -3,12 +3,11 @@ package com.ebanma.cloud.user.service.impl;
 import com.ebanma.cloud.common.core.AbstractService;
 import com.ebanma.cloud.common.exception.MallException;
 import com.ebanma.cloud.user.dao.UserInfoMapper;
-import com.ebanma.cloud.user.model.ProdLifetime;
 import com.ebanma.cloud.user.model.UserInfo;
 import com.ebanma.cloud.user.service.ProdLifetimeSearchService;
 import com.ebanma.cloud.user.service.ProdLifetimeService;
 import com.ebanma.cloud.user.service.ProdStrategy;
-import com.ebanma.cloud.user.vo.ProdLifeTime;
+import com.ebanma.cloud.user.vo.ProdLifetimeVO;
 import com.ebanma.cloud.user.vo.ShoppingProdLifeTime;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -28,7 +27,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Slf4j
 @Service
 @Transactional
-public class ProdLifetimeServiceImpl extends AbstractService<ProdLifetime> implements ProdLifetimeService {
+public class ProdLifetimeServiceImpl extends AbstractService<com.ebanma.cloud.user.model.ProdLifetime> implements ProdLifetimeService {
 
     @Resource
     private ProdLifetimeSearchService prodLifetimeSearchService;
@@ -54,7 +53,7 @@ public class ProdLifetimeServiceImpl extends AbstractService<ProdLifetime> imple
      * @param productCode
      * @return
      */
-    public ProdLifeTime getProdLifeTime(String userId, String principalType, String productCode) {
+    public ProdLifetimeVO getProdLifeTime(String userId, String principalType, String productCode) {
         return strategyMap.get(productCode + "_" + principalType).getProdLifeTime(userId, principalType, productCode);
     }
 
@@ -66,16 +65,11 @@ public class ProdLifetimeServiceImpl extends AbstractService<ProdLifetime> imple
      */
     @Override
     public ShoppingProdLifeTime getShoppingProdLifeTime(String userId) {
-        ProdLifetime prodLifetime = prodLifetimeSearchService.findProd(userId, "shopping", "SHOP");
+        ProdLifetimeVO prodLifeTimeVO = strategyMap.get("SHOP_shopping").getProdLifeTime(userId, "shopping", "SHOP");
         ShoppingProdLifeTime shoppingProdLifeTime = new ShoppingProdLifeTime();
-        if (prodLifetime != null) {
-            Long count = prodLifetime.getCount();
-            Long rank = (count / 10 + 1) > 6 ? 6 : (count / 10 + 1);
-            Long needOrders = rank == 6 ? 0 : 10 - count % 10;
-            shoppingProdLifeTime.setOrders(count);
-            shoppingProdLifeTime.setRank(rank);
-            shoppingProdLifeTime.setNeedOrders(needOrders);
-        }
+        shoppingProdLifeTime.setRank(prodLifeTimeVO.getRank());
+        shoppingProdLifeTime.setOrders(prodLifeTimeVO.getCount());
+        shoppingProdLifeTime.setNeedOrders(prodLifeTimeVO.getNeedCount());
         return shoppingProdLifeTime;
     }
 
@@ -89,7 +83,7 @@ public class ProdLifetimeServiceImpl extends AbstractService<ProdLifetime> imple
      */
     @Override
     public void handleMessage(String userId, String principalType, String productCode, Long amount) {
-        ProdLifetime prodLifetime = prodLifetimeSearchService.findProd(userId, principalType, productCode);
+        com.ebanma.cloud.user.model.ProdLifetime prodLifetime = prodLifetimeSearchService.findProd(userId, principalType, productCode);
         if (prodLifetime == null) {
             //确认userId是否存在
             Boolean isExist = confirmUserById(userId);
@@ -97,7 +91,7 @@ public class ProdLifetimeServiceImpl extends AbstractService<ProdLifetime> imple
                 log.error("用户id{}不存在", userId);
                 MallException.fail("该用户不存在");
             }
-            prodLifetime = new ProdLifetime();
+            prodLifetime = new com.ebanma.cloud.user.model.ProdLifetime();
             prodLifetime.setProductCode(productCode);
             prodLifetime.setPrincipalType(principalType);
             prodLifetime.setPrincipalId(userId);

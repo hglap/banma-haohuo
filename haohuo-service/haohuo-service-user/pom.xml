@@ -39,6 +39,11 @@
             <version>2.0.4</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.ebanma.cloud</groupId>
+            <artifactId>haohuo-service-api</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
     </dependencies>
 
     <build>
