@@ -1,6 +1,7 @@
 package com.ebanma.cloud.trans.api.dto;
 
-import com.github.pagehelper.PageInfo;
+
+import java.util.List;
 
 /**
  * @author 鹿胜宝
@@ -18,7 +19,7 @@ public class TransAccountLogVO {
     /**
      * 明细列表
      */
-    private PageInfo<TransAccountLogDTO> logList;
+    private List<TransAccountLogDTO> logList;
 
     public String getTransId() {
         return transId;
@@ -36,11 +37,11 @@ public class TransAccountLogVO {
         this.amountPoints = amountPoints;
     }
 
-    public PageInfo<TransAccountLogDTO> getLogList() {
+    public List<TransAccountLogDTO> getLogList() {
         return logList;
     }
 
-    public void setLogList(PageInfo<TransAccountLogDTO> logList) {
+    public void setLogList(List<TransAccountLogDTO> logList) {
         this.logList = logList;
     }
 }

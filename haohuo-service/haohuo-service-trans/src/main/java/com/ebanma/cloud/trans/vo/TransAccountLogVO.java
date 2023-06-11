@@ -1,17 +1,12 @@
 package com.ebanma.cloud.trans.vo;
 
-import com.github.pagehelper.PageInfo;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import java.util.List;
 
 /**
  * @author 鹿胜宝
  * @version $ Id: TransAccountLogVO, v 0.1 2023/06/07 20:21 banma-0193 Exp $
  */
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
+
 public class TransAccountLogVO {
     /**
      * 账户Id
@@ -24,5 +19,38 @@ public class TransAccountLogVO {
     /**
      * 明细列表
      */
-    private PageInfo<TransAccountLogDTO> logList;
+    private List<TransAccountLogDTO> logList;
+
+    public String getTransId() {
+        return transId;
+    }
+
+    public void setTransId(String transId) {
+        this.transId = transId;
+    }
+
+    public Long getAmountPoints() {
+        return amountPoints;
+    }
+
+    public void setAmountPoints(Long amountPoints) {
+        this.amountPoints = amountPoints;
+    }
+
+    public List<TransAccountLogDTO> getLogList() {
+        return logList;
+    }
+
+    public void setLogList(List<TransAccountLogDTO> logList) {
+        this.logList = logList;
+    }
+
+    public TransAccountLogVO() {
+    }
+
+    public TransAccountLogVO(String transId, Long amountPoints, List<TransAccountLogDTO> logList) {
+        this.transId = transId;
+        this.amountPoints = amountPoints;
+        this.logList = logList;
+    }
 }

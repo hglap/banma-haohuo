@@ -3,12 +3,14 @@ package com.ebanma.cloud.trans.service.impl;
 import com.ebanma.cloud.common.core.AbstractService;
 import com.ebanma.cloud.common.exception.MallException;
 import com.ebanma.cloud.trans.dao.TransAccountLogMapper;
-import com.ebanma.cloud.trans.model.*;
+import com.ebanma.cloud.trans.model.TransAccount;
+import com.ebanma.cloud.trans.model.TransAccountLog;
+import com.ebanma.cloud.trans.model.TransInfo;
+import com.ebanma.cloud.trans.model.TransOrder;
 import com.ebanma.cloud.trans.service.*;
 import com.ebanma.cloud.trans.vo.TransAccountLogDTO;
 import com.ebanma.cloud.trans.vo.TransAccountLogSearchVO;
 import com.ebanma.cloud.trans.vo.TransAccountLogVO;
-import com.github.pagehelper.PageInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -18,7 +20,10 @@ import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Condition;
 
 import javax.annotation.Resource;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
@@ -179,12 +184,11 @@ public class TransAccountLogServiceImpl extends AbstractService<TransAccountLog>
             }
             list = transStrategy.doSearchTrans(filterResult, transAccountLogSearchVO);
         }
-        PageInfo pageInfo = new PageInfo(list);
         //查询并返回总积分
         Condition condition = new Condition(TransAccount.class);
         condition.createCriteria().andEqualTo("transId", transId);
         TransAccount transAccount = transAccountService.findByCondition(condition).get(0);
-        TransAccountLogVO transAccountLogVO = new TransAccountLogVO(transId, transAccount.getBalance(), pageInfo);
+        TransAccountLogVO transAccountLogVO = new TransAccountLogVO(transId, transAccount.getBalance(), list);
         return transAccountLogVO;
     }
 }

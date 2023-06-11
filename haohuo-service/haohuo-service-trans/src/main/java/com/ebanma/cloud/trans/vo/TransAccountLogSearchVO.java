@@ -7,7 +7,7 @@ import lombok.Data;
  * @version $ Id: TransAccountLogSearchVO, v 0.1 2023/06/07 19:57 banma-0193 Exp $
  */
 @Data
-public class TransAccountLogSearchVO extends BaseVO {
+public class TransAccountLogSearchVO {
     //用户id（可不填，从token获取）
     private String userId;
 

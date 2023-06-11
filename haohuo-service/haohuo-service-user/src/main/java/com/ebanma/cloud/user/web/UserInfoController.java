@@ -4,6 +4,7 @@ import com.ebanma.cloud.common.dto.Result;
 import com.ebanma.cloud.common.dto.ResultGenerator;
 import com.ebanma.cloud.user.model.UserInfo;
 import com.ebanma.cloud.user.service.UserInfoService;
+import com.ebanma.cloud.user.vo.UserInfoVO;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.apache.rocketmq.spring.core.RocketMQTemplate;
@@ -79,7 +80,7 @@ public class UserInfoController {
      */
     @GetMapping("/getUserInfo")
     public Result getUserInfo(@RequestParam String userId) {
-        UserInfo userInfo = userInfoService.getUserInfo(userId);
+        UserInfoVO userInfo = userInfoService.getUserInfo(userId);
         return ResultGenerator.genSuccessResult(userInfo);
     }
 }

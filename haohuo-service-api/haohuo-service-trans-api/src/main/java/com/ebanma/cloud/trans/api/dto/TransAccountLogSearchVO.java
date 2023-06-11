@@ -6,7 +6,7 @@ package com.ebanma.cloud.trans.api.dto;
  * @version $ Id: TransAccountLogSearchVO, v 0.1 2023/06/07 19:57 banma-0193 Exp $
  */
 
-public class TransAccountLogSearchVO extends BaseVO {
+public class TransAccountLogSearchVO{
     //用户id
     private String userId;
 

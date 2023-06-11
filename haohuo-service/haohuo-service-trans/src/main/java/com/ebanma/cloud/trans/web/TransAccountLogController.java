@@ -67,9 +67,8 @@ public class TransAccountLogController {
      * @return
      */
     @PostMapping("/getTransInfo")
-    public Result getTransInfo(@RequestBody TransAccountLogSearchVO transAccountLogSearchVO) throws Exception {
+    public Result<TransAccountLogVO> getTransInfo(@RequestBody TransAccountLogSearchVO transAccountLogSearchVO) throws Exception {
         log.info("账务查询入参：{}",transAccountLogSearchVO);
-        PageHelper.startPage(transAccountLogSearchVO.getPageNum(), transAccountLogSearchVO.getPageSize());
         TransAccountLogVO transAccountLogVO = transAccountLogService.searchByCondition(transAccountLogSearchVO);
         return ResultGenerator.genSuccessResult(transAccountLogVO);
     }

@@ -3,10 +3,10 @@ package com.ebanma.cloud.user.service.impl;
 import com.ebanma.cloud.common.core.AbstractService;
 import com.ebanma.cloud.common.dto.Result;
 import com.ebanma.cloud.common.exception.MallException;
+import com.ebanma.cloud.trans.api.dto.TransAccountLogSearchVO;
+import com.ebanma.cloud.trans.api.dto.TransAccountLogVO;
+import com.ebanma.cloud.trans.api.openfeign.TransFeign;
 import com.ebanma.cloud.user.dao.UserInfoMapper;
-import com.ebanma.cloud.user.dto.TransAccountLogSearchVO;
-import com.ebanma.cloud.user.dto.TransAccountLogVO;
-import com.ebanma.cloud.user.feign.FeignService;
 import com.ebanma.cloud.user.model.Address;
 import com.ebanma.cloud.user.model.UserInfo;
 import com.ebanma.cloud.user.service.AddressService;
@@ -35,10 +35,10 @@ public class UserInfoServiceImpl extends AbstractService<UserInfo> implements Us
     @Resource
     private UserInfoMapper userInfoMapper;
     @Resource
-    private FeignService feignService;
+    private TransFeign transFeign;
 
     @Override
-    public UserInfo getUserInfo(String userId) {
+    public UserInfoVO getUserInfo(String userId) {
         UserInfoVO userInfoVO = new UserInfoVO();
         Condition condition = new Condition(UserInfo.class);
         condition.createCriteria().andEqualTo("userId", userId);
@@ -51,19 +51,19 @@ public class UserInfoServiceImpl extends AbstractService<UserInfo> implements Us
         userInfoVO.setAvator(userInfo.getHeadImg());
         userInfoVO.setNickname(userInfo.getNickName());
         //购物等级相关,等级
-        ProdLifetimeVO shoppingProdLifeTime = prodLifetimeService.getProdLifeTime(userId, "SHOP", "shopping");
+        ProdLifetimeVO shoppingProdLifeTime = prodLifetimeService.getProdLifeTime(userId, "shopping", "SHOP");
         userInfoVO.setShoppingLevel(String.valueOf(shoppingProdLifeTime.getRank()));
         //成长等级相关
-        ProdLifetimeVO growProdLifeTime = prodLifetimeService.getProdLifeTime(userId, "USER", "sign");
+        ProdLifetimeVO growProdLifeTime = prodLifetimeService.getProdLifeTime(userId, "sign", "USER");
         userInfoVO.setGrowLevel(String.valueOf(growProdLifeTime.getRank()));
         userInfoVO.setDayToUp(String.valueOf(growProdLifeTime.getNeedCount()));
         //总积分,feign调用
         TransAccountLogSearchVO searchVO = new TransAccountLogSearchVO();
         searchVO.setUserId(userId);
         searchVO.setBizType(0);
-        Result transInfo = feignService.getTransInfo(searchVO);
+        Result<TransAccountLogVO> transInfo = transFeign.getTransInfo(searchVO);
         if (transInfo.getCode() == 200 && transInfo.getData() != null) {
-            TransAccountLogVO data = (TransAccountLogVO) (transInfo.getData());
+            TransAccountLogVO data = transInfo.getData();
             userInfoVO.setPoints(String.valueOf(data.getAmountPoints()));
         }
         //地址相关
@@ -71,6 +71,6 @@ public class UserInfoServiceImpl extends AbstractService<UserInfo> implements Us
         condition.createCriteria().andEqualTo("userId", userId);
         List<Address> list = addressService.findByCondition(addressCondition);
         userInfoVO.setAddressList(list);
-        return userInfo;
+        return userInfoVO;
     }
 }
