@@ -1,23 +1,26 @@
-package com.ebanma.cloud.mall.model.po;
+package com.ebanma.cloud.mall.model.vo;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import lombok.Data;
+
 import java.io.Serializable;
 import java.util.Date;
-import lombok.Data;
 
 /**
  * 
  * @TableName sku_category
  * 商品分类
  */
-@TableName(value ="sku_category")
 @Data
-public class SkuCategoryPO extends BasePO implements Serializable {
+public class SkuCategoryVO implements Serializable {
 
 
-    private static final long serialVersionUID = -7331111886455644727L;
+    private static final long serialVersionUID = -4950907928576586775L;
+
+    private String id;
+
     /**
      * 名称
      */
@@ -42,6 +45,9 @@ public class SkuCategoryPO extends BasePO implements Serializable {
      * 描述
      */
     private String description;
+
+
+
 
 
 }
