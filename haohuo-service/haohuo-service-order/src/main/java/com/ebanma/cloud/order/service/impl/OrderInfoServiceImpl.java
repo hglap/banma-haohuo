@@ -10,10 +10,15 @@ import com.ebanma.cloud.mall.api.vo.SkuInfoVO;
 import com.ebanma.cloud.order.dao.OrderInfoMapper;
 import com.ebanma.cloud.order.feign.SkuInfoQueryDTO;
 import com.ebanma.cloud.order.feign.countDTO;
+import com.ebanma.cloud.order.model.DisplayOrder;
 import com.ebanma.cloud.order.model.OrderInfo;
 import com.ebanma.cloud.order.model.dto.OrderInfoDTO;
 import com.ebanma.cloud.order.service.OrderInfoService;
 import com.ebanma.cloud.order.util.RedisUtil;
+import com.ebanma.cloud.trans.api.dto.TransAccountLogDTO;
+import com.ebanma.cloud.trans.api.dto.TransAccountLogSearchVO;
+import com.ebanma.cloud.trans.api.dto.TransAccountLogVO;
+import com.ebanma.cloud.trans.api.openfeign.TransFeign;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.rocketmq.spring.core.RocketMQTemplate;
@@ -27,6 +32,8 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 
 /**
@@ -46,6 +53,9 @@ public class OrderInfoServiceImpl implements OrderInfoService {
 
     @Autowired
     private SkuInfoServiceFeign skuInfoServiceFeign;
+
+    @Autowired
+    private TransFeign transFeign;
 
 
     //@Autowired
@@ -202,6 +212,22 @@ public class OrderInfoServiceImpl implements OrderInfoService {
         return ResultGenerator.genSuccessResult(map);
     }
 
+    @Override
+    public Result<DisplayOrder> getDisplayInfo(String skuId) {
+        DisplayOrder displayOrder = new DisplayOrder();
+        // 获取商品信息
+        Result<SkuInfoVO> skuInfoVOResult = skuInfoServiceFeign.queryById(skuId);
+        displayOrder.setSkuInfo(skuInfoVOResult.getData());
+        // 获取红包及积分
+        TransAccountLogSearchVO transAccountLogSearchVO =new TransAccountLogSearchVO();
+        transAccountLogSearchVO.setBizType(0);
+        Result<TransAccountLogVO> transInfo = transFeign.getTransInfo(transAccountLogSearchVO);
+        List<TransAccountLogDTO> redPacketList = transInfo.getData().getLogList().getList();
+        List<TransAccountLogDTO> redPackets = redPacketList.stream().filter(redPacket ->
+                redPacket.getRedPacketStatus() == 0 || redPacket.getRedPacketStatus() == 3).collect(Collectors.toList());
+
+        return null;
+    }
 
 
     //@Override

@@ -4,6 +4,7 @@ package com.ebanma.cloud.order.service;
 import com.ebanma.cloud.common.dto.Result;
 import com.ebanma.cloud.order.feign.SkuInfoQueryDTO;
 import com.ebanma.cloud.order.feign.countDTO;
+import com.ebanma.cloud.order.model.DisplayOrder;
 import com.ebanma.cloud.order.model.OrderInfo;
 import com.ebanma.cloud.order.model.dto.OrderInfoDTO;
 
@@ -25,4 +26,6 @@ public interface OrderInfoService {
     int save(OrderInfo orderInfo);
 
     Result<Map<String, countDTO>> querySkuSaleCount(SkuInfoQueryDTO skuInfoQueryDTO);
+
+    Result<DisplayOrder> getDisplayInfo(String skuId);
 }

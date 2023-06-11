@@ -4,6 +4,7 @@ import com.ebanma.cloud.common.dto.Result;
 import com.ebanma.cloud.common.dto.ResultGenerator;
 import com.ebanma.cloud.order.feign.SkuInfoQueryDTO;
 import com.ebanma.cloud.order.feign.countDTO;
+import com.ebanma.cloud.order.model.DisplayOrder;
 import com.ebanma.cloud.order.model.OrderInfo;
 import com.ebanma.cloud.order.model.dto.OrderInfoDTO;
 import com.ebanma.cloud.order.service.OrderInfoService;
@@ -24,6 +25,12 @@ import java.util.Map;
 public class OrderInfoController {
     @Resource
     private OrderInfoService orderInfoService;
+
+    @PostMapping("/getDisplayInfo")
+    public Result<DisplayOrder> getDisplayInfo(@RequestParam("skuId") String skuId) {
+        return orderInfoService.getDisplayInfo(skuId);
+    }
+
 
     @PostMapping("/add")
     public Result add(@RequestBody OrderInfo orderInfo) {
