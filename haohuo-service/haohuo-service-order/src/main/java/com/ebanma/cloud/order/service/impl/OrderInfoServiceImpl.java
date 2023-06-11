@@ -16,8 +16,11 @@ import com.ebanma.cloud.order.service.OrderInfoService;
 import com.ebanma.cloud.order.util.RedisUtil;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.rocketmq.spring.core.RocketMQTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
+import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -47,6 +50,9 @@ public class OrderInfoServiceImpl implements OrderInfoService {
 
     //@Autowired
     //private RocketMQTemplate rocketMQTemplate;
+
+    @Autowired
+    private KafkaTemplate kafkaTemplate;
 
 
     @Override
@@ -111,7 +117,24 @@ public class OrderInfoServiceImpl implements OrderInfoService {
         Object execute = redisUtil.getRedisTemplate().execute(redisScript, keyList, 2+"");
 
         if ("1".equals(execute.toString())) {
-            // 成功后，发送消息
+            // 新增订单
+
+
+            // 调用支付接口支付订单
+
+
+            // 支付成功后，发送消息更新库存
+            kafkaTemplate.send("userlog","测试消息");
+
+
+            // 支付成功后调用更新订单状态方法，扣减红包方法，扣减积分方法（全局事务）
+
+
+            // 取消支付或支付失败则回滚redis中库存更改订单状态为已取消
+
+
+
+
             //rocketMQTemplate.syncSend("hgl-order-topic"
             //        , MessageBuilder.withPayload("测试消息").build(),3000,3);
             System.out.println("扣减库存成功");

@@ -1,7 +1,6 @@
 package com.ebanma.cloud.mall.api.openfeign;
 
 import com.ebanma.cloud.common.dto.Result;
-import com.ebanma.cloud.common.dto.ResultGenerator;
 import com.ebanma.cloud.mall.api.vo.SkuInfoVO;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;

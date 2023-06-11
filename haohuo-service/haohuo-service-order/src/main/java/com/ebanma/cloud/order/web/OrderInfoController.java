@@ -28,7 +28,7 @@ public class OrderInfoController {
     @PostMapping("/add")
     public Result add(@RequestBody OrderInfo orderInfo) {
         orderInfoService.save(orderInfo);
-        return ResultGenerator.genSuccessResult();
+        return ResultGenerator.genSuccessResult("操作成功");
     }
 
     @PostMapping("/list")
@@ -55,7 +55,7 @@ public class OrderInfoController {
         } catch (Exception e) {
             return ResultGenerator.genFailResult("操作失败");
         }
-        return ResultGenerator.genSuccessResult();
+        return ResultGenerator.genSuccessResult("操作成功");
     }
 
     @PostMapping("/querySkuSaleCount")
