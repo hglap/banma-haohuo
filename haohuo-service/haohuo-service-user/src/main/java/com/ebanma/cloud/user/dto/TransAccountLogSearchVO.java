@@ -1,5 +1,4 @@
-package com.ebanma.cloud.trans.api.dto;
-
+package com.ebanma.cloud.user.dto;
 
 /**
  * @author 鹿胜宝

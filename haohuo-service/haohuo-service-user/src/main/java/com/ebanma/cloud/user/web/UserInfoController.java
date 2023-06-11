@@ -6,12 +6,12 @@ import com.ebanma.cloud.user.model.UserInfo;
 import com.ebanma.cloud.user.service.UserInfoService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.apache.rocketmq.spring.core.RocketMQTemplate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -20,6 +20,10 @@ import java.util.List;
 @RestController
 @RequestMapping("/user/info")
 public class UserInfoController {
+
+    @Autowired
+    private RocketMQTemplate rocketMQTemplate;
+
     @Resource
     private UserInfoService userInfoService;
 
@@ -53,5 +57,29 @@ public class UserInfoController {
         List<UserInfo> list = userInfoService.findAll();
         PageInfo pageInfo = new PageInfo(list);
         return ResultGenerator.genSuccessResult(pageInfo);
+    }
+
+
+    @PostMapping("/testMQ")
+    public void testMQ() {
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("principalId", "001");
+        map.put("principalType", "sign");
+        map.put("productCode", "USER");
+        map.put("amount",0L);
+        rocketMQTemplate.convertAndSend("prod-topic", map);
+
+    }
+
+    /**
+     * 获取用户详情
+     *
+     * @param userId
+     * @return
+     */
+    @GetMapping("/getUserInfo")
+    public Result getUserInfo(@RequestParam String userId) {
+        UserInfo userInfo = userInfoService.getUserInfo(userId);
+        return ResultGenerator.genSuccessResult(userInfo);
     }
 }

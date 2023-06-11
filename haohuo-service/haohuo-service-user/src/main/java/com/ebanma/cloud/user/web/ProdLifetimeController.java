@@ -2,14 +2,12 @@ package com.ebanma.cloud.user.web;
 
 import com.ebanma.cloud.common.dto.Result;
 import com.ebanma.cloud.common.dto.ResultGenerator;
-import com.ebanma.cloud.user.model.ProdLifetime;
 import com.ebanma.cloud.user.service.ProdLifetimeService;
+import com.ebanma.cloud.user.vo.ProdLifetimeVO;
+import com.ebanma.cloud.user.vo.ShoppingProdLifeTime;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -24,7 +22,7 @@ public class ProdLifetimeController {
     private ProdLifetimeService prodLifetimeService;
 
     @PostMapping("/add")
-    public Result add(ProdLifetime prodLifetime) {
+    public Result add(@RequestBody com.ebanma.cloud.user.model.ProdLifetime prodLifetime) {
         prodLifetimeService.save(prodLifetime);
         return ResultGenerator.genSuccessResult();
     }
@@ -36,22 +34,48 @@ public class ProdLifetimeController {
     }
 
     @PostMapping("/update")
-    public Result update(ProdLifetime prodLifetime) {
+    public Result update(@RequestBody com.ebanma.cloud.user.model.ProdLifetime prodLifetime) {
         prodLifetimeService.update(prodLifetime);
         return ResultGenerator.genSuccessResult();
     }
 
     @PostMapping("/detail")
     public Result detail(@RequestParam Integer id) {
-        ProdLifetime prodLifetime = prodLifetimeService.findById(id);
+        com.ebanma.cloud.user.model.ProdLifetime prodLifetime = prodLifetimeService.findById(id);
         return ResultGenerator.genSuccessResult(prodLifetime);
     }
 
     @PostMapping("/list")
     public Result list(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "0") Integer size) {
         PageHelper.startPage(page, size);
-        List<ProdLifetime> list = prodLifetimeService.findAll();
+        List<com.ebanma.cloud.user.model.ProdLifetime> list = prodLifetimeService.findAll();
         PageInfo pageInfo = new PageInfo(list);
         return ResultGenerator.genSuccessResult(pageInfo);
+    }
+
+    /**
+     * 购物成长等级查询的接口
+     *
+     * @param userId
+     * @return
+     */
+    @PostMapping("/getShoppingLevel")
+    public Result ShoppingLevel(@RequestParam String userId) {
+        ShoppingProdLifeTime shoppingProdLifeTime = prodLifetimeService.getShoppingProdLifeTime(userId);
+        return ResultGenerator.genSuccessResult(shoppingProdLifeTime);
+    }
+
+    /**
+     * 产品帐（登录、购物等级详情数据）查询通用接口
+     *
+     * @param userId
+     * @param principalType
+     * @param productCode
+     * @return
+     */
+    @PostMapping("/getProdDetail")
+    public Result ShoppingLevel(@RequestParam String userId, String principalType, String productCode) {
+        ProdLifetimeVO prodLifeTimeVO = prodLifetimeService.getProdLifeTime(userId, principalType, productCode);
+        return ResultGenerator.genSuccessResult(prodLifeTimeVO);
     }
 }

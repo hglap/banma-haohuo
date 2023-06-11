@@ -13,3 +13,10 @@ spring:
 mybatis:
   mapper-locations: mapper/*.xml
 
+rocketmq:
+  name-server: 30.16.96.140:9090
+  producer:
+    group: group1
+logging:
+  level:
+    com.ebanma.cloud.user.dao: debug
