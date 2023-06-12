@@ -1,4 +1,4 @@
-package com.ebanma.cloud.seckill.model;
+package com.ebanma.cloud.seckill.globalException;
 
 import com.ebanma.cloud.common.dto.Result;
 import com.ebanma.cloud.common.dto.ResultGenerator;

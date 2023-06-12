@@ -1,12 +1,9 @@
 package com.ebanma.cloud.seckill.model.dto;
 
-import com.ebanma.cloud.seckill.model.BaseDto;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 import java.sql.Timestamp;
-import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
 
 /**
  * @author 崔国垲

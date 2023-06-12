@@ -1,4 +1,4 @@
-package com.ebanma.cloud.seckill.model;
+package com.ebanma.cloud.seckill.globalException;
 
 import org.apache.commons.lang3.StringUtils;
 

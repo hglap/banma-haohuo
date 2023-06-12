@@ -2,10 +2,12 @@ package com.ebanma.cloud.seckill.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.ebanma.cloud.common.core.AbstractService;
+import com.ebanma.cloud.common.dto.Result;
 import com.ebanma.cloud.common.util.BeanUtil;
 import com.ebanma.cloud.common.util.IdWorker;
+import com.ebanma.cloud.game.api.vo.GameEggRuleVO;
 import com.ebanma.cloud.seckill.dao.ActivityMapper;
-import com.ebanma.cloud.seckill.model.BusinessException;
+import com.ebanma.cloud.seckill.globalException.BusinessException;
 import com.ebanma.cloud.seckill.model.dto.ActivitySaveDto;
 import com.ebanma.cloud.seckill.model.dto.ActivitySearchInfoDto;
 import com.ebanma.cloud.seckill.model.dto.SeckillMessageDto;
@@ -14,6 +16,8 @@ import com.ebanma.cloud.seckill.model.vo.ActivityGetInfoVo;
 import com.ebanma.cloud.seckill.model.vo.ActivitySearchInfoVo;
 import com.ebanma.cloud.seckill.model.vo.SeckillGit;
 import com.ebanma.cloud.seckill.service.ActivityService;
+import com.ebanma.cloud.seckill.service.GameServiceGateway;
+import com.ebanma.cloud.seckill.service.KafkaTransMessage;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 
@@ -24,12 +28,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.redis.core.BoundListOperations;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.kafka.support.SendResult;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.concurrent.ListenableFutureCallback;
 
 import javax.annotation.Resource;
 import java.sql.Timestamp;
@@ -48,7 +49,7 @@ import java.util.concurrent.TimeUnit;
  */
 @Service
 @Transactional(rollbackFor = RuntimeException.class)
-public class ActivityServiceImpl extends AbstractService<Activity> implements ActivityService {
+public class ActivityServiceImpl extends AbstractService<Activity> implements ActivityService{
 
     private Logger log = LoggerFactory.getLogger(ActivityServiceImpl.class);
 
@@ -61,10 +62,18 @@ public class ActivityServiceImpl extends AbstractService<Activity> implements Ac
     @Resource
     private RedissonClient redissonClient;
 
+    @Resource
+    private GameServiceGateway gameServiceGateway;
+
+    @Resource
+    private KafkaTransMessage kafkaTransMessage;
 
     private final StringBuffer stringBuffer = new StringBuffer();
 
     private IdWorker id = new IdWorker();
+
+    public ActivityServiceImpl() {
+    }
 
     @Override
     public PageInfo searchInfoBypage(ActivitySearchInfoDto activitySearchInfoDto) {
@@ -116,6 +125,7 @@ public class ActivityServiceImpl extends AbstractService<Activity> implements Ac
     }
 
     private void getGiftList(long amount, long during) {
+        Result<List<GameEggRuleVO>> result = gameServiceGateway.percentage();
         String key = "ActivityGift"+redisTemplate.opsForValue().get("activityId");
         for(int i = 0; i < amount; i++) {
            String gitName = stringBuffer.append("积分").append(i).toString();
@@ -125,8 +135,13 @@ public class ActivityServiceImpl extends AbstractService<Activity> implements Ac
         redisTemplate.expire("ActivityGift",during,TimeUnit.MILLISECONDS);
     }
 
+
+
     @Override
     public Object getRedisInfo(String activity) {
+        System.out.println("_______________________________");
+        Result<List<GameEggRuleVO>> result = gameServiceGateway.percentage();
+        System.out.println(JSON.toJSONString(result,true));
         System.out.println("_______________________________");
         BoundListOperations<String,Object> bound = redisTemplate.boundListOps("ActivityGift");
         Activity activity1 = (Activity) redisTemplate.opsForValue().get("activity");
@@ -191,7 +206,7 @@ public class ActivityServiceImpl extends AbstractService<Activity> implements Ac
                     gitName
             );
             // TODO 将消息发送到kafka中，并校验返回值
-            sendMessage(seckillMessageDto);
+            kafkaTransMessage.sendMessageByKafka(JSON.toJSONString(seckillMessageDto));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }finally {
@@ -203,22 +218,7 @@ public class ActivityServiceImpl extends AbstractService<Activity> implements Ac
         return seckillGit;
     }
 
-    @Resource
-    private KafkaTemplate<String, String> kafkaTemplate;
 
-    public boolean sendMessage(SeckillMessageDto msg) {
-        kafkaTemplate.send("seckill", JSON.toJSONString(msg)).addCallback(new ListenableFutureCallback<SendResult<String, String>>() {
-            @Override
-            public void onFailure(Throwable ex) {
-                log.error("发送消息失败：{}" , ex.getMessage());
-            }
-            @Override
-            public void onSuccess(SendResult<String, String> result) {
-
-            }
-        });
-        return true;
-    }
 
     private long getDuration() {
         long end = (long)redisTemplate.opsForValue().get("activityEndTimeMillis");

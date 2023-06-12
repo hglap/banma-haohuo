@@ -1,4 +1,4 @@
-package com.ebanma.cloud.seckill.model;
+package com.ebanma.cloud.seckill.model.enumUtil;
 
 /**
  * @author 崔国垲

@@ -6,5 +6,5 @@ package com.ebanma.cloud.seckill.service;
  */
 public interface KafkaTransMessage {
 
-    String sendMessageByKafka(String message);
+    boolean sendMessageByKafka(String message);
 }
