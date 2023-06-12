@@ -37,9 +37,12 @@ public interface SkuInfoService extends IService<SkuInfoPO> {
     Boolean del(String id);
 
     /**
+     * 根据商户IdList查询商品数量
      * @param idList
      * @return
      */
     Map<String, Long> getSkuInfoCountByStoreIdList(List<String> idList);
+
+
 
 }

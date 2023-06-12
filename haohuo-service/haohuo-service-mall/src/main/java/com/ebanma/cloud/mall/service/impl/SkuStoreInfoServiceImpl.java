@@ -3,25 +3,27 @@ package com.ebanma.cloud.mall.service.impl;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollectionUtil;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.ebanma.cloud.mall.dao.SkuInfoMapper;
-import com.ebanma.cloud.mall.model.dto.SkuInfoInsertDTO;
+import com.ebanma.cloud.common.dto.Result;
+import com.ebanma.cloud.common.enums.ResultCode;
 import com.ebanma.cloud.mall.model.dto.SkuStoreInfoEditDTO;
 import com.ebanma.cloud.mall.model.dto.SkuStoreInfoInsertDTO;
 import com.ebanma.cloud.mall.model.dto.SkuStoreInfoSearchDTO;
 import com.ebanma.cloud.mall.model.enums.SkuUseStatusTypeEnum;
-import com.ebanma.cloud.mall.model.po.SkuInfoPO;
 import com.ebanma.cloud.mall.model.po.SkuStoreInfoPO;
 import com.ebanma.cloud.mall.model.vo.SkuStoreInfoVO;
 import com.ebanma.cloud.mall.service.SkuInfoService;
 import com.ebanma.cloud.mall.service.SkuStoreInfoService;
 import com.ebanma.cloud.mall.dao.SkuStoreInfoMapper;
+import com.ebanma.cloud.order.api.dto.SkuInfoQueryDTO;
+import com.ebanma.cloud.order.api.dto.countDTO;
+import com.ebanma.cloud.order.api.openfeign.OrderInfoServiceFeign;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.BeanUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -36,11 +38,17 @@ import java.util.stream.Collectors;
 public class SkuStoreInfoServiceImpl extends ServiceImpl<SkuStoreInfoMapper, SkuStoreInfoPO>
     implements SkuStoreInfoService{
 
+    private Logger logger = LoggerFactory.getLogger(SkuStoreInfoServiceImpl.class);
+
     @Autowired
     private SkuStoreInfoMapper skuStoreInfoMapper;
 
     @Autowired
     private SkuInfoService skuInfoService;
+
+
+    @Autowired
+    private OrderInfoServiceFeign orderInfoServiceFeign;
 
     /**
      * 分页查询商家列表
@@ -74,12 +82,54 @@ public class SkuStoreInfoServiceImpl extends ServiceImpl<SkuStoreInfoMapper, Sku
             skuStoreInfoVO.setProductCount(skuInfoCountByStoreIdMap.get(skuStoreInfoVO.getId()));
         });
 
-        // TODO 调用【订单】查询商家的营业金额，订单数量
+        /* 调用【订单】查询商家的营业金额，订单数量 */
+        Map<String, countDTO> storeBusinessAmountAndOrderCountByStoreIdListMap = getStoreBusinessAmountAndOrderCountByStoreIdList(idList);
+        if (storeBusinessAmountAndOrderCountByStoreIdListMap != null) {
+            skuStoreInfoVOList.forEach(skuStoreInfoVO -> {
+                countDTO countDTO = storeBusinessAmountAndOrderCountByStoreIdListMap.get(skuStoreInfoVO.getId());
+                if(countDTO != null){
+                    skuStoreInfoVO.setIncome(countDTO.getAmountCount())
+                            .setOrderCount(countDTO.getOrderCount());
+                }
+            });
+        }
+
 
 
         pageInfo.setList(skuStoreInfoVOList);
         return pageInfo;
     }
+
+    /**
+     * 根据商户IdList查询商家营业金额,订单数量
+     * @param idList
+     * @return
+     */
+    private Map<String, countDTO> getStoreBusinessAmountAndOrderCountByStoreIdList(List<String> idList) {
+        if(CollectionUtil.isEmpty(idList)){
+            return null;
+        }
+        SkuInfoQueryDTO skuInfoQueryDTO = new SkuInfoQueryDTO();
+        skuInfoQueryDTO.setMerchantIdList(idList);
+        Result<Map<String, countDTO>> result = null;
+        Map<String, countDTO> map = null;
+        try {
+            result = orderInfoServiceFeign.querySkuSaleCount(skuInfoQueryDTO);
+            if(ResultCode.SUCCESS.code() == result.getCode()){
+                map = result.getData();
+            }
+            logger.info("调用订单服务获取商家营业金额及订单数量成功！");
+            logger.info("result = {}", result);
+        }catch (Exception e){
+            logger.info("调用订单服务获取商家营业金额及订单数量失败!");
+            logger.info("商家IdList:{}",idList);
+            throw new RuntimeException(e);
+        }
+        return map;
+    }
+
+
+
 
 
     /**

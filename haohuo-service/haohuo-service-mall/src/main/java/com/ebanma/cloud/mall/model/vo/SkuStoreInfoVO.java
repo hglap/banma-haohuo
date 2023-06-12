@@ -1,6 +1,7 @@
 package com.ebanma.cloud.mall.model.vo;
 
 import lombok.Data;
+import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -11,6 +12,7 @@ import java.math.BigDecimal;
  * 商家信息
  */
 @Data
+@Accessors(chain = true)
 public class SkuStoreInfoVO implements Serializable {
 
     private static final long serialVersionUID = -3322758266892160421L;

@@ -5,7 +5,6 @@ import cn.hutool.core.collection.CollectionUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ebanma.cloud.common.dto.Result;
-import com.ebanma.cloud.common.enums.ResultCode;
 import com.ebanma.cloud.mall.model.dto.*;
 import com.ebanma.cloud.mall.model.enums.SkuAttachmentRelationTypeEnum;
 import com.ebanma.cloud.mall.model.enums.SkuRecordTypeEnum;
@@ -20,7 +19,7 @@ import com.ebanma.cloud.mall.dao.SkuInfoMapper;
 import com.ebanma.cloud.mall.service.SkuInventoryService;
 import com.ebanma.cloud.mall.service.SkuRecordService;
 import com.ebanma.cloud.order.api.dto.SkuInfoQueryDTO;
-import com.ebanma.cloud.order.api.dto.SkuSaleCountDTO;
+import com.ebanma.cloud.order.api.dto.countDTO;
 import com.ebanma.cloud.order.api.openfeign.OrderInfoServiceFeign;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -112,11 +111,11 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoMapper, SkuInfoPO>
 
         /* 调用【订单服务】查询商品销量 */
         /* 查询已卖数量【调用订单】*/
-        Map<String, SkuSaleCountDTO> saleCountMap = getSaleCount(idList);
+        Map<String, countDTO> saleCountMap = getSaleCount(idList);
         skuInfoVOList.forEach(skuInfoVO -> {
             Integer skuSaleCount = Optional.ofNullable(saleCountMap)
                     .map(m -> m.get(skuInfoVO.getId()))
-                    .map(SkuSaleCountDTO::getSkuSaleCount)
+                    .map(countDTO::getSkuSaleCount)
                     .orElseGet(null);
             skuInfoVO.setSaledCount(skuSaleCount);
         });
@@ -131,10 +130,10 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoMapper, SkuInfoPO>
      * @param idList
      * @return
      */
-    private Map<String, SkuSaleCountDTO> getSaleCount(List<String> idList){
+    private Map<String, countDTO> getSaleCount(List<String> idList){
         SkuInfoQueryDTO skuInfoQueryDTO = new SkuInfoQueryDTO();
         skuInfoQueryDTO.setSkuIDList(idList);
-        Result<Map<String, SkuSaleCountDTO>> mapResult = new Result<Map<String, SkuSaleCountDTO>>();
+        Result<Map<String, countDTO>> mapResult = new Result<Map<String, countDTO>>();
         try{
             mapResult = orderInfoServiceFeign.querySkuSaleCount(skuInfoQueryDTO);
         }catch (Exception e){
@@ -157,10 +156,10 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoMapper, SkuInfoPO>
         List<String> idList = new ArrayList<>();
         idList.add(id);
 
-        Map<String, SkuSaleCountDTO> saleCountMap = getSaleCount(idList);
+        Map<String, countDTO> saleCountMap = getSaleCount(idList);
         Integer skuSaleCount = Optional.ofNullable(saleCountMap)
                 .map(m -> m.get(id))
-                .map(SkuSaleCountDTO::getSkuSaleCount)
+                .map(countDTO::getSkuSaleCount)
                 .orElseGet(null);
         skuInfoVO.setSaledCount(skuSaleCount);
 
