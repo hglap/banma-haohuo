@@ -20,4 +20,5 @@ public interface LoginService {
 
     Result updatePassword(Password password);
 
+    Result checkCode(Password password);
 }

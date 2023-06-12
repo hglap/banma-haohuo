@@ -27,9 +27,9 @@ public class LoginServiceImpl implements LoginService {
     @Resource
     private UserInfoMapper userInfoMapper;
 
-    private final String SMS_CODE_KEY_LOGIN = "smsCode:login";
+    private final String SMS_CODE_KEY_LOGIN = "smsCode:login:";
 
-    private final String SMS_CODE_KEY_PASSWORD = "smsCode:password";
+    private final String SMS_CODE_KEY_PASSWORD = "smsCode:password:";
 
     @Autowired
     private RedisUtil redisUtil;
@@ -45,7 +45,7 @@ public class LoginServiceImpl implements LoginService {
         if(StringUtils.isBlank(smsCode)){
             return ResultGenerator.genFailResult("请重新获取验证码");
         }
-        if(userLogin.getCode().equals(smsCode)){
+        if(userLogin.getSmsCode().equals(smsCode)){
             String token = JwtUtil.createJWT("appLogin",userLogin.getUserPhone(),null);
             redisUtil.set(token,"OK");
             LoginVO loginVO = new LoginVO();
@@ -92,7 +92,7 @@ public class LoginServiceImpl implements LoginService {
             return ResultGenerator.genFailResult("手机号不合法");
         }
         //根据不同用处在redis中设置验证码
-        if(smsCode.getType().equals("login")){
+        if(smsCode.getType().equals("login_code")){
             //登录
             UserInfo userInfo = userInfoMapper.selectByPhone(smsCode.getUserPhone());
             if(userInfo == null) {
@@ -110,7 +110,7 @@ public class LoginServiceImpl implements LoginService {
                 smsvo.setSmsCode(code);
                 return ResultGenerator.genSuccessResult(smsvo);
             }
-        } else if (smsCode.getType().equals("pass")) {
+        } else if (smsCode.getType().equals("password_code")) {
             //密码服务
             String code = NumberUtil.genRandomNum(6)+"";
             redisUtil.set(SMS_CODE_KEY_PASSWORD+smsCode.getUserPhone(),code,5l, TimeUnit.MINUTES);
@@ -145,10 +145,10 @@ public class LoginServiceImpl implements LoginService {
                 if(StringUtils.isBlank(token)){
                     return ResultGenerator.genFailResult("请重新获取验证码");
                 }
-                if(password.getSMSCode().equals(token)){
+                if(password.getSmsCode().equals(token)){
                     //校验通过
-                    userInfoMapper.updateByPrimaryKey(userInfo);
-                    return ResultGenerator.genSuccessResult("注册成功");
+                    userInfoMapper.updateByPrimaryKeySelective(userInfo);
+                    return ResultGenerator.genSuccessResult("修改成功");
                 }else{
                     //校验不通过
                     return ResultGenerator.genFailResult("验证码错误");
@@ -158,6 +158,16 @@ public class LoginServiceImpl implements LoginService {
             }
         }
         return null;
+    }
+
+    @Override
+    public Result checkCode(Password password) {
+        System.out.println(password);
+        if(password.getSmsCode().equals((String) redisUtil.get(SMS_CODE_KEY_PASSWORD+password.getUserPhone()))){
+            return ResultGenerator.genSuccessResult("ok");
+        }else{
+            return ResultGenerator.genFailResult("fail");
+        }
     }
 
 }

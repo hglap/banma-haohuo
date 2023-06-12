@@ -24,7 +24,7 @@ public class LoginController {
 
     @PostMapping("/login")
     public Result login(UserLogin userLogin) {
-        System.out.println(userLogin.getUserPhone());
+        System.out.println(userLogin);
         if(userLogin.getType().equals(UserLoginEnum.APP_PHONE_LOGIN.getType())){
             return loginService.appCodeLogin(userLogin);
         }else if(userLogin.getType().equals(UserLoginEnum.APP_PASSWORD_LOGIN.getType())){
@@ -37,6 +37,7 @@ public class LoginController {
 
     @PostMapping("/getSmsCode")
     public Result getSMSCode(SMSCode smsCode){
+
         return loginService.getSMSCode(smsCode);
     }
 
@@ -50,4 +51,8 @@ public class LoginController {
         return BaseContextHandler.getUserId();
     };
 
+    @PostMapping("/checkCode")
+    public Result checkCode(Password password){
+        return loginService.checkCode(password);
+    }
 }
