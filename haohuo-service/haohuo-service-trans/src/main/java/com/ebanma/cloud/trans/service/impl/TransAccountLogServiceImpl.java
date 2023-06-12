@@ -20,10 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Condition;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
@@ -104,6 +101,10 @@ public class TransAccountLogServiceImpl extends AbstractService<TransAccountLog>
             transInfo.setTransTypeCode("0003");
             transInfo.setTransId(userId + "0003");
             transInfo.setStatus("1");
+            transInfo.setCreateTime(new Date());
+            transInfo.setCreator(userId);
+            transInfo.setModifiedTime(new Date());
+            transInfo.setModifier(userId);
             transInfoService.save(transInfo);
         }
         //如果请求中未携带transId，此处补全
@@ -148,6 +149,8 @@ public class TransAccountLogServiceImpl extends AbstractService<TransAccountLog>
         }
         //4.账务订单状态维护
         transOrder.setOrderStatus(1);
+        transOrder.setCreateBy(userId);
+        transOrder.setCreateOn(new Date());
         transOrderService.update(transOrder);
     }
 
