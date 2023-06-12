@@ -20,7 +20,7 @@ import java.util.List;
 * Created by CodeGenerator on 2023/06/06.
 */
 @RestController
-@RequestMapping("/user/info")
+@RequestMapping("/userInfo/info")
 public class UserInfoController {
 
     @Autowired
@@ -62,16 +62,16 @@ public class UserInfoController {
     }
 
 
-    @PostMapping("/testMQ")
-    public void testMQ() {
-        HashMap<String, Object> map = new HashMap<>();
-        map.put("principalId", BaseContextHandler.getUserId());
-        map.put("principalType", "sign");
-        map.put("productCode", "USER");
-        map.put("amount",0L);
-        rocketMQTemplate.convertAndSend("prod-topic", map);
-
-    }
+//    @PostMapping("/testMQ")
+//    public void testMQ() {
+//        HashMap<String, Object> map = new HashMap<>();
+//        map.put("principalId", BaseContextHandler.getUserId());
+//        map.put("principalType", "sign");
+//        map.put("productCode", "USER");
+//        map.put("amount",0L);
+//        rocketMQTemplate.convertAndSend("prod-topic", map);
+//
+//    }
 
     /**
      * 获取用户详情
