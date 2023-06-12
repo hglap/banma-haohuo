@@ -54,7 +54,7 @@ public class ResultGenerator {
         return result;
     }
 
-    public static Result genFirstLoginResult(String message,String data) {
+    public static Result genFirstLoginResult(String message,Object data) {
         Result result = new Result();
         result.setCode(ResultCode.UNREGISTER.code());
         if (!StringUtils.hasText(message)) {
