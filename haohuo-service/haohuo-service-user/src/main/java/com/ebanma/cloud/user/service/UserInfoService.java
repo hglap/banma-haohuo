@@ -2,6 +2,7 @@ package com.ebanma.cloud.user.service;
 
 
 import com.ebanma.cloud.common.core.Service;
+import com.ebanma.cloud.common.dto.Result;
 import com.ebanma.cloud.user.model.UserInfo;
 import com.ebanma.cloud.user.vo.UserInfoVO;
 
@@ -11,4 +12,5 @@ import com.ebanma.cloud.user.vo.UserInfoVO;
 public interface UserInfoService extends Service<UserInfo> {
 
     UserInfoVO getUserInfo(String userId);
+
 }

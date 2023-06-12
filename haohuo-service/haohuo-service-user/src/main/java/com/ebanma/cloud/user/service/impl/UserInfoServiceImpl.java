@@ -73,4 +73,5 @@ public class UserInfoServiceImpl extends AbstractService<UserInfo> implements Us
         userInfoVO.setAddressList(list);
         return userInfoVO;
     }
+
 }
