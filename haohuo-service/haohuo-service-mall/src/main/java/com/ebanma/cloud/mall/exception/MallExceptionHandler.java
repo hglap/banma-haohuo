@@ -20,7 +20,7 @@ public class MallExceptionHandler {
     public ModelAndView throwableHandler(MallException exception) {
         exception.printStackTrace();
         ModelAndView modelAndView = new ModelAndView(new MappingJackson2JsonView());
-        modelAndView.addObject("code", 500);
+        modelAndView.addObject("code", 200);
         modelAndView.addObject("message", exception.getLocalizedMessage());
         modelAndView.addObject("data", null);
         modelAndView.addObject("success", false);
