@@ -3,6 +3,7 @@ package com.ebanma.cloud.user.web;
 import com.ebanma.cloud.common.dto.Result;
 import com.ebanma.cloud.common.dto.ResultGenerator;
 import com.ebanma.cloud.common.enums.UserLoginEnum;
+import com.ebanma.cloud.user.common.BaseContextHandler;
 import com.ebanma.cloud.user.model.Password;
 import com.ebanma.cloud.user.model.SMSCode;
 import com.ebanma.cloud.user.model.UserLogin;
@@ -42,5 +43,10 @@ public class LoginController {
     public Result updatePassword(@RequestBody Password password){
         return loginService.updatePassword(password);
     }
+
+    @GetMapping("/admin/getUserInfoByToken")
+    public String getUserIdByToken(){
+        return BaseContextHandler.getUserId();
+    };
 
 }

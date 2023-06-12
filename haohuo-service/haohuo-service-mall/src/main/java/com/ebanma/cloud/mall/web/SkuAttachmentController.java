@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Map;
 
@@ -39,25 +40,25 @@ public class SkuAttachmentController {
 
     @ApiOperation(value = "根据关联ID和关联类型查询附件列表", notes = "【APP】根据关联ID和关联类型查询附件列表", httpMethod = "POST")
     @PostMapping("/getAttachmentList")
-    public Result<List<SkuAttachmentVO>> getAttachmentList(@RequestBody SkuAttachmentSearchDTO skuAttachmentSearchDTO){
+    public Result<List<SkuAttachmentVO>> getAttachmentList(@RequestBody @NotNull(message="关联ID列表和关联类型不能为空") SkuAttachmentSearchDTO skuAttachmentSearchDTO){
         return ResultGenerator.genSuccessResult(skuAttachmentService.getAttachmentList(skuAttachmentSearchDTO));
     }
 
     @ApiOperation(value = "根据关联ID列表和关联类型查询附件列表", notes = "【APP】根据关联ID列表和关联类型查询附件列表", httpMethod = "POST")
     @PostMapping("/getAttachmentListByRelationIdListAndRelationType")
-    public Result<Map<String,List<SkuAttachmentVO>>> getAttachmentMap(@RequestBody SkuAttachmentSearchDTO skuAttachmentSearchDTO){
+    public Result<Map<String,List<SkuAttachmentVO>>> getAttachmentMap(@RequestBody @NotNull(message="关联ID列表和关联类型不能为空") SkuAttachmentSearchDTO skuAttachmentSearchDTO){
         return ResultGenerator.genSuccessResult(skuAttachmentService.getAttachmentMap(skuAttachmentSearchDTO));
     }
 
     @ApiOperation(value = "根据ID查询附件", notes = "【APP】根据ID查询附件", httpMethod = "GET")
     @GetMapping("/queryById")
-    public Result<SkuAttachmentVO> getAttachmentList(@NotEmpty String id){
+    public Result<SkuAttachmentVO> getAttachmentList(@NotEmpty(message = "附件ID不能为空") String id){
         return ResultGenerator.genSuccessResult(skuAttachmentService.queryById(id));
     }
 
     @ApiOperation(value = "根据关联ID及关联类型删除附件", notes = "根据关联ID及关联类型删除附件", httpMethod = "POST")
     @GetMapping("/del")
-    public Result<Boolean> del(@RequestBody SkuAttachmentDTO skuAttachmentDTO) {
+    public Result<Boolean> del(@RequestBody @NotNull(message = "入参不能为空") SkuAttachmentDTO skuAttachmentDTO) {
         return ResultGenerator.genSuccessResult(skuAttachmentService.del(skuAttachmentDTO));
     }
 

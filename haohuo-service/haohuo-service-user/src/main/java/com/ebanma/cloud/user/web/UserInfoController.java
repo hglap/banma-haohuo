@@ -2,6 +2,7 @@ package com.ebanma.cloud.user.web;
 
 import com.ebanma.cloud.common.dto.Result;
 import com.ebanma.cloud.common.dto.ResultGenerator;
+import com.ebanma.cloud.user.common.BaseContextHandler;
 import com.ebanma.cloud.user.model.UserInfo;
 import com.ebanma.cloud.user.service.UserInfoService;
 import com.ebanma.cloud.user.vo.UserInfoVO;
@@ -64,7 +65,7 @@ public class UserInfoController {
     @PostMapping("/testMQ")
     public void testMQ() {
         HashMap<String, Object> map = new HashMap<>();
-        map.put("principalId", "001");
+        map.put("principalId", BaseContextHandler.getUserId());
         map.put("principalType", "sign");
         map.put("productCode", "USER");
         map.put("amount",0L);

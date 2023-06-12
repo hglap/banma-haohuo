@@ -14,13 +14,10 @@ import lombok.Data;
  */
 @TableName(value ="sku_category")
 @Data
-public class SkuCategoryPO implements Serializable {
-    /**
-     * 
-     */
-    @TableId
-    private String id;
+public class SkuCategoryPO extends BasePO implements Serializable {
 
+
+    private static final long serialVersionUID = -7331111886455644727L;
     /**
      * 名称
      */
@@ -46,55 +43,5 @@ public class SkuCategoryPO implements Serializable {
      */
     private String description;
 
-    /**
-     * 
-     */
-    private Long version;
 
-    /**
-     * 
-     */
-    private Date createTime;
-
-    /**
-     * 
-     */
-    private String createUser;
-
-    /**
-     * 
-     */
-    private Date lastModified;
-
-    /**
-     * 
-     */
-    private String lastModifyUser;
-
-    @TableField(exist = false)
-    private static final long serialVersionUID = 1L;
-
-
-
-    @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(getClass().getSimpleName());
-        sb.append(" [");
-        sb.append("Hash = ").append(hashCode());
-        sb.append(", id=").append(id);
-        sb.append(", name=").append(name);
-        sb.append(", categoryNo=").append(categoryNo);
-        sb.append(", useStatus=").append(useStatus);
-        sb.append(", seq=").append(seq);
-        sb.append(", desc=").append(description);
-        sb.append(", version=").append(version);
-        sb.append(", createTime=").append(createTime);
-        sb.append(", createUser=").append(createUser);
-        sb.append(", lastModified=").append(lastModified);
-        sb.append(", lastModifyUser=").append(lastModifyUser);
-        sb.append(", serialVersionUID=").append(serialVersionUID);
-        sb.append("]");
-        return sb.toString();
-    }
 }

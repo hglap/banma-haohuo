@@ -34,7 +34,7 @@ public class SkuDetailController {
 
     @ApiOperation(value = "查询宝贝详情", notes = "查询宝贝详情", httpMethod = "GET")
     @GetMapping("/queryDetailById")
-    public Result queryDetailById(@NotEmpty String id){
+    public Result queryDetailById(@NotEmpty @NotEmpty(message = "商品ID不能为空") String id){
         return ResultGenerator.genSuccessResult(skuDetailService.queryDetailBySkuId(id));
     }
 }

@@ -7,7 +7,7 @@
     -->
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="egg_type" jdbcType="VARCHAR" property="eggType" />
-    <result column="present_type" jdbcType="VARCHAR" property="presentType" />
+    <result column="present_code" jdbcType="VARCHAR" property="presentCode" />
     <result column="present_count" jdbcType="INTEGER" property="presentCount" />
     <result column="egg_odd" jdbcType="DOUBLE" property="eggOdd" />
     <result column="present_odd" jdbcType="DOUBLE" property="presentOdd" />

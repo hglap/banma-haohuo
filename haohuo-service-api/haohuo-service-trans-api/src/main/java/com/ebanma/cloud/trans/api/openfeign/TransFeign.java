@@ -5,6 +5,8 @@ import com.ebanma.cloud.trans.api.dto.TransAccountLog;
 import com.ebanma.cloud.trans.api.dto.TransAccountLogSearchVO;
 import com.ebanma.cloud.trans.api.dto.TransAccountLogVO;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -33,4 +35,5 @@ public interface TransFeign {
      */
     @PostMapping("/getTransInfo")
     Result<TransAccountLogVO> getTransInfo(@RequestBody TransAccountLogSearchVO transAccountLogSearchVO);
+
 }
