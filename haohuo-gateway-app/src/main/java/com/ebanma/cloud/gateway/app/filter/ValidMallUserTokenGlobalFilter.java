@@ -37,8 +37,10 @@ public class ValidMallUserTokenGlobalFilter implements GlobalFilter, Ordered {
         final List<String> ignoreURLs = new ArrayList<>();
         ignoreURLs.add("/user-service/user/login");
         ignoreURLs.add("/user-service/user/getSMSCode");
+        ignoreURLs.add("/user/login");
+        ignoreURLs.add("/user/getSMSCode");
 
-        //System.err.println(exchange.getRequest().getURI().getPath());
+        System.err.println(exchange.getRequest().getURI().getPath());
 
         // 登录注册接口，直接放行
         if (true) {

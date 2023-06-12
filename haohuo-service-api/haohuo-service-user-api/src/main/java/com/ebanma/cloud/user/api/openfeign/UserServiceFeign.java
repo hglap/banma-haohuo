@@ -7,12 +7,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
-@FeignClient(value = "user-service", path = "/users")
+@FeignClient(value = "user-service", path = "/user")
 public interface UserServiceFeign {
 
-    @GetMapping(value = "/admin/{token}")
-    Result getAdminUserByToken(@PathVariable(value = "token") String token);
+    @GetMapping(value = "/admin/getUserInfoByToken")
+    String getUserIdByToken();
 
-    @GetMapping(value = "/mall/getDetailByToken")
-    Result<UserDTO> getAppUserByToken(@RequestParam(value = "token") String token);
 }

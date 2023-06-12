@@ -1,19 +1,24 @@
 package com.ebanma.cloud.user.service.impl;
 
+import cn.hutool.http.HttpRequest;
 import com.alibaba.nacos.common.utils.StringUtils;
 import com.ebanma.cloud.common.dto.Result;
 import com.ebanma.cloud.common.dto.ResultGenerator;
 import com.ebanma.cloud.common.util.JwtUtil;
+import com.ebanma.cloud.common.util.NumberUtil;
 import com.ebanma.cloud.user.dao.UserInfoMapper;
 import com.ebanma.cloud.user.model.Password;
 import com.ebanma.cloud.user.model.SMSCode;
 import com.ebanma.cloud.user.model.UserInfo;
 import com.ebanma.cloud.user.model.UserLogin;
 import com.ebanma.cloud.user.service.LoginService;
+import com.ebanma.cloud.user.util.RedisUtil;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author yuqintao
@@ -29,6 +34,9 @@ public class LoginServiceImpl implements LoginService {
 
     private final String SMS_CODE_KEY_PASSWORD = "smsCode:password";
 
+    @Autowired
+    private RedisUtil redisUtil;
+
     @Override
     public Result appCodeLogin(UserLogin userLogin) {
         UserInfo userInfo = userInfoMapper.selectByPhone(userLogin.getUserPhone());
@@ -36,7 +44,10 @@ public class LoginServiceImpl implements LoginService {
             return ResultGenerator.genUnRegisterResult("该手机号未注册");
         }
         //todo:使用redis获取生成的验证码
-        String smsCode = "111111";
+        String smsCode = (String) redisUtil.get(SMS_CODE_KEY_LOGIN+userLogin.getUserPhone());
+        if(StringUtils.isBlank(smsCode)){
+            return ResultGenerator.genFailResult("请重新获取验证码");
+        }
         if(userLogin.getCode().equals(smsCode)){
             String token = JwtUtil.createJWT("appLogin",userLogin.getUserPhone(),null);
             return ResultGenerator.genSuccessResult(token);
@@ -80,18 +91,19 @@ public class LoginServiceImpl implements LoginService {
             UserInfo userInfo = userInfoMapper.selectByPhone(smsCode.getUserPhone());
             if(userInfo == null) {
                 //第一次登录
-                String code = "439666";
-                //TODO:redis设置验证码
+                String code = NumberUtil.genRandomNum(6)+"";
+                redisUtil.set(SMS_CODE_KEY_LOGIN+smsCode.getUserPhone(),code,5l, TimeUnit.MINUTES);
                 return ResultGenerator.genFirstLoginResult("第一次登录","您的登录验证码为"+code);
             }else{
                 //非第一次登录
-                String code = "666666";
-                //TODO:redis设置验证码
+                String code = NumberUtil.genRandomNum(6)+"";
+                redisUtil.set(SMS_CODE_KEY_LOGIN+smsCode.getUserPhone(),code,5l, TimeUnit.MINUTES);
                 return ResultGenerator.genSuccessResult("您的登录验证码为"+code);
             }
         } else if (smsCode.getType().equals("pass")) {
             //密码服务
-            String code = "888888";
+            String code = NumberUtil.genRandomNum(6)+"";
+            redisUtil.set(SMS_CODE_KEY_PASSWORD+smsCode.getUserPhone(),code,5l, TimeUnit.MINUTES);
             //TODO:redis设置验证码
             return ResultGenerator.genSuccessResult("您修改密码的验证码为"+code);
         }
@@ -117,7 +129,10 @@ public class LoginServiceImpl implements LoginService {
             if(userDetail != null){
                 userInfo.setId(userDetail.getId());
                 //todo:从redis获取验证码
-                String token = "888888";
+                String token = (String)redisUtil.get(SMS_CODE_KEY_PASSWORD+password.getUserPhone());
+                if(StringUtils.isBlank(token)){
+                    return ResultGenerator.genFailResult("请重新获取验证码");
+                }
                 if(password.getSMSCode().equals(token)){
                     //校验通过
                     userInfoMapper.updateByPrimaryKey(userInfo);
@@ -132,4 +147,5 @@ public class LoginServiceImpl implements LoginService {
         }
         return null;
     }
+
 }

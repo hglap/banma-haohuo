@@ -86,9 +86,10 @@ public class JwtUtil {
     public static void main(String[] args) {
         String jwt = JwtUtil.createJWT("weiyibiaoshi", "aaaaaa", null);
         System.out.println(jwt);
-        String totalJWT = "eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJrZXkiLCJzdWIiOiIxMzAxOTEzMjcxMyIsImlzcyI6ImFkbWluIiwiaWF0IjoxNjg2MTIwNjY1LCJleHAiOjE2ODYxMjQyNjV9.YO1UQ6rlNnCuHJGPkaIVL99BWDgdiTWie_tjp93AslE";
+        String totalJWT = "eyJhbGciOiJIUzI1NiJ9.eyJqdGkiOiJhcHBMb2dpbiIsInN1YiI6IjEzMDE5MTMyNzEzIiwiaXNzIjoiYWRtaW4iLCJpYXQiOjE2ODYyOTY4MzgsImV4cCI6MTY4NjMwMDQzOH0.JPYQeKkQfpWU0DMod7JEaGStMI6xx69v5LY8uJTWyHg";
         try {
-            Claims claims = JwtUtil.parseJWT(totalJWT);
+            Claims claims = JwtUtil.parseJWT(jwt);
+            System.out.println(claims.get("sub"));
             System.out.println(claims);
         } catch (Exception e) {
             e.printStackTrace();
