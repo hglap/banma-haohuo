@@ -8,10 +8,30 @@ package com.ebanma.cloud.common.enums;
  */
 public enum GameRedisEnum {
 
+    /**
+     * 用户锁
+     */
     USER_LOCK("game:u:l:"),
-    DRAW_LOCK("game:draw:l"),
-    DRAW_INFO("game:draw:i"),
+    /**
+     * 用户信息
+     */
     USER_INFO("game:u:i:"),
+    /**
+     * 用户购买锁
+     */
+    USER_BUY("game:u:buy:"),
+    /**
+     * 抽奖锁
+     */
+    DRAW_LOCK("game:draw:l"),
+    /**
+     * 抽奖信息[概率控制]
+     */
+    DRAW_INFO("game:draw:i"),
+
+    /**
+     * 游戏规则
+     */
     GAME_RULE("game:rule");
 
     private String key;

@@ -37,13 +37,8 @@ public class ValidMallUserTokenGlobalFilter implements GlobalFilter, Ordered {
         final List<String> ignoreURLs = new ArrayList<>();
         ignoreURLs.add("/user-service/user/login");
         ignoreURLs.add("/user-service/user/getSMSCode");
-
-        //System.err.println(exchange.getRequest().getURI().getPath());
-
-        // 登录注册接口，直接放行
-        if (true) {
-            return chain.filter(exchange);
-        }
+        ignoreURLs.add("/user/login");
+        ignoreURLs.add("/user/getSMSCode");
 
         // 登录注册接口，直接放行
         if (ignoreURLs.contains(exchange.getRequest().getURI().getPath())) {
@@ -57,7 +52,7 @@ public class ValidMallUserTokenGlobalFilter implements GlobalFilter, Ordered {
             return wrapErrorResponse(exchange, chain);
         }
 
-        String token = headers.getFirst("token");
+        String token = headers.getFirst("Auth");
 
         if (!StringUtils.hasText(token)) {
             // 返回错误提示
@@ -79,7 +74,7 @@ public class ValidMallUserTokenGlobalFilter implements GlobalFilter, Ordered {
     }
 
     Mono<Void> wrapErrorResponse(ServerWebExchange exchange, GatewayFilterChain chain) {
-        Result result = ResultGenerator.genErrorResult(ResultCode.UNAUTHORIZED, "无权限访问");
+        Result result = ResultGenerator.genErrorResult(ResultCode.UNAUTHORIZED.code(), "无权限访问");
         ObjectMapper mapper = new ObjectMapper();
         ObjectNode resultNode = mapper.valueToTree(result);
         byte[] bytes = resultNode.toString().getBytes(StandardCharsets.UTF_8);

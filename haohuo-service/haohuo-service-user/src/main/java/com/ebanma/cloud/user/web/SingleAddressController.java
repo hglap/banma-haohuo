@@ -36,7 +36,7 @@ public class SingleAddressController {
     }
 
     @PostMapping("/detail")
-    public Result detail(@RequestParam String userId) {
+    public Result<Address> detail(@RequestParam String userId) {
         Address address = addressService.findByUserId(userId);
         return ResultGenerator.genSuccessResult(address);
     }

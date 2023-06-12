@@ -2,7 +2,9 @@ package com.ebanma.cloud.user.service.impl;
 
 import com.ebanma.cloud.common.core.AbstractService;
 import com.ebanma.cloud.common.exception.MallException;
+import com.ebanma.cloud.user.dao.ProdLifetimeMapper;
 import com.ebanma.cloud.user.dao.UserInfoMapper;
+import com.ebanma.cloud.user.model.ProdLifetime;
 import com.ebanma.cloud.user.model.UserInfo;
 import com.ebanma.cloud.user.service.ProdLifetimeSearchService;
 import com.ebanma.cloud.user.service.ProdLifetimeService;
@@ -27,14 +29,14 @@ import java.util.concurrent.ConcurrentHashMap;
 @Slf4j
 @Service
 @Transactional
-public class ProdLifetimeServiceImpl extends AbstractService<com.ebanma.cloud.user.model.ProdLifetime> implements ProdLifetimeService {
+public class ProdLifetimeServiceImpl extends AbstractService<ProdLifetime> implements ProdLifetimeService {
 
     @Resource
     private ProdLifetimeSearchService prodLifetimeSearchService;
-
+    @Resource
+    private ProdLifetimeMapper prodLifetimeMapper;
     @Resource
     private UserInfoMapper userInfoMapper;
-
     @Resource
     private final Map<String, ProdStrategy> strategyMap = new ConcurrentHashMap<>();
 
@@ -83,15 +85,15 @@ public class ProdLifetimeServiceImpl extends AbstractService<com.ebanma.cloud.us
      */
     @Override
     public void handleMessage(String userId, String principalType, String productCode, Long amount) {
-        com.ebanma.cloud.user.model.ProdLifetime prodLifetime = prodLifetimeSearchService.findProd(userId, principalType, productCode);
+        ProdLifetime prodLifetime = prodLifetimeSearchService.findProd(userId, principalType, productCode);
         if (prodLifetime == null) {
             //确认userId是否存在
             Boolean isExist = confirmUserById(userId);
-            if (isExist) {
+            if (!isExist) {
                 log.error("用户id{}不存在", userId);
                 MallException.fail("该用户不存在");
             }
-            prodLifetime = new com.ebanma.cloud.user.model.ProdLifetime();
+            prodLifetime = new ProdLifetime();
             prodLifetime.setProductCode(productCode);
             prodLifetime.setPrincipalType(principalType);
             prodLifetime.setPrincipalId(userId);
@@ -100,12 +102,14 @@ public class ProdLifetimeServiceImpl extends AbstractService<com.ebanma.cloud.us
             }
             prodLifetime.setCount(1L);
             prodLifetime.setCreateTime(new Date());
+            prodLifetimeMapper.insert(prodLifetime);
         } else {
             prodLifetime.setCount(prodLifetime.getCount() + 1);
             if (amount != null) {
                 prodLifetime.setAmount(prodLifetime.getAmount() + amount);
             }
             prodLifetime.setModifiedTime(new Date());
+            prodLifetimeMapper.updateByPrimaryKeySelective(prodLifetime);
         }
     }
 

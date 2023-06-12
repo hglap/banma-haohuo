@@ -1,11 +1,14 @@
 package com.ebanma.cloud.game.model.vo;
 
+import com.ebanma.cloud.common.util.IdWorker;
 import com.ebanma.cloud.game.model.po.GameRule;
+import com.ebanma.cloud.trans.api.dto.TransAccountLog;
 import io.swagger.annotations.ApiModel;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * 概率控制
@@ -49,5 +52,19 @@ public class GamePresentRuleVO implements Serializable {
         this.presentCode = presentType;
         this.presentCount = presentCount;
         this.presentOdd = presentOdd;
+    }
+
+    public TransAccountLog getTransAccountLog(String userId) {
+        TransAccountLog transAccountLog = new TransAccountLog();
+        transAccountLog.setUserId(userId);
+        transAccountLog.setBizSerialNumber(String.valueOf(new IdWorker().nextId()));
+        transAccountLog.setAmount(this.presentCount);
+        transAccountLog.setLogType(0);
+        transAccountLog.setBizType(this.presentCode);
+        transAccountLog.setDescription("砸蛋活动，发放奖励。");
+        transAccountLog.setConsume("game");
+        transAccountLog.setCreateOn(new Date());
+        transAccountLog.setCreateBy(userId);
+        return transAccountLog;
     }
 }

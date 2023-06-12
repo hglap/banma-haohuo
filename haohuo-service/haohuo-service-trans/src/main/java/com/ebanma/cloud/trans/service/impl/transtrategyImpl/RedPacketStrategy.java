@@ -186,6 +186,8 @@ public class RedPacketStrategy implements TransStrategy {
             transAccountLog.setAmount(redPacket.getRedPacketAmount());
         }
         //账务流水记录
+        transAccountLog.setCreateOn(new Date());
+        transAccountLog.setCreateBy(transAccountLog.getTransId());
         transAccountLogMapper.insertSelective(transAccountLog);
     }
 

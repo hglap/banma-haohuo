@@ -15,6 +15,7 @@ import tk.mybatis.mapper.entity.Condition;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -114,9 +115,12 @@ public class PointsStrategy implements TransStrategy {
             transAccount.setBalance(transAccount.getBalance() - transAccountLog.getAmount());
             transAccount.setTotalOutAmount(transAccount.getTotalOutAmount() + transAccountLog.getAmount());
         }
+        transAccount.setModifiedTime(new Date());
         //账务余额表更新
         transAccountService.update(transAccount);
         //账务流水记录
+        transAccountLog.setCreateOn(new Date());
+        transAccountLog.setCreateBy(transAccountLog.getTransId());
         transAccountLogMapper.insertSelective(transAccountLog);
     }
 }

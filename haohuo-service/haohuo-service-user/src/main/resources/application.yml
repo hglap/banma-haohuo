@@ -10,11 +10,17 @@ spring:
         namespace: 7bdad1e8-52f0-4905-814a-d413d6d819e5
       username: nacos
       password: nacos
+  redis:
+    host: 30.16.95.140
+    #    host: 127.0.0.1
+    port: 6379
+    password: admin
+    database: 1
 mybatis:
   mapper-locations: mapper/*.xml
 
 rocketmq:
-  name-server: 30.16.96.140:9090
+  name-server: 30.16.95.140:9876
   producer:
     group: group1
 logging:
