@@ -142,18 +142,17 @@ public class AliPayController {
                 paymentInfo.setUserId(params.get("buyer_id"));
                 paymentInfoMapper.insert(paymentInfo);
 
-                // 支付成功后，发送消息更新库存
+                // 发送消息新增产品帐
                 //kafkaTemplate.send("userlog","测试消息");
 
-                // 支付成功后调用更新订单状态方法，扣减红包方法，扣减积分方法（全局事务）
+                // 调用更新订单状态方法，扣减红包方法，扣减积分方法（全局事务），扣减库存
 
 
                 // 取消支付或支付失败则回滚redis中库存更改订单状态为已取消
-                
+
 
                 //rocketMQTemplate.syncSend("hgl-order-topic"
                 //        , MessageBuilder.withPayload("测试消息").build(),3000,3);
-
             }
         }
         return "success";
