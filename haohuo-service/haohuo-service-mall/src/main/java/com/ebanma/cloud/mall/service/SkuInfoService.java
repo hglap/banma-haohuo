@@ -9,6 +9,7 @@ import com.ebanma.cloud.mall.model.vo.SkuInfoVO;
 import com.ebanma.cloud.mall.model.vo.SkuRecommendVO;
 import com.github.pagehelper.PageInfo;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
@@ -44,5 +45,5 @@ public interface SkuInfoService extends IService<SkuInfoPO> {
     Map<String, Long> getSkuInfoCountByStoreIdList(List<String> idList);
 
 
-
+    Map<String, Long> getAllSkuCount();
 }

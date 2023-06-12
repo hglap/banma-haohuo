@@ -15,6 +15,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
@@ -46,26 +48,26 @@ public class SkuCategoryController {
 
     @ApiOperation(value = "分类新增", notes = "【服务端】分类新增", httpMethod = "POST")
     @PostMapping("/add")
-    public Result<Boolean> add(@RequestBody SkuCategoryInsertDTO skuCategoryInsertDTO){
+    public Result<Boolean> add(@RequestBody @NotNull(message = "分类信息不能为空") SkuCategoryInsertDTO skuCategoryInsertDTO){
         return ResultGenerator.genSuccessResult(skuCategoryService.add(skuCategoryInsertDTO));
     }
 
 
     @ApiOperation(value = "分类编辑", notes = "【服务端】分类编辑", httpMethod = "POST")
     @PostMapping("/edit")
-    public Result<Boolean> edit(@RequestBody SkuCategoryEditDTO skuCategoryEditDTO){
+    public Result<Boolean> edit(@RequestBody @NotNull(message = "分类信息不能为空") SkuCategoryEditDTO skuCategoryEditDTO){
         return ResultGenerator.genSuccessResult(skuCategoryService.edit(skuCategoryEditDTO));
     }
 
     @ApiOperation(value = "分类删除", notes = "【服务端】分类删除", httpMethod = "GET")
     @GetMapping("/del")
-    public Result<Boolean> del(@RequestParam("id")  String id ){
+    public Result<Boolean> del(@RequestParam("id") @NotEmpty(message = "分类ID不能为空") String id ){
         return ResultGenerator.genSuccessResult(skuCategoryService.del(id));
     }
 
     @ApiOperation(value = "分类修改导航栏状态", notes = "【服务端】分类修改导航栏状态", httpMethod = "GET")
     @GetMapping("/editStatus")
-    public Result<Boolean> editStatus(@RequestParam("id")  String id , @RequestParam("useStatus")String useStatus){
+    public Result<Boolean> editStatus(@RequestParam("id") @NotEmpty(message = "分类ID不能为空") String id , @RequestParam("useStatus") @NotEmpty(message = "分类状态不能为空")String  useStatus){
         return ResultGenerator.genSuccessResult(skuCategoryService.editStatus(id,useStatus));
     }
 

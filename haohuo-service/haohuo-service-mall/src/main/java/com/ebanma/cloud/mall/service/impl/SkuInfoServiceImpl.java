@@ -30,6 +30,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -425,6 +426,17 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoMapper, SkuInfoPO>
         Map<String, Long> map = skuInfoPOList.stream()
                 .collect(Collectors.groupingBy(SkuInfoPO::getStoreId, Collectors.summingLong(SkuInfoPO::getCurrentQua)));
         return map;
+    }
+
+    /**
+     * 获取所有商品的库存数
+     * @return
+     */
+    @Override
+    public Map<String, Long> getAllSkuCount() {
+        List<SkuInfoPO> skuInfoPOList = list();
+        Map<String, Long> countMap = skuInfoPOList.stream().collect(Collectors.toMap(SkuInfoPO::getId, SkuInfoPO::getCurrentQua));
+        return countMap;
     }
 
 
