@@ -7,9 +7,21 @@
     -->
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="user_id" jdbcType="VARCHAR" property="userId" />
-    <result column="present_type" jdbcType="VARCHAR" property="presentType" />
+    <result column="user_name" jdbcType="VARCHAR" property="userName" />
+    <result column="present_code" jdbcType="VARCHAR" property="presentCode" />
     <result column="present_count" jdbcType="INTEGER" property="presentCount" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="modified_time" jdbcType="TIMESTAMP" property="modifiedTime" />
   </resultMap>
+  <resultMap id="BaseResultMap2" type="com.ebanma.cloud.game.model.vo.GameTopRankVO">
+    <result column="user_id" jdbcType="VARCHAR" property="userId" />
+    <result column="user_name" jdbcType="VARCHAR" property="userName" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+  </resultMap>
+    <select id="getTopRank" resultMap="BaseResultMap2">
+      select id, user_id , user_name  ,create_time
+      from  game_user_record
+      where present_code=#{code}  and present_count = #{count}
+          and TIMESTAMPDIFF(week,create_time,now())  = 0 order by create_time desc ;
+    </select>
 </mapper>

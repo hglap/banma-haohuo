@@ -36,3 +36,7 @@ spring:
 
 mybatis:
   mapper-locations: mapper/*.xml
+
+logging:
+  level:
+    com.ebanma.cloud.game.dao: debug
