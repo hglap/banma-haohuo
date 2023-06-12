@@ -66,6 +66,11 @@ public class GameUserInfo implements Serializable {
      */
     @Column(name = "modified_time")
     private Date modifiedTime;
+    /**
+     * 最新中奖时间
+     */
+    @Column(name = "winning_date")
+    private Date winningDate;
 
     List<GameUserProp> gameUserProp;
 
@@ -80,6 +85,7 @@ public class GameUserInfo implements Serializable {
         this.totalDrawTimes=0;
         this.createTime = new Date();
         this.modifiedTime = new Date();
+        this.winningDate = null;
     }
 
     /**
@@ -90,14 +96,16 @@ public class GameUserInfo implements Serializable {
      * @param presentDraw 中间类型
      */
     public void afterDraw(GamePresentRuleVO presentDraw ){
-        switch (Objects.requireNonNull(GamePriceOrPropEnum.getGamePropByKey(presentDraw.getPresentType()))){
+        switch (Objects.requireNonNull(GamePriceOrPropEnum.getGamePropByValue(presentDraw.getPresentCode()))){
             case RED_PACKET:
                 this.totalRedPacket += presentDraw.getPresentCount();
                 this.winningTimes ++;
+                this.winningDate = new Date();
                 break;
             case POINT:
                 this.totalWinPoints += presentDraw.getPresentCount();
                 this.winningTimes ++;
+                this.winningDate = new Date();
                 break;
             default:
                 break;

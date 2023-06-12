@@ -42,7 +42,7 @@ public class GameDrawVO implements Serializable {
     public GameDrawVO(int totalTimes, Double eggOdd) {
         this.totalTimes = totalTimes;
         this.remainTimes = totalTimes;
-        this.guaranteedTimes = new Long(Math.round(eggOdd)).intValue();
+        this.guaranteedTimes = new Long(Math.round(eggOdd*totalTimes)).intValue();
         this.winning = 0;
     }
 

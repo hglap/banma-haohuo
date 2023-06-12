@@ -2,8 +2,9 @@ package com.ebanma.cloud.mall.web;
 
 import com.ebanma.cloud.common.dto.Result;
 import com.ebanma.cloud.common.dto.ResultGenerator;
-import com.ebanma.cloud.mall.model.dto.SkuInventoryInsertDTO;
+import com.ebanma.cloud.mall.model.dto.*;
 import com.ebanma.cloud.mall.service.SkuInventoryService;
+import com.github.pagehelper.PageInfo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import javax.validation.constraints.NotNull;
 
 /**
  * @author: why
@@ -34,8 +36,20 @@ public class SkuInventoryController {
 
     @ApiOperation(value = "库存信息新增", notes = "库存信息新增", httpMethod = "POST")
     @PostMapping("/add")
-    public Result<Boolean> add(@RequestBody SkuInventoryInsertDTO skuInventoryInsertDTO){
+    public Result<Boolean> add(@RequestBody @NotNull(message = "库存信息不能为空") SkuInventoryInsertDTO skuInventoryInsertDTO){
         return ResultGenerator.genSuccessResult(skuInventoryService.add(skuInventoryInsertDTO));
+    }
+
+    @ApiOperation(value = "商品出入库", notes = "【服务端】商品出入库", httpMethod = "POST")
+    @PostMapping("/edit")
+    public Result<Boolean> edit(@RequestBody @NotNull(message = "库存修改信息不能为空") SkuInventoryEditDTO skuInventoryEditDTO){
+        return ResultGenerator.genSuccessResult(skuInventoryService.edit(skuInventoryEditDTO));
+    }
+
+    @ApiOperation(value = "分页查询库存列表", notes = "【服务端】分页查询库存列表", httpMethod = "POST")
+    @PostMapping("/queryList")
+    public Result<PageInfo> queryList(@RequestBody  SkuInventorySearchDTO skuInventorySearchDTO){
+        return ResultGenerator.genSuccessResult(skuInventoryService.queryList(skuInventorySearchDTO));
     }
 
 }

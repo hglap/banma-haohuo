@@ -1,6 +1,7 @@
 package com.ebanma.cloud.game.service;
 
 import com.ebanma.cloud.game.model.dto.GameDrawDto;
+import com.ebanma.cloud.game.model.dto.GamePurchasesDto;
 import com.ebanma.cloud.game.model.vo.GamePrizeVO;
 
 public interface GameService {
@@ -12,4 +13,16 @@ public interface GameService {
      * @return {@link GamePrizeVO}
      */
     GamePrizeVO result(GameDrawDto gameDrawDto);
+
+    /**
+     * 购买砸蛋次数
+     *
+     * @param gamePurchasesDto 游戏购买dto
+     * @return boolean
+     */
+    boolean purchases(GamePurchasesDto gamePurchasesDto);
+
+
+
+
 }

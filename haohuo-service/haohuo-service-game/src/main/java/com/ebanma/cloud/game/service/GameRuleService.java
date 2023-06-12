@@ -58,4 +58,6 @@ public interface GameRuleService extends Service<GameRule> {
      * @return {@link GameEggRuleVO}
      */
     GameEggRuleVO getEggDrawByGuaranteed(List<GameEggRuleVO> gameRules);
+
+
 }

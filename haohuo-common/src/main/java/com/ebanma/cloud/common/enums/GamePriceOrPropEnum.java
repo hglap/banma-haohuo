@@ -17,8 +17,8 @@ public enum GamePriceOrPropEnum {
     C("奥赛库斯的正义",13),
     POINT("积分",0),
     RED_PACKET("红包",1),
-    LUCKY_HAMMER("幸运锤",100),
-    ANGEL_BLESSINGS("天使祝福",101),
+    LUCKY_HAMMER("幸运锤",20),
+    ANGEL_BLESSINGS("天使祝福",21),
     NULL("谢谢惠顾",10);
 
     private String key;
