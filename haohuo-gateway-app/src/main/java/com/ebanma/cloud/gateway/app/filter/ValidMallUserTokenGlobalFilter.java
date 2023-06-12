@@ -39,7 +39,7 @@ public class ValidMallUserTokenGlobalFilter implements GlobalFilter, Ordered {
         ignoreURLs.add("/user-service/user/getSMSCode");
         ignoreURLs.add("/user/login");
         ignoreURLs.add("/user/getSMSCode");
-        
+
         // 登录注册接口，直接放行
         if (ignoreURLs.contains(exchange.getRequest().getURI().getPath())) {
             return chain.filter(exchange);
@@ -52,7 +52,7 @@ public class ValidMallUserTokenGlobalFilter implements GlobalFilter, Ordered {
             return wrapErrorResponse(exchange, chain);
         }
 
-        String token = headers.getFirst("token");
+        String token = headers.getFirst("Auth");
 
         if (!StringUtils.hasText(token)) {
             // 返回错误提示

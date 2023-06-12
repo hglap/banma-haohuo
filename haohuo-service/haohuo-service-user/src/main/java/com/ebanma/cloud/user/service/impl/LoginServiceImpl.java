@@ -50,6 +50,7 @@ public class LoginServiceImpl implements LoginService {
         }
         if(userLogin.getCode().equals(smsCode)){
             String token = JwtUtil.createJWT("appLogin",userLogin.getUserPhone(),null);
+            redisUtil.set(token,"OK");
             return ResultGenerator.genSuccessResult(token);
         }
         return ResultGenerator.genFailResult("验证码错误");
@@ -64,6 +65,7 @@ public class LoginServiceImpl implements LoginService {
             return ResultGenerator.genFailResult("密码错误");
         }
         String token = JwtUtil.createJWT("appLogin",userLogin.getUserPhone(),null);
+        redisUtil.set(token,"OK");
         return ResultGenerator.genSuccessResult(token);
     }
 
@@ -76,6 +78,7 @@ public class LoginServiceImpl implements LoginService {
             return ResultGenerator.genFailResult("密码错误");
         }
         String token = JwtUtil.createJWT("platformLogin",userLogin.getUserPhone(),null);
+        redisUtil.set(token,"OK");
         return ResultGenerator.genSuccessResult(token);
     }
 
