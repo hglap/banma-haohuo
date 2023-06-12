@@ -9,4 +9,13 @@ import com.ebanma.cloud.user.model.Address;
  */
 public interface AddressService extends Service<Address> {
 
+    void saveAddress(Address address);
+
+    void updateAddress(Address address);
+
+    void addAndUpdate(Address address);
+
+    void deleteByUserId(String userId);
+
+    Address findByUserId(String userId);
 }

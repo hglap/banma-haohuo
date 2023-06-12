@@ -42,9 +42,33 @@ public class ResultGenerator {
         return result;
     }
 
-    public static Result genErrorResult(int code, String message) {
+    public static Result genUnRegisterResult(String message) {
         Result result = new Result();
-        result.setCode(code);
+        result.setCode(ResultCode.UNREGISTER.code());
+        result.setCode(ResultCode.FAIL.code());
+        if (!StringUtils.hasText(message)) {
+            result.setMessage(DEFAULT_FAIL_MESSAGE);
+        } else {
+            result.setMessage(message);
+        }
+        return result;
+    }
+
+    public static Result genFirstLoginResult(String message,String data) {
+        Result result = new Result();
+        result.setCode(ResultCode.UNREGISTER.code());
+        if (!StringUtils.hasText(message)) {
+            result.setMessage("First Time Login");
+        } else {
+            result.setMessage(message);
+        }
+        result.setData(data);
+        return result;
+    }
+
+    public static Result genErrorResult(ResultCode code, String message) {
+        Result result = new Result();
+        result.setCode(code.code());
         result.setMessage(message);
         return result;
     }

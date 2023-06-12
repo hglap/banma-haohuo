@@ -21,6 +21,12 @@ CREATE TABLE `order_info` (
                               `delivery_time` datetime DEFAULT NULL COMMENT '发货时间',
                               `consign_time` datetime DEFAULT NULL COMMENT '签收时间',
                               `img_url` varchar(200) DEFAULT NULL COMMENT '图片路径',
+                              `sku_id` varchar(32) DEFAULT NULL COMMENT 'sku_id',
+                              `sku_num` int(11) DEFAULT NULL COMMENT '购买个数',
+                              `integral` varchar(11) DEFAULT NULL COMMENT '抵扣积分',
+                              `red_packet_id` varchar(11) DEFAULT NULL COMMENT '红包id',
+                              `order_price` decimal(10,2) DEFAULT NULL COMMENT '购买价格(下单时sku价格）',
+                              `merchant_id` varchar(32) DEFAULT NULL COMMENT '商户id',
                               PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='订单表信息表';
 

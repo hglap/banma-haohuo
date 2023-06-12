@@ -8,7 +8,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
 //@EnableDiscoveryClient
-@MapperScan(basePackages = {"com.ebanma.cloud.mall.dao", "com.ebanma.cloud.common.core"})
 public class MallServiceApplication {
 
     public static void main(String[] args) {

@@ -1,0 +1,55 @@
+package com.ebanma.cloud.post.web;
+
+import com.ebanma.cloud.common.dto.Result;
+import com.ebanma.cloud.common.dto.ResultGenerator;
+import com.ebanma.cloud.post.model.po.PostCommentPO;
+import com.ebanma.cloud.post.model.vo.PostInfoSearchVO;
+import com.ebanma.cloud.post.service.PostCommentService;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import org.springframework.web.bind.annotation.*;
+
+import javax.annotation.Resource;
+import java.util.List;
+
+/**
+* Created by CodeGenerator on 2023/06/06.
+*/
+@RestController
+@RequestMapping("/post/comment")
+public class PostCommentController {
+    @Resource
+    private PostCommentService postCommentService;
+
+    @PostMapping("/add")
+    public Result add(PostCommentPO postComment) {
+        postCommentService.save(postComment);
+        return ResultGenerator.genSuccessResult();
+    }
+
+    @PostMapping("/delete")
+    public Result delete(@RequestParam Integer id) {
+        postCommentService.removeById(id);
+        return ResultGenerator.genSuccessResult();
+    }
+
+    @PostMapping("/update")
+    public Result update(PostCommentPO postComment) {
+        postCommentService.updateById(postComment);
+        return ResultGenerator.genSuccessResult();
+    }
+
+    @PostMapping("/detail")
+    public Result detail(@RequestParam Integer id) {
+        PostCommentPO postComment = postCommentService.getById(id);
+        return ResultGenerator.genSuccessResult(postComment);
+    }
+
+    @PostMapping("/list")
+    public Result list(@RequestBody PostInfoSearchVO searchVO) {
+        PageHelper.startPage(searchVO.getPageNum(), searchVO.getPageSize());
+        List<PostCommentPO> list = postCommentService.list();
+        PageInfo pageInfo = new PageInfo(list);
+        return ResultGenerator.genSuccessResult(pageInfo);
+    }
+}

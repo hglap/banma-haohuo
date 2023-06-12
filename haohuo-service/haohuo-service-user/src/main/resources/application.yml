@@ -3,3 +3,20 @@ server:
 spring:
   application:
     name: user-service
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 30.16.95.140:8848
+        namespace: 7bdad1e8-52f0-4905-814a-d413d6d819e5
+      username: nacos
+      password: nacos
+mybatis:
+  mapper-locations: mapper/*.xml
+
+rocketmq:
+  name-server: 30.16.96.140:9090
+  producer:
+    group: group1
+logging:
+  level:
+    com.ebanma.cloud.user.dao: debug

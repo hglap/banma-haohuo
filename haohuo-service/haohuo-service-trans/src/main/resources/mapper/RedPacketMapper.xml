@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ebanma.cloud.trans.dao.RedPacketMapper">
+  <resultMap id="BaseResultMap" type="com.ebanma.cloud.trans.model.RedPacket">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="red_packet_id" jdbcType="VARCHAR" property="redPacketId" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+    <result column="red_packet_amount" jdbcType="INTEGER" property="redPacketAmount" />
+    <result column="expire_time" jdbcType="TIMESTAMP" property="expireTime" />
+    <result column="create_on" jdbcType="TIMESTAMP" property="createOn" />
+    <result column="create_by" jdbcType="VARCHAR" property="createBy" />
+  </resultMap>
+</mapper>

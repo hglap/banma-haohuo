@@ -18,3 +18,4 @@ public interface Mapper<T>
         IdsMapper<T>,
         InsertListMapper<T> {
 }
+

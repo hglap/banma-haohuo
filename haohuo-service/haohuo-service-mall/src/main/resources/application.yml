@@ -3,3 +3,14 @@ server:
 spring:
   application:
     name: mall-service
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 30.16.95.140:8848
+        namespace: 7bdad1e8-52f0-4905-814a-d413d6d819e5
+      username: nacos
+      password: nacos
+mybatis-plus:
+  mapper-locations: classpath:/mapper/*.xml
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl

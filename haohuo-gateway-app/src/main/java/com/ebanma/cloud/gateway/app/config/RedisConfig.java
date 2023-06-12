@@ -1,5 +1,6 @@
 package com.ebanma.cloud.gateway.app.config;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration;
 import org.springframework.cache.CacheManager;
@@ -24,7 +25,7 @@ import java.util.Set;
  * @author banma-0197
  */
 @Configuration
-@EnableCaching
+//@EnableCaching
 @AutoConfigureAfter(RedisAutoConfiguration.class)
 public class RedisConfig extends CachingConfigurerSupport {
 

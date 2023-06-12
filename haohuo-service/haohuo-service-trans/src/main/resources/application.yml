@@ -3,3 +3,30 @@ server:
 spring:
   application:
     name: trans-service
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 30.16.95.140:8848
+        namespace: 7bdad1e8-52f0-4905-814a-d413d6d819e5
+      username: nacos
+      password: nacos
+  redis:
+    # Redis服务器地址
+    host: 30.16.95.140
+    # Redis服务器端口,默认为6379.若有改动按改动后的来
+    port: 6379
+    #Redis服务器连接密码，默认为空，若有设置按设置的来
+    password: admin
+    jedis:
+      pool:
+        # 连接池最大连接数，若为负数则表示没有任何限制
+        max-active: 8
+        # 连接池最大阻塞等待时间，若为负数则表示没有任何限制
+        max-wait: -1
+        # 连接池中的最大空闲连接
+        max-idle: 8
+mybatis:
+  mapper-locations: mapper/*.xml
+logging:
+  level:
+    com.ebanma.cloud.trans.dao: debug

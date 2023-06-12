@@ -21,5 +21,6 @@ public interface Service<T> {
     List<T> findByCondition(Condition condition);//根据条件查找
     List<T> findAll();//获取所有
 
+    T findByUserId(String userId);
 
 }

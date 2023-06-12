@@ -4,4 +4,5 @@ import com.ebanma.cloud.common.core.Mapper;
 import com.ebanma.cloud.user.model.UserInfo;
 
 public interface UserInfoMapper extends Mapper<UserInfo> {
+    UserInfo selectByPhone(String userPhone);
 }

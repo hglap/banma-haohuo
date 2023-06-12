@@ -4,12 +4,13 @@ import com.ebanma.cloud.common.dto.Result;
 import com.ebanma.cloud.common.dto.ResultGenerator;
 import com.ebanma.cloud.user.model.Address;
 import com.ebanma.cloud.user.service.AddressService;
+import com.ebanma.cloud.user.utils.InsertGroup;
+import com.ebanma.cloud.user.utils.UpdateGroup;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+import tk.mybatis.mapper.entity.Condition;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -18,14 +19,20 @@ import java.util.List;
 * Created by CodeGenerator on 2023/06/06.
 */
 @RestController
-@RequestMapping("/address")
+@RequestMapping("/address/actual")
 public class AddressController {
     @Resource
     private AddressService addressService;
 
+    /**
+     * 增加地址
+     *
+     * @param address
+     * @return
+     */
     @PostMapping("/add")
-    public Result add(Address address) {
-        addressService.save(address);
+    public Result add(@Validated(InsertGroup.class) @RequestBody Address address) {
+        addressService.saveAddress(address);
         return ResultGenerator.genSuccessResult();
     }
 
@@ -35,9 +42,15 @@ public class AddressController {
         return ResultGenerator.genSuccessResult();
     }
 
+    /**
+     * 修改地址
+     *
+     * @param address
+     * @return
+     */
     @PostMapping("/update")
-    public Result update(Address address) {
-        addressService.update(address);
+    public Result update(@Validated(UpdateGroup.class) @RequestBody Address address) {
+        addressService.updateAddress(address);
         return ResultGenerator.genSuccessResult();
     }
 
@@ -47,10 +60,20 @@ public class AddressController {
         return ResultGenerator.genSuccessResult(address);
     }
 
+    /**
+     * 查询我的地址列表
+     *
+     * @param page
+     * @param size
+     * @param userId
+     * @return
+     */
     @PostMapping("/list")
-    public Result list(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "0") Integer size) {
+    public Result list(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "0") Integer size , String userId) {
         PageHelper.startPage(page, size);
-        List<Address> list = addressService.findAll();
+        Condition condition = new Condition(Address.class);
+        condition.createCriteria().andEqualTo("userId", userId);
+        List<Address> list = addressService.findByCondition(condition);
         PageInfo pageInfo = new PageInfo(list);
         return ResultGenerator.genSuccessResult(pageInfo);
     }

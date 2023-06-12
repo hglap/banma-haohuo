@@ -13,6 +13,7 @@
         <module>haohuo-gateway-app</module>
         <module>haohuo-service</module>
         <module>haohuo-service-api</module>
+        <module>haohuo-common-file</module>
     </modules>
     <packaging>pom</packaging>
     <description>好货商城微服务版本(Spring Cloud Alibaba)</description>
@@ -90,6 +91,11 @@
                 <version>${lombok.version}</version>
                 <scope>provided</scope>
             </dependency>
+            <dependency>
+                <groupId>org.redisson</groupId>
+                <artifactId>redisson-spring-boot-starter</artifactId>
+                <version>3.15.6</version>
+            </dependency>
 
         </dependencies>
     </dependencyManagement>
@@ -114,11 +120,12 @@
         </plugins>
     </build>
 
-    <repositories>
-        <repository>
-            <id>central</id>
-            <url>https://maven.aliyun.com/repository/central</url>
-            <name>aliyun</name>
-        </repository>
-    </repositories>
+<!--    <repositories>-->
+<!--        <repository>-->
+<!--            <id>central</id>-->
+<!--            <url>https://maven.aliyun.com/repository/central</url>-->
+<!--            <name>aliyun</name>-->
+<!--        </repository>-->
+<!--    </repositories>-->
+
 </project>

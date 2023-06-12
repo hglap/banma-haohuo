@@ -1,0 +1,18 @@
+server:
+  port: 8091
+spring:
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+  application:
+    name: common-file
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 30.16.95.140:8848
+        namespace: 7bdad1e8-52f0-4905-814a-d413d6d819e5
+      username: nacos
+      password: nacos
+
+
