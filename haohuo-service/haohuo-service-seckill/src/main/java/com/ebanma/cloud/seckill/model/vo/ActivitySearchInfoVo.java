@@ -4,10 +4,9 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 import java.io.Serializable;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.Date;
+import java.sql.Date;
+import java.sql.Time;
+import java.sql.Timestamp;
 
 /**
  * @author 崔国垲
@@ -31,7 +30,7 @@ public class ActivitySearchInfoVo implements Serializable {
      */
 //    @Column(name = "start_time")
     @JsonFormat(pattern = "HH:mm:ss",timezone = "GMT-8")
-    private LocalTime startTime;
+    private Time startTime;
 
     /**
      * 持续时间
@@ -44,7 +43,7 @@ public class ActivitySearchInfoVo implements Serializable {
      */
 //    @Column(name = "create_time")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT-8")
-    private LocalDateTime createTime;
+    private Timestamp createTime;
 
 
     /**

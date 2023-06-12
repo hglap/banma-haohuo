@@ -4,6 +4,7 @@ import com.ebanma.cloud.seckill.model.BaseDto;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 
@@ -17,6 +18,6 @@ public class ActivitySearchInfoDto extends BaseDto {
     private String createUserName;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT-8")
-    private LocalDateTime createTime;
+    private Timestamp createTime;
 
 }

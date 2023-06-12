@@ -3,6 +3,8 @@ package com.ebanma.cloud.seckill.model.dto;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.sql.Date;
+import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
@@ -34,9 +36,9 @@ public class ActivitySaveDto implements Serializable {
     /**
      * 日期
      */
-    private LocalDate startDate;
+    private Date startDate;
     /**
      * 时刻
      */
-    private LocalTime startTime;
+    private Time startTime;
 }

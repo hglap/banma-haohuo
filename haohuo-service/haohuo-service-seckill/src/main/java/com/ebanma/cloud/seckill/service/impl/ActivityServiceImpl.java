@@ -32,6 +32,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.concurrent.ListenableFutureCallback;
 
 import javax.annotation.Resource;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
@@ -46,6 +47,7 @@ import java.util.concurrent.TimeUnit;
  * @date 2023/06/06
  */
 @Service
+@Transactional(rollbackFor = RuntimeException.class)
 public class ActivityServiceImpl extends AbstractService<Activity> implements ActivityService {
 
     private Logger log = LoggerFactory.getLogger(ActivityServiceImpl.class);
@@ -56,9 +58,13 @@ public class ActivityServiceImpl extends AbstractService<Activity> implements Ac
     @Resource
     private RedisTemplate<String,Object> redisTemplate;
 
-    private StringBuilder stringBuilder = new StringBuilder();
+    @Resource
+    private RedissonClient redissonClient;
 
-    private IdWorker id;
+
+    private final StringBuffer stringBuffer = new StringBuffer();
+
+    private IdWorker id = new IdWorker();
 
     @Override
     public PageInfo searchInfoBypage(ActivitySearchInfoDto activitySearchInfoDto) {
@@ -80,7 +86,7 @@ public class ActivityServiceImpl extends AbstractService<Activity> implements Ac
                 saveDto.getStartTime(),
                 saveDto.getDuration(),
                 0,
-                new Date(),
+                new Timestamp(System.currentTimeMillis()),
                 saveDto.getCreateUserId()+"",
                 1,
                 1,
@@ -99,18 +105,22 @@ public class ActivityServiceImpl extends AbstractService<Activity> implements Ac
        }else if(num > 1){
            throw new BusinessException("已存在待发布活动，无法新增");
        }
-        LocalDateTime start = LocalDateTime.of(activity.getStartDate(),activity.getStartTime());
-        long endTimeMillis = start.toInstant(ZoneOffset.UTC).toEpochMilli()+activity.getDuration()* 1000L;
+        LocalDateTime start = LocalDateTime.of(activity.getStartDate().toLocalDate(), activity.getStartTime().toLocalTime());
+        long endTimeMillis = start.toInstant(ZoneOffset.of("+8")).toEpochMilli()+activity.getDuration()* 1000L;
         long during =endTimeMillis- System.currentTimeMillis();
        redisTemplate.opsForValue().set("activity", activity,during, TimeUnit.MILLISECONDS);
+       redisTemplate.opsForValue().set("activityId", activity.getId(), during, TimeUnit.MILLISECONDS);
        redisTemplate.opsForValue().set("activityEndTimeMillis", endTimeMillis,during, TimeUnit.MILLISECONDS);
        this.getGiftList(activity.getAmount(),during);
        return i;
     }
 
     private void getGiftList(long amount, long during) {
+        String key = "ActivityGift"+redisTemplate.opsForValue().get("activityId");
         for(int i = 0; i < amount; i++) {
-            redisTemplate.opsForList().rightPush("ActivityGift","积分"+i);
+           String gitName = stringBuffer.append("积分").append(i).toString();
+            stringBuffer.setLength(0);
+            redisTemplate.opsForList().rightPush(key,gitName);
         }
         redisTemplate.expire("ActivityGift",during,TimeUnit.MILLISECONDS);
     }
@@ -137,7 +147,8 @@ public class ActivityServiceImpl extends AbstractService<Activity> implements Ac
             throw new BusinessException("无待发布活动");
         }
         // 生产path
-        String path = stringBuilder.append(activity.getId()).append("*").append("userId").append("*").append("seckill").toString();
+        String path = stringBuffer.append(activity.getId()).append("*").append(userId).append("*").append("seckill").toString();
+        stringBuffer.setLength(0);
         // 将path存入redis中
         if(redisTemplate.opsForHash().putIfAbsent("userPaths",userId,path)){
             long during = this.getDuration();
@@ -149,20 +160,20 @@ public class ActivityServiceImpl extends AbstractService<Activity> implements Ac
         return vo;
     }
 
-    @Resource
-    private RedissonClient redissonClient;
 
 
     @Override
     public SeckillGit seckill(String path, String userId, long activityId) {
+        //1.用户锁-避免用户重复提交抽奖
        RLock redissonLock = redissonClient.getLock("seckill");
+        String gitName = "空";
         SeckillGit seckillGit = new SeckillGit();
         try {
             // TODO 获取分布式锁
             redissonLock.lock();
             // TODO 获取奖品
-            BoundListOperations<String,Object> bound = redisTemplate.boundListOps("ActivityGift");
-            String gitName = (String) bound.rightPop();
+            BoundListOperations<String,Object> bound = redisTemplate.boundListOps("ActivityGift"+redisTemplate.opsForValue().get("activityId"));
+            gitName = (String) bound.rightPop();
             // TODO 将path 放入redis中
             if(gitName != null){
                 redisTemplate.opsForSet().add("getGitPaths",path);
@@ -176,11 +187,11 @@ public class ActivityServiceImpl extends AbstractService<Activity> implements Ac
                     id.nextId(),
                     userId,
                     activityId,
-                    new Date(),
+                    new Timestamp(System.currentTimeMillis()),
                     gitName
             );
             // TODO 将消息发送到kafka中，并校验返回值
-            sendMessage(JSON.toJSONString(seckillMessageDto));
+            sendMessage(seckillMessageDto);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }finally {
@@ -188,21 +199,21 @@ public class ActivityServiceImpl extends AbstractService<Activity> implements Ac
             redissonLock.unlock();
         }
         // TODO 返回奖品
-        seckillGit.setGitName(path);
+        seckillGit.setGitName(gitName);
         return seckillGit;
     }
 
     @Resource
-    private KafkaTemplate<String, Object> kafkaTemplate;
+    private KafkaTemplate<String, String> kafkaTemplate;
 
-    public boolean sendMessage(String msg) {
-        kafkaTemplate.send("seckill", msg).addCallback(new ListenableFutureCallback<SendResult<String, Object>>() {
+    public boolean sendMessage(SeckillMessageDto msg) {
+        kafkaTemplate.send("seckill", JSON.toJSONString(msg)).addCallback(new ListenableFutureCallback<SendResult<String, String>>() {
             @Override
             public void onFailure(Throwable ex) {
                 log.error("发送消息失败：{}" , ex.getMessage());
             }
             @Override
-            public void onSuccess(SendResult<String, Object> result) {
+            public void onSuccess(SendResult<String, String> result) {
 
             }
         });

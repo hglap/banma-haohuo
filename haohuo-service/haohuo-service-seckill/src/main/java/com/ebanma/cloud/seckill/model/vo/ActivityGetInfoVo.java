@@ -3,6 +3,8 @@ package com.ebanma.cloud.seckill.model.vo;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
+import java.sql.Date;
+import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
@@ -17,8 +19,8 @@ public class ActivityGetInfoVo {
     private int duration;
     private String path;
     @JsonFormat(pattern = "yyyy-MM-dd",timezone = "GMT-8")
-    private LocalDate startDate;
+    private Date startDate;
     @JsonFormat(pattern = "HH:mm:ss",timezone = "GMT-8")
-    private LocalTime startTime;
+    private Time startTime;
 
 }

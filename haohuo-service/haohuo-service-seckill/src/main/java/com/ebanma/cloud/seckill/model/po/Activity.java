@@ -8,10 +8,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import java.io.Serializable;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.Date;
+import java.sql.Date;
+import java.sql.Time;
+import java.sql.Timestamp;
 
 @Data
 public class Activity implements Serializable {
@@ -22,16 +21,16 @@ public class Activity implements Serializable {
     /**
      * 开始日期
      */
-//    @Column(name = "start_date")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT-8")
-    private LocalDate startDate;
+    @Column(name = "start_date")
+    @JsonFormat(pattern = "yyyy-MM-dd",timezone = "GMT-8")
+    private Date startDate;
 
     /**
      * 开始时间
      */
-//    @Column(name = "start_time")
+    @Column(name = "start_time")
     @JsonFormat(pattern = "HH:mm:ss",timezone = "GMT-8")
-    private LocalTime startTime;
+    private Time startTime;
 
     /**
      * 持续时间
@@ -46,20 +45,20 @@ public class Activity implements Serializable {
     /**
      * 创建时间
      */
-//    @Column(name = "create_time")
+    @Column(name = "create_time")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT-8")
-    private Date createTime;
+    private Timestamp createTime;
 
     /**
      * 创建人
      */
-//    @Column(name = "create_user_id")
+    @Column(name = "create_user_id")
     private String createUserId;
 
     /**
      * 秒杀状态
      */
-//    @Column(name = "seckill_status")
+    @Column(name = "seckill_status")
     private Integer seckillStatus;
 
     /**
@@ -75,10 +74,10 @@ public class Activity implements Serializable {
     /**
      * 创建人名
      */
-//    @Column(name = "create_user_name")
+    @Column(name = "create_user_name")
     private String createUserName;
 
-    public Activity(Long id, LocalDate startDate, LocalTime startTime, Integer duration, Integer stock, Date createTime, String createUserId, Integer seckillStatus, Integer version, Integer amount, String createUserName) {
+    public Activity(Long id, Date startDate, Time startTime, Integer duration, Integer stock, Timestamp createTime, String createUserId, Integer seckillStatus, Integer version, Integer amount, String createUserName) {
         this.id = id;
         this.startDate = startDate;
         this.startTime = startTime;

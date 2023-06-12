@@ -10,4 +10,5 @@ import java.util.List;
 
 public interface SeckillMapper extends Mapper<Seckill> {
 
+    void addBantch(List<Seckill> list);
 }

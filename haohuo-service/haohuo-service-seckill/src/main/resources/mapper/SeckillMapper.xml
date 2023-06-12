@@ -15,6 +15,13 @@
   <sql id="Base_Column_list">
     id,user_id,activity_id,seckill_time,prize_type,prize_amount
   </sql>
+    <insert id="addBantch">
+      insert into seckill ( id,user_id,activity_id,seckill_time,prize_type,prize_amount ) values
+      <foreach collection="list" index="index" item="value" open="" close="" separator=",">
+        (#{value.id},#{value.userId},#{value.activityId},#{value.seckillTime},#{value.prizeType},#{value.prizeAmount})
+      </foreach>
+
+    </insert>
 
     <select id="searchBypage" resultType="com.ebanma.cloud.seckill.model.po.Activity">
       select <include refid="Base_Column_list"></include>
