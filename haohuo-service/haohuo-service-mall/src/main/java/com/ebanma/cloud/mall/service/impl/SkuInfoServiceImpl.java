@@ -206,11 +206,17 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoMapper, SkuInfoPO>
         return null;
     }
 
+    /**
+     * 分页查询
+     * @param skuInfoSearchDTO
+     * @return
+     */
     @Override
     public PageInfo searchList(SkuInfoSearchDTO skuInfoSearchDTO) {
         PageHelper.startPage(skuInfoSearchDTO.getPageNum(), skuInfoSearchDTO.getPageSize());
         List<SkuInfoPO> skuInfoPOList = skuInfoMapper.selectList(new LambdaQueryWrapper<SkuInfoPO>()
                 .eq(StringUtils.isNotEmpty(skuInfoSearchDTO.getCategoryId()), SkuInfoPO::getCategoryId, skuInfoSearchDTO.getCategoryId())
+                .eq(StringUtils.isNotEmpty(skuInfoSearchDTO.getUseStatus()),SkuInfoPO::getUseStatus,skuInfoSearchDTO.getUseStatus())
                 .like(StringUtils.isNotEmpty(skuInfoSearchDTO.getSkuName()), SkuInfoPO::getSkuName, skuInfoSearchDTO.getSkuName())
                 .like(StringUtils.isNotEmpty(skuInfoSearchDTO.getGoodsNo()), SkuInfoPO::getGoodsNo, skuInfoSearchDTO.getGoodsNo()));
 

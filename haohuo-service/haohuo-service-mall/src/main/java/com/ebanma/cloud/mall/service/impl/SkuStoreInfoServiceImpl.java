@@ -68,6 +68,7 @@ public class SkuStoreInfoServiceImpl extends ServiceImpl<SkuStoreInfoMapper, Sku
         }
         List<SkuStoreInfoPO> skuStoreInfoPOList = lambdaQuery().like(StringUtils.isNotEmpty(skuStoreInfoSearchDTO.getAccount()), SkuStoreInfoPO::getAccount, skuStoreInfoSearchDTO.getAccount())
                 .like(StringUtils.isNotEmpty(skuStoreInfoSearchDTO.getName()), SkuStoreInfoPO::getName, skuStoreInfoSearchDTO.getName())
+                .eq(StringUtils.isNotEmpty(skuStoreInfoSearchDTO.getUseStatus()),SkuStoreInfoPO::getUseStatus,skuStoreInfoSearchDTO.getUseStatus())
                 .between(CollectionUtil.isNotEmpty(skuStoreInfoSearchDTO.getCreateTime()), SkuStoreInfoPO::getCreateTime, firstDate, lastDate)
                 .list();
 
