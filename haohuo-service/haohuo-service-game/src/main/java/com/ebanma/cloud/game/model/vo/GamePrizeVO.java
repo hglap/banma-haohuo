@@ -15,12 +15,12 @@ import java.io.Serializable;
 @ApiModel( value ="GamePrizeVO", description="游戏抽奖奖品" )
 public class GamePrizeVO implements Serializable {
 
-    private String presentType;
+    private Integer presentCode;
 
     private Integer presentCount;
 
     public GamePrizeVO(GamePresentRuleVO gamePresentRuleVO) {
-        this.presentType = gamePresentRuleVO.getPresentType();
+        this.presentCode = gamePresentRuleVO.getPresentCode();
         this.presentCount = gamePresentRuleVO.getPresentCount();
     }
 }

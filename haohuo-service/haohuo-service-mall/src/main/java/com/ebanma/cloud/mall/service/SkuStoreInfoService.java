@@ -1,7 +1,12 @@
 package com.ebanma.cloud.mall.service;
 
+import com.ebanma.cloud.mall.model.dto.SkuInfoInsertDTO;
+import com.ebanma.cloud.mall.model.dto.SkuStoreInfoEditDTO;
+import com.ebanma.cloud.mall.model.dto.SkuStoreInfoInsertDTO;
+import com.ebanma.cloud.mall.model.dto.SkuStoreInfoSearchDTO;
 import com.ebanma.cloud.mall.model.po.SkuStoreInfoPO;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.github.pagehelper.PageInfo;
 
 /**
 * @author kmkmj
@@ -10,4 +15,13 @@ import com.baomidou.mybatisplus.extension.service.IService;
 */
 public interface SkuStoreInfoService extends IService<SkuStoreInfoPO> {
 
+    PageInfo searchList(SkuStoreInfoSearchDTO skuStoreInfoSearchDTO);
+
+    Boolean add(SkuStoreInfoInsertDTO skuStoreInfoInsertDTO);
+
+    Boolean edit(SkuStoreInfoEditDTO skuStoreInfoEditDTO);
+
+    Boolean editStatus(String id, String useStatus);
+
+    Boolean del(String id);
 }
