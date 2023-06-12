@@ -1,12 +1,14 @@
 package com.ebanma.cloud.trans.api.dto;
 
 
+import java.io.Serializable;
+
 /**
  * @author 鹿胜宝
  * @version $ Id: TransAccountLogSearchVO, v 0.1 2023/06/07 19:57 banma-0193 Exp $
  */
 
-public class TransAccountLogSearchVO{
+public class TransAccountLogSearchVO implements Serializable {
     //用户id
     private String userId;
 
