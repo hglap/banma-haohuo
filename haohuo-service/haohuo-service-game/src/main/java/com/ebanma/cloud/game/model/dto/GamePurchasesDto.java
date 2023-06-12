@@ -1,6 +1,7 @@
 package com.ebanma.cloud.game.model.dto;
 
 import com.ebanma.cloud.common.enums.GamePriceOrPropEnum;
+import com.ebanma.cloud.common.util.IdWorker;
 import com.ebanma.cloud.trans.api.dto.TransAccountLog;
 import io.swagger.annotations.ApiModel;
 import lombok.Data;
@@ -28,7 +29,8 @@ public class GamePurchasesDto {
     public TransAccountLog getTransAccountLog() {
         TransAccountLog transAccountLog = new TransAccountLog();
         transAccountLog.setUserId(this.userId);
-        transAccountLog.setAmount(100);
+        transAccountLog.setBizSerialNumber(String.valueOf(new IdWorker().nextId()));
+        transAccountLog.setAmount(100* this.buyCount/3);
         transAccountLog.setLogType(1);
         transAccountLog.setBizType(GamePriceOrPropEnum.POINT.getValue());
         transAccountLog.setDescription("砸蛋活动，消耗100积分购买三次抽奖机会。");
