@@ -64,7 +64,7 @@ public class UserInfoController {
     @PostMapping("/testMQ")
     public void testMQ() {
         HashMap<String, Object> map = new HashMap<>();
-        map.put("principalId", "001");
+        map.put("principalId", "13423457788");
         map.put("principalType", "sign");
         map.put("productCode", "USER");
         map.put("amount",0L);

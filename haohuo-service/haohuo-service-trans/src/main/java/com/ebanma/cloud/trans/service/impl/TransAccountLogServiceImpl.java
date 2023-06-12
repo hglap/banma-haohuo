@@ -65,7 +65,7 @@ public class TransAccountLogServiceImpl extends AbstractService<TransAccountLog>
     @Override
     public void record(TransAccountLog transAccountLog) throws Exception {
         //1.新建订单作幂等，流水号由业务流水号、交易类型、用户id、流水值拼接而成
-        String userId = StringUtils.isBlank(transAccountLog.getUserId()) ? "001" : transAccountLog.getUserId();
+        String userId = StringUtils.isBlank(transAccountLog.getUserId()) ? "13423457788" : transAccountLog.getUserId();
         transAccountLog.setUserId(userId);
         String serialNumber = transAccountLog.getBizSerialNumber() + transAccountLog.getLogType() + userId + transAccountLog.getAmount();
         Condition condition = new Condition(TransOrder.class);
@@ -161,7 +161,7 @@ public class TransAccountLogServiceImpl extends AbstractService<TransAccountLog>
     @Override
     public TransAccountLogVO searchByCondition(TransAccountLogSearchVO transAccountLogSearchVO) throws Exception {
         //分页查询明细
-        String userId = StringUtils.isBlank(transAccountLogSearchVO.getUserId()) ? "001" : transAccountLogSearchVO.getUserId();
+        String userId = StringUtils.isBlank(transAccountLogSearchVO.getUserId()) ? "13423457788" : transAccountLogSearchVO.getUserId();
         String transId = userId + "0003";
         TransAccountLog transAccountLog = new TransAccountLog();
         transAccountLog.setTransId(transId);
