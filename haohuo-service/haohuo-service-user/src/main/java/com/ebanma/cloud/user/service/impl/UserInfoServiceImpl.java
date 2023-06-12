@@ -58,7 +58,7 @@ public class UserInfoServiceImpl extends AbstractService<UserInfo> implements Us
         condition.createCriteria().andEqualTo("userId", userId);
         List<UserInfo> userInfos = userInfoMapper.selectByCondition(condition);
         if (userInfos.size() != 1) {
-            MallException.fail("用户信息异常，存在重复的用户账号");
+            MallException.fail("用户信息异常，存在重复的用户账号或用户不存在");
         }
         UserInfo userInfo = userInfos.get(0);
         //设置头像、昵称
