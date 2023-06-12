@@ -241,7 +241,12 @@ public class ActivityServiceImpl extends AbstractService<Activity> implements Ac
             redissonLock.lock();
             // TODO 获取奖品
             BoundListOperations<String,Object> bound = redisTemplate.boundListOps("ActivityGift"+redisTemplate.opsForValue().get("activityId"));
-            gitName = (String) bound.rightPop();
+            Git git = (Git) bound.rightPop();
+            if(git.getBizType() == 0){
+                gitName = "恭喜获得"+git.getAmount()+"积分";
+            }else{
+                gitName = "恭喜获得"+git.getAmount()+"元红包";
+            }
             // TODO 将path 放入redis中
             if(gitName != null){
                 redisTemplate.opsForSet().add("getGitPaths",path);
@@ -256,7 +261,9 @@ public class ActivityServiceImpl extends AbstractService<Activity> implements Ac
                     userId,
                     activityId,
                     new Timestamp(System.currentTimeMillis()),
-                    gitName
+                    gitName,
+                    git.getBizType(),
+                    git.getAmount()
             );
             // TODO 将消息发送到kafka中，并校验返回值
             kafkaTransMessage.sendMessageByKafka(JSON.toJSONString(seckillMessageDto));
