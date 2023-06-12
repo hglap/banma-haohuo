@@ -66,9 +66,9 @@ public class ResultGenerator {
         return result;
     }
 
-    public static Result genErrorResult(ResultCode code, String message) {
+    public static Result genErrorResult(int code, String message) {
         Result result = new Result();
-        result.setCode(code.code());
+        result.setCode(code);
         result.setMessage(message);
         return result;
     }
