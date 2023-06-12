@@ -21,7 +21,6 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
-
         <!--依赖来自定义的goods微服务的POJO 和feign-->
         <dependency>
             <groupId>com.ebanma.cloud</groupId>

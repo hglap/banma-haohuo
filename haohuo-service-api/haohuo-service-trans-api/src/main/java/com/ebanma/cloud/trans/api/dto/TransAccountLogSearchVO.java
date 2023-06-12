@@ -15,7 +15,7 @@ public class TransAccountLogSearchVO implements Serializable {
     //流水类型 0获取 1消耗
     private Integer logType;
 
-    //代币类型 0红包 1积分
+    //代币类型 0积分 1红包
     private Integer bizType;
 
     //红包状态 0未使用 1已使用 2已过期 3七日内过期

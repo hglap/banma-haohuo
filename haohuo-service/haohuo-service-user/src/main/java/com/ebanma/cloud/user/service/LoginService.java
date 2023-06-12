@@ -19,4 +19,6 @@ public interface LoginService {
     Result getSMSCode(SMSCode smsCode);
 
     Result updatePassword(Password password);
+
+    Result checkCode(Password password);
 }

@@ -8,7 +8,7 @@ import java.util.Date;
 
 public class TransAccountLog {
     /**
-     * 主键
+     * 主键，请求入参不需要填写
      */
 
     private Integer id;
@@ -19,13 +19,13 @@ public class TransAccountLog {
     private String userId;
 
     /**
-     * 账务id
+     * 账务id，请求入参不需要填写
      */
 
     private String transId;
 
     /**
-     * 流水值
+     * 流水值，增加减少的积分或者增加或减少的红包理论值
      */
 
     private Integer amount;
@@ -43,28 +43,28 @@ public class TransAccountLog {
     private Integer bizType;
 
     /**
-     * 实抵金额
+     * 实抵金额，使用红包抵扣时候需要填写，此处为红包实际抵扣的钱
      */
 
     private BigDecimal actualAmount;
 
     /**
-     * 描述
+     * 描述，描述下账务的流水情况，如 xxx在xx活动于xxx时间增加xx积分
      */
     private String description;
 
     /**
-     * 来源
+     * 来源，描述下活动来源，比如购物、抽奖等
      */
     private String source;
 
     /**
-     * 用途
+     * 用途，描述下花费的地方，比如购物、活动等
      */
     private String consume;
 
     /**
-     * 红包id
+     * 红包id，使用红包时候必填，填写红包的id
      */
 
     private String redPacketId;
@@ -83,12 +83,12 @@ public class TransAccountLog {
     private String createBy;
 
     /**
-     * 红包实体
+     * 红包实体，不需要填写
      */
     private RedPacket redPacket;
 
     /**
-     * 业务流水号
+     * 业务流水号，必填，后端做幂等使用。需要一个唯一的值。
      */
 
     private String bizSerialNumber;

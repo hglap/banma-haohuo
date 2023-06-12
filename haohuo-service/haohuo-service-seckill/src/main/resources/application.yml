@@ -10,3 +10,18 @@ spring:
         namespace: 7bdad1e8-52f0-4905-814a-d413d6d819e5
       username: nacos
       password: nacos
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/seckill
+    username: root
+    password: root
+mybatis:
+  mapper-locations: mapper/*.xml
+  configuration:
+    map-underscore-to-camel-case: true
+logging:
+  level:
+    com.ebanma.cloud.seckill.dao: debug
+
+
+
