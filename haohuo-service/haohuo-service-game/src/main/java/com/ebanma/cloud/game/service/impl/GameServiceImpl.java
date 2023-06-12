@@ -4,13 +4,14 @@ import cn.hutool.core.thread.ThreadUtil;
 import com.ebanma.cloud.common.core.ServiceException;
 import com.ebanma.cloud.common.enums.GamePriceOrPropEnum;
 import com.ebanma.cloud.common.enums.GameRedisEnum;
+import com.ebanma.cloud.common.enums.ResultCode;
 import com.ebanma.cloud.game.model.dto.GameDrawDto;
+import com.ebanma.cloud.game.model.dto.GamePurchasesDto;
 import com.ebanma.cloud.game.model.po.GameUserInfo;
 import com.ebanma.cloud.game.model.po.GameUserRecord;
-import com.ebanma.cloud.game.model.vo.GameEggRuleVO;
-import com.ebanma.cloud.game.model.vo.GamePresentRuleVO;
-import com.ebanma.cloud.game.model.vo.GamePrizeVO;
+import com.ebanma.cloud.game.model.vo.*;
 import com.ebanma.cloud.game.service.*;
+import com.ebanma.cloud.trans.api.openfeign.TransFeign;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
@@ -51,6 +52,8 @@ public class GameServiceImpl implements GameService {
     @Resource
     private GameRuleService gameRuleService;
 
+    @Resource
+    private TransFeign transFeign;
 
     @Transactional
     @Override
@@ -72,7 +75,9 @@ public class GameServiceImpl implements GameService {
             List<GameEggRuleVO> gameRules = gameRuleService.getGameRules(userInfo, gameDrawDto.getPropCode());
 
             //4.金蛋保底控制方法
-            GameEggRuleVO eggDraw = gameRuleService.getEggDraw(gameRules);
+            GameEggRuleVO eggDraw = 1==1?
+                    gameRuleService.getEggDrawByGuaranteed(gameRules)
+                    : gameRuleService.getEggDraw(gameRules);
 
             //5.根据蛋类型进行奖品抽奖
             GamePresentRuleVO presentDraw = gameRuleService.getPresentDraw(eggDraw.getPresentRuleVOS());
@@ -84,11 +89,14 @@ public class GameServiceImpl implements GameService {
             //更新游戏域各人信息
             gameUserInfoService.update(userInfo);
             //更新道具剩余信息
-            gameUserPropService.update(userInfo.getUseGameUserProp());
-            //清除道具使用记录
-            userInfo.setUseGameUserProp(null);
+            if (userInfo.getUseGameUserProp() != null) {
+                gameUserPropService.update(userInfo.getUseGameUserProp());
+                //清除道具使用记录
+                userInfo.setUseGameUserProp(null);
+            }
             //6.3 抽奖记录
-            GameUserRecord gameUserRecord = new GameUserRecord(gameDrawDto.getUserId(),presentDraw);
+
+            GameUserRecord gameUserRecord = new GameUserRecord(gameDrawDto.getUserId(),"",presentDraw);
             gameUserRecordService.save(gameUserRecord);
             //6.4 更新redis内用户个人数据
             redisTemplate.opsForValue().set(GameRedisEnum.USER_INFO.getKey()+gameDrawDto.getUserId(),userInfo,5, TimeUnit.MINUTES);
@@ -97,7 +105,7 @@ public class GameServiceImpl implements GameService {
             ThreadUtil.execAsync( new Runnable() {
                 @Override
                 public void run() {
-                    switch (Objects.requireNonNull(GamePriceOrPropEnum.getGamePropByKey(presentDraw.getPresentType()))){
+                    switch (Objects.requireNonNull(GamePriceOrPropEnum.getGamePropByValue(presentDraw.getPresentCode()))){
                         case RED_PACKET:
                             System.out.println(GamePriceOrPropEnum.RED_PACKET.getKey()+GamePriceOrPropEnum.RED_PACKET.getValue()+presentDraw.getPresentCount());
                             break;
@@ -131,6 +139,14 @@ public class GameServiceImpl implements GameService {
         }
     }
 
-
+    @Override
+    public boolean purchases(GamePurchasesDto gamePurchasesDto) {
+        try {
+            return ResultCode.SUCCESS.code() - transFeign.updateTrans(gamePurchasesDto.getTransAccountLog()).getCode() == 0;
+        }catch (Exception e) {
+            log.info("调用账户域进行积分扣减失败。");
+            throw new ServiceException("调用账户域进行积分扣减失败。",e);
+        }
+    }
 
 }
