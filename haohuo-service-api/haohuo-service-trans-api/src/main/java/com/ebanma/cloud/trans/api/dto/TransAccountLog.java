@@ -87,6 +87,20 @@ public class TransAccountLog {
      */
     private RedPacket redPacket;
 
+    /**
+     * 业务流水号
+     */
+
+    private String bizSerialNumber;
+
+    public String getBizSerialNumber() {
+        return bizSerialNumber;
+    }
+
+    public void setBizSerialNumber(String bizSerialNumber) {
+        this.bizSerialNumber = bizSerialNumber;
+    }
+
     public RedPacket getRedPacket() {
         return redPacket;
     }

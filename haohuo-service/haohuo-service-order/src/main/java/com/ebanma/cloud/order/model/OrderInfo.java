@@ -117,6 +117,9 @@ public class OrderInfo {
     @TableField(value = "img_url")
     private String imgUrl;
 
+    @TableField(value = "delivery_no")
+    private String deliveryNo;
+
     /**
      * 商品id
      */
@@ -152,6 +155,14 @@ public class OrderInfo {
      */
     @TableField(value = "merchant_id")
     private String merchantId;
+
+    public String getDeliveryNo() {
+        return deliveryNo;
+    }
+
+    public void setDeliveryNo(String deliveryNo) {
+        this.deliveryNo = deliveryNo;
+    }
 
     /**
      * 获取主键
