@@ -13,4 +13,5 @@ public interface UserServiceFeign {
     @GetMapping(value = "/admin/getUserInfoByToken")
     String getUserIdByToken();
 
+
 }
