@@ -1,4 +1,5 @@
-package com.ebanma.cloud.gateway.app.config;
+//package com.ebanma.cloud.gateway.app.config;
+package com.ebanma.cloud.game.config;
 
 import org.redisson.Redisson;
 import org.redisson.api.RedissonClient;
@@ -33,10 +34,10 @@ public class MyRedissonConfig {
         Config config = new Config();
         config.setTransportMode(TransportMode.NIO);
         SingleServerConfig serverConfig = config.useSingleServer();
-        serverConfig.setAddress("redis:\\"+redisHost + ":" + redisPort);
+        serverConfig.setAddress("redis://"+redisHost + ":" + redisPort);
 
         if(StringUtils.hasLength(redisPassword)){
-            serverConfig.setAddress(redisPassword);
+            serverConfig.setPassword(redisPassword);
         }
         return Redisson.create(config);
     }

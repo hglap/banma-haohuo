@@ -64,9 +64,7 @@ public class  GameRuleServiceImpl extends AbstractService<GameRule> implements G
                     //道具数量减一
                     m.setPropRemainCount(m.getPropRemainCount() - 1);
                     //记录用户使用的道具,方便后续更新数据库
-                    userInfo.setUseGameUserProp(m);
-                    //更新数据库
-                    gameUserPropService.update(m);
+                    userInfo.getUseGameUserProp().add(m);
                     //使用道具类型判断
                     switch (Objects.requireNonNull(GamePriceOrPropEnum.getGamePropByValue(propCode))) {
                         case A:
@@ -85,6 +83,18 @@ public class  GameRuleServiceImpl extends AbstractService<GameRule> implements G
         }
 
         return gameRules;
+    }
+
+    @Override
+    public void guaranteedRollback(GameEggRuleVO eggDraw) {
+        GameDrawVO gameDrawVO = (GameDrawVO) redisTemplate.opsForValue().get(GameRedisEnum.DRAW_INFO.getKey());
+        //保底剩余次数+1
+        gameDrawVO.setRemainTimes( gameDrawVO.getRemainTimes() +1 );
+        if( GameEggEnum.GOLDEN_EGG.getEggType().equals(eggDraw.getEggType()) ){
+            //如果该次为金蛋,则金蛋统计次数回置
+            gameDrawVO.setWinning( gameDrawVO.getWinning() -1 );
+        }
+        redisTemplate.opsForValue().set(GameRedisEnum.DRAW_INFO.getKey(),gameDrawVO);
     }
 
     /**
