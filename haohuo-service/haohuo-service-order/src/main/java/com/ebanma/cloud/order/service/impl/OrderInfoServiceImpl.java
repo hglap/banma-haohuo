@@ -20,6 +20,8 @@ import com.ebanma.cloud.trans.api.dto.TransAccountLogDTO;
 import com.ebanma.cloud.trans.api.dto.TransAccountLogSearchVO;
 import com.ebanma.cloud.trans.api.dto.TransAccountLogVO;
 import com.ebanma.cloud.trans.api.openfeign.TransFeign;
+import com.ebanma.cloud.user.api.openfeign.UserAddressFeign;
+import com.ebanma.cloud.user.api.openfeign.UserServiceFeign;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.rocketmq.spring.core.RocketMQTemplate;
@@ -57,6 +59,12 @@ public class OrderInfoServiceImpl implements OrderInfoService {
 
     @Autowired
     private TransFeign transFeign;
+
+    @Autowired
+    private UserServiceFeign userServiceFeign;
+    
+    @Autowired
+    private UserAddressFeign userAddressFeign;
 
 
     //@Autowired
@@ -214,6 +222,10 @@ public class OrderInfoServiceImpl implements OrderInfoService {
     @Override
     public Result<DisplayOrder> getDisplayInfo(String skuId) {
         DisplayOrder displayOrder = new DisplayOrder();
+        // 获取登陆人信息
+        String userId = userServiceFeign.getUserIdByToken();
+        Result detail = userAddressFeign.detail(userId);
+
         // 获取商品信息
         Result<SkuInfoVO> skuInfoVOResult = skuInfoServiceFeign.queryById(skuId);
         displayOrder.setSkuInfo(skuInfoVOResult.getData());
