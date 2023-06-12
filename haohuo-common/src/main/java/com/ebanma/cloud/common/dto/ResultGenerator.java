@@ -45,6 +45,7 @@ public class ResultGenerator {
     public static Result genUnRegisterResult(String message) {
         Result result = new Result();
         result.setCode(ResultCode.UNREGISTER.code());
+        result.setCode(ResultCode.FAIL.code());
         if (!StringUtils.hasText(message)) {
             result.setMessage(DEFAULT_FAIL_MESSAGE);
         } else {
@@ -53,7 +54,7 @@ public class ResultGenerator {
         return result;
     }
 
-    public static Result genFirstLoginResult(String message,String data) {
+    public static Result genFirstLoginResult(String message,Object data) {
         Result result = new Result();
         result.setCode(ResultCode.UNREGISTER.code());
         if (!StringUtils.hasText(message)) {
@@ -65,9 +66,9 @@ public class ResultGenerator {
         return result;
     }
 
-    public static Result genErrorResult(ResultCode code, String message) {
+    public static Result genErrorResult(int code, String message) {
         Result result = new Result();
-        result.setCode(code.code());
+        result.setCode(code);
         result.setMessage(message);
         return result;
     }

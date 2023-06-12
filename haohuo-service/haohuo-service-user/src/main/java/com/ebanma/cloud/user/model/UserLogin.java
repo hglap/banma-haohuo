@@ -15,7 +15,7 @@ public class UserLogin {
 
     private String password;
 
-    private String code;
+    private String smsCode;
 
     private String loginIP;
 
@@ -73,21 +73,34 @@ public class UserLogin {
         this.exploreType = exploreType;
     }
 
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    public UserLogin(String userPhone, String type, String password, String code, String loginIP, String loginLocation, String exploreType) {
+    public UserLogin(String userPhone, String type, String password, String smsCode, String loginIP, String loginLocation, String exploreType) {
         this.userPhone = userPhone;
         this.type = type;
         this.password = password;
-        this.code = code;
+        this.smsCode = smsCode;
         this.loginIP = loginIP;
         this.loginLocation = loginLocation;
         this.exploreType = exploreType;
+    }
+
+    public String getSmsCode() {
+        return smsCode;
+    }
+
+    public void setSmsCode(String smsCode) {
+        this.smsCode = smsCode;
+    }
+
+    @Override
+    public String toString() {
+        return "UserLogin{" +
+                "userPhone='" + userPhone + '\'' +
+                ", type='" + type + '\'' +
+                ", password='" + password + '\'' +
+                ", smsCode='" + smsCode + '\'' +
+                ", loginIP='" + loginIP + '\'' +
+                ", loginLocation='" + loginLocation + '\'' +
+                ", exploreType='" + exploreType + '\'' +
+                '}';
     }
 }

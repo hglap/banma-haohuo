@@ -23,7 +23,8 @@ public class LoginController {
     private LoginService loginService;
 
     @PostMapping("/login")
-    public Result login(@RequestBody UserLogin userLogin) {
+    public Result login(UserLogin userLogin) {
+        System.out.println(userLogin);
         if(userLogin.getType().equals(UserLoginEnum.APP_PHONE_LOGIN.getType())){
             return loginService.appCodeLogin(userLogin);
         }else if(userLogin.getType().equals(UserLoginEnum.APP_PASSWORD_LOGIN.getType())){
@@ -34,13 +35,14 @@ public class LoginController {
         return ResultGenerator.genFailResult("登陆非法");
     }
 
-    @PostMapping("/getSMSCode")
-    public Result getSMSCode(@RequestBody SMSCode smsCode){
+    @PostMapping("/getSmsCode")
+    public Result getSMSCode(SMSCode smsCode){
+
         return loginService.getSMSCode(smsCode);
     }
 
     @PostMapping("/updatePassword")
-    public Result updatePassword(@RequestBody Password password){
+    public Result updatePassword(Password password){
         return loginService.updatePassword(password);
     }
 
@@ -49,4 +51,8 @@ public class LoginController {
         return BaseContextHandler.getUserId();
     };
 
+    @PostMapping("/checkCode")
+    public Result checkCode(Password password){
+        return loginService.checkCode(password);
+    }
 }

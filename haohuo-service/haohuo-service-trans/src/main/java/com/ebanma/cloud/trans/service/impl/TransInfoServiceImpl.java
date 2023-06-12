@@ -31,6 +31,8 @@ public class TransInfoServiceImpl extends AbstractService<TransInfo> implements 
         super.save(transInfo);
         TransAccount transAccount = new TransAccount();
         transAccount.setTransId(transInfo.getTransId());
+        transAccount.setCreateTime(transInfo.getCreateTime());
+        transAccount.setModifiedTime(transInfo.getCreateTime());
         transAccountService.save(transAccount);
     }
 }
