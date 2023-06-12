@@ -2,9 +2,7 @@ package com.ebanma.cloud.game.web;
 
 import com.ebanma.cloud.common.dto.Result;
 import com.ebanma.cloud.common.dto.ResultGenerator;
-import com.ebanma.cloud.game.model.dto.GameDrawDto;
 import com.ebanma.cloud.game.service.GameRuleService;
-import com.ebanma.cloud.game.service.GameService;
 import com.ebanma.cloud.game.service.GameUserInfoService;
 import com.ebanma.cloud.game.service.GameUserRecordService;
 import io.swagger.annotations.Api;
@@ -40,7 +38,7 @@ public class GameShowController {
      */
     @ApiOperation("获取游戏规则概率")
     @PostMapping("/percentage")
-    public Result percentage(GameDrawDto gameDrawDto) {
+    public Result percentage() {
         return ResultGenerator.genSuccessResult(gameRuleService.getGameRules());
     };
 
