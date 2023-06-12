@@ -4,6 +4,7 @@ import com.ebanma.cloud.common.core.AbstractService;
 import com.ebanma.cloud.common.exception.MallException;
 import com.ebanma.cloud.user.dao.ProdLifetimeMapper;
 import com.ebanma.cloud.user.dao.UserInfoMapper;
+import com.ebanma.cloud.user.model.ProdLifetime;
 import com.ebanma.cloud.user.model.UserInfo;
 import com.ebanma.cloud.user.service.ProdLifetimeSearchService;
 import com.ebanma.cloud.user.service.ProdLifetimeService;
@@ -28,7 +29,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Slf4j
 @Service
 @Transactional
-public class ProdLifetimeServiceImpl extends AbstractService<com.ebanma.cloud.user.model.ProdLifetime> implements ProdLifetimeService {
+public class ProdLifetimeServiceImpl extends AbstractService<ProdLifetime> implements ProdLifetimeService {
 
     @Resource
     private ProdLifetimeSearchService prodLifetimeSearchService;
@@ -84,7 +85,7 @@ public class ProdLifetimeServiceImpl extends AbstractService<com.ebanma.cloud.us
      */
     @Override
     public void handleMessage(String userId, String principalType, String productCode, Long amount) {
-        com.ebanma.cloud.user.model.ProdLifetime prodLifetime = prodLifetimeSearchService.findProd(userId, principalType, productCode);
+        ProdLifetime prodLifetime = prodLifetimeSearchService.findProd(userId, principalType, productCode);
         if (prodLifetime == null) {
             //确认userId是否存在
             Boolean isExist = confirmUserById(userId);
@@ -92,7 +93,7 @@ public class ProdLifetimeServiceImpl extends AbstractService<com.ebanma.cloud.us
                 log.error("用户id{}不存在", userId);
                 MallException.fail("该用户不存在");
             }
-            prodLifetime = new com.ebanma.cloud.user.model.ProdLifetime();
+            prodLifetime = new ProdLifetime();
             prodLifetime.setProductCode(productCode);
             prodLifetime.setPrincipalType(principalType);
             prodLifetime.setPrincipalId(userId);
