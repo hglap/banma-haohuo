@@ -1,72 +1,49 @@
 package com.ebanma.cloud.user.api.dto;
 
-
-import com.ebanma.cloud.user.utils.InsertGroup;
-import com.ebanma.cloud.user.utils.UpdateGroup;
-
-import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-
 public class Address {
     /**
      * 主键
      */
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @NotNull(message = "主键id不能为空", groups = UpdateGroup.class)
     private Long id;
 
     /**
      * 用户ID
      */
-    @Column(name = "user_id")
-    @NotBlank(message = "用户id不能为空", groups = InsertGroup.class)
     private String userId;
 
     /**
      * 省
      */
-    @NotBlank(message = "省份不能为空", groups = InsertGroup.class)
     private String province;
 
     /**
      * 市
      */
-    @NotBlank(message = "城市不能为空", groups = InsertGroup.class)
     private String city;
 
     /**
      * 县/区
      */
-    @NotBlank(message = "区县不能为空", groups = InsertGroup.class)
     private String area;
 
     /**
      * 电话
      */
-    @NotBlank(message = "电话不能为空", groups = InsertGroup.class)
     private String phone;
 
     /**
      * 详细地址
      */
-    @NotBlank(message = "地址不能为空", groups = InsertGroup.class)
     private String address;
 
     /**
      * 联系人
      */
-    @NotBlank(message = "联系人不能为空", groups = InsertGroup.class)
     private String contact;
 
     /**
      * 是否是默认 1默认 0否
      */
-    @Column(name = "is_default")
     private String isDefault;
 
     /**

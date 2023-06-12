@@ -23,6 +23,11 @@ public class SkuCategorySearchDTO extends BasePageSearchVO implements Serializab
      */
     private String categoryNo;
 
+    /**
+     * 状态
+     */
+    private String useStatus;
+
 
 
 

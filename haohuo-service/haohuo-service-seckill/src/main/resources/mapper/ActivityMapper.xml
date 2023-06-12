@@ -25,7 +25,10 @@
     values (#{id}, #{startDate}, #{startTime}, #{duration}, #{amount}, #{createUserName}, #{createUserId}, #{createTime},1,1, #{amount})
 
   </insert>
-  <select id="searchBypage" resultType="com.ebanma.cloud.seckill.model.po.Activity">
+    <update id="closeDoneActivity">
+      update activity set seckill_status = 0 where concat(start_date,' ',start_time) &lt; #{tt} and seckill_status = 1
+    </update>
+    <select id="searchBypage" resultType="com.ebanma.cloud.seckill.model.po.Activity">
       select <include refid="Base_Column_List"></include>
           from activity
     <where>
