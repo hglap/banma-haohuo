@@ -34,8 +34,7 @@ public class OrderInfoController {
 
     @PostMapping("/add")
     public Result add(@RequestBody OrderInfo orderInfo) {
-        orderInfoService.save(orderInfo);
-        return ResultGenerator.genSuccessResult("操作成功");
+        return orderInfoService.save(orderInfo);
     }
 
     @PostMapping("/list")

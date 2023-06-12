@@ -8,6 +8,7 @@ import com.ebanma.cloud.common.util.BeanUtil;
 import com.ebanma.cloud.mall.api.openfeign.SkuInfoServiceFeign;
 import com.ebanma.cloud.mall.api.vo.SkuInfoVO;
 import com.ebanma.cloud.order.dao.OrderInfoMapper;
+import com.ebanma.cloud.order.dao.PaymentInfoMapper;
 import com.ebanma.cloud.order.feign.SkuInfoQueryDTO;
 import com.ebanma.cloud.order.feign.countDTO;
 import com.ebanma.cloud.order.model.AccountInfo;
@@ -20,8 +21,10 @@ import com.ebanma.cloud.trans.api.dto.TransAccountLogDTO;
 import com.ebanma.cloud.trans.api.dto.TransAccountLogSearchVO;
 import com.ebanma.cloud.trans.api.dto.TransAccountLogVO;
 import com.ebanma.cloud.trans.api.openfeign.TransFeign;
+import com.ebanma.cloud.user.api.dto.Address;
 import com.ebanma.cloud.user.api.openfeign.UserAddressFeign;
 import com.ebanma.cloud.user.api.openfeign.UserServiceFeign;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.rocketmq.spring.core.RocketMQTemplate;
@@ -44,6 +47,7 @@ import java.util.stream.Stream;
  */
 @Service
 @Transactional
+@Slf4j
 public class OrderInfoServiceImpl implements OrderInfoService {
     @Resource
     private OrderInfoMapper orderInfoMapper;
@@ -62,10 +66,6 @@ public class OrderInfoServiceImpl implements OrderInfoService {
 
     @Autowired
     private UserServiceFeign userServiceFeign;
-    
-    @Autowired
-    private UserAddressFeign userAddressFeign;
-
 
     //@Autowired
     //private RocketMQTemplate rocketMQTemplate;
@@ -125,43 +125,32 @@ public class OrderInfoServiceImpl implements OrderInfoService {
     }
 
     @Override
-    public int save(OrderInfo orderInfo) {
-        String lockKey = orderInfo.getSkuId();
-        redisUtil.getRedisTemplate().opsForValue().set(lockKey,20+"");
-        redisUtil.getRedisTemplate().opsForValue().decrement(lockKey,2);
+    public Result<OrderInfo> save(OrderInfo orderInfo) {
+        String skuId = orderInfo.getSkuId();
 
-        System.out.println(redisUtil.getRedisTemplate().opsForValue().get(lockKey));
         List<String> keyList = new ArrayList<>();
-        keyList.add(lockKey);
-        Object execute = redisUtil.getRedisTemplate().execute(redisScript, keyList, 2+"");
+        keyList.add(skuId);
+        Object execute = redisUtil.getRedisTemplate().execute(redisScript, keyList, orderInfo.getSkuNum()+"");
 
         if ("1".equals(execute.toString())) {
+
             // 新增订单
+            orderInfo.setOutTradeNo(UUID.randomUUID().toString());
             orderInfoMapper.insert(orderInfo);
             // 调用支付接口支付订单
 
-
             // 支付成功后，发送消息更新库存
-            kafkaTemplate.send("userlog","测试消息");
-
-
-            // 支付成功后调用更新订单状态方法，扣减红包方法，扣减积分方法（全局事务）
-
-
-            // 取消支付或支付失败则回滚redis中库存更改订单状态为已取消
-
-
+            //kafkaTemplate.send("userlog","测试消息");
 
             //rocketMQTemplate.syncSend("hgl-order-topic"
             //        , MessageBuilder.withPayload("测试消息").build(),3000,3);
-            System.out.println("扣减库存成功");
-
+            log.info("扣减库存成功,商品id=={},商品剩余数量=={}",orderInfo.getSkuId(),redisUtil.getRedisTemplate().opsForValue().get(skuId));
+            return ResultGenerator.genSuccessResult(orderInfo);
         } else {
             // 失败后返回结果
-            System.out.println("扣减库存失败");
+            log.info("扣减库存失败,商品id=={},商品剩余数量=={}",orderInfo.getSkuId(),redisUtil.getRedisTemplate().opsForValue().get(skuId));
+            return ResultGenerator.genFailResult("库存不足！");
         }
-        System.out.println(redisUtil.getRedisTemplate().opsForValue().get(lockKey));
-        return 0;
     }
 
     @Override
@@ -224,8 +213,8 @@ public class OrderInfoServiceImpl implements OrderInfoService {
         DisplayOrder displayOrder = new DisplayOrder();
         // 获取登陆人信息
         String userId = userServiceFeign.getUserIdByToken();
-        Result detail = userAddressFeign.detail(userId);
-
+        Result<Address> detail = userServiceFeign.detail(userId);
+        displayOrder.setAddress(detail.getData());
         // 获取商品信息
         Result<SkuInfoVO> skuInfoVOResult = skuInfoServiceFeign.queryById(skuId);
         displayOrder.setSkuInfo(skuInfoVOResult.getData());
@@ -241,7 +230,6 @@ public class OrderInfoServiceImpl implements OrderInfoService {
         AccountInfo accountInfo = new AccountInfo();
         accountInfo.setTotalIntegral(transInfo.getData().getAmountPoints());
         displayOrder.setAccountInfo(accountInfo);
-
         return ResultGenerator.genSuccessResult(displayOrder);
     }
 

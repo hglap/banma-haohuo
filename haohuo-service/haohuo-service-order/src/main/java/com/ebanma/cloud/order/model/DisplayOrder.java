@@ -4,6 +4,7 @@ package com.ebanma.cloud.order.model;
 import com.ebanma.cloud.mall.api.vo.SkuInfoVO;
 import com.ebanma.cloud.trans.api.dto.RedPacket;
 import com.ebanma.cloud.trans.api.dto.TransAccountLogDTO;
+import com.ebanma.cloud.user.api.dto.Address;
 import com.ebanma.cloud.user.api.dto.UserDTO;
 import lombok.Data;
 
@@ -19,5 +20,7 @@ public class DisplayOrder {
     private SkuInfoVO skuInfo;
 
     private AccountInfo accountInfo;
+
+    private Address address;
 
 }

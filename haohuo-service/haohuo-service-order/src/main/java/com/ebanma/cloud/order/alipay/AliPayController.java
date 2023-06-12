@@ -8,7 +8,12 @@ import com.alipay.api.internal.util.AlipaySignature;
 import com.alipay.api.request.AlipayTradePagePayRequest;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.ebanma.cloud.order.dao.OrderInfoMapper;
+import com.ebanma.cloud.order.dao.PaymentInfoMapper;
+import com.ebanma.cloud.order.model.OrderInfo;
+import com.ebanma.cloud.order.model.PaymentInfo;
 import com.ebanma.cloud.order.service.OrderInfoService;
+import org.apache.rocketmq.spring.core.RocketMQTemplate;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,6 +22,8 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.math.BigDecimal;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -34,7 +41,13 @@ public class AliPayController {
     private AliPayConfig aliPayConfig;
 
     @Resource
-    private OrderInfoService orderInfoService;
+    private OrderInfoMapper orderInfoMapper;
+
+    @Resource
+    private PaymentInfoMapper paymentInfoMapper;
+
+    @Autowired
+    private RocketMQTemplate rocketMQTemplate;
 
     @GetMapping("/pay") // &subject=xxx&traceNo=xxx&totalAmount=xxx
     public void pay(AliPay aliPay, HttpServletResponse httpResponse) throws Exception {
@@ -107,7 +120,39 @@ public class AliPayController {
                 //    orders.setState("已支付");
                 //    ordersMapper.updateById(orders);
                 //}
+
+                // 查询订单
+                QueryWrapper<OrderInfo> queryWrapper = new QueryWrapper<>();
+                queryWrapper.eq("out_trade_no", outTradeNo);
+                OrderInfo orderInfo = orderInfoMapper.selectOne(queryWrapper);
+                // 更新订单
+                if (orderInfo != null) {
+                    orderInfo.setPaymentTime(new Date());
+                    orderInfo.setOrderStatus("待发货");
+                    orderInfoMapper.updateById(orderInfo);
+                }
                 // 写paymentInfo表
+                PaymentInfo paymentInfo = new PaymentInfo();
+                paymentInfo.setPaymentTime(new Date(params.get("gmt_payment")));
+                paymentInfo.setOrderId(orderInfo.getOrderId());
+                paymentInfo.setTotalAmount(new BigDecimal(params.get("total_amount")));
+                paymentInfo.setAlipayTradeNo(params.get("trade_no"));
+                paymentInfo.setPaymentType("支付宝支付");
+                paymentInfo.setSubject(params.get("subject"));
+                paymentInfo.setUserId(params.get("buyer_id"));
+                paymentInfoMapper.insert(paymentInfo);
+
+                // 支付成功后，发送消息更新库存
+                //kafkaTemplate.send("userlog","测试消息");
+
+                // 支付成功后调用更新订单状态方法，扣减红包方法，扣减积分方法（全局事务）
+
+
+                // 取消支付或支付失败则回滚redis中库存更改订单状态为已取消
+                
+
+                //rocketMQTemplate.syncSend("hgl-order-topic"
+                //        , MessageBuilder.withPayload("测试消息").build(),3000,3);
 
             }
         }

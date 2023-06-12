@@ -23,7 +23,7 @@ public interface OrderInfoService {
 
     int update(OrderInfo orderInfo);
 
-    int save(OrderInfo orderInfo);
+    Result<OrderInfo> save(OrderInfo orderInfo);
 
     Result<Map<String, countDTO>> querySkuSaleCount(SkuInfoQueryDTO skuInfoQueryDTO);
 

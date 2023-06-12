@@ -1,38 +1,36 @@
-package com.ebanma.cloud.order.config;
+package com.ebanma.cloud.mall.init;
 
 
 import com.ebanma.cloud.common.dto.Result;
 import com.ebanma.cloud.mall.api.openfeign.SkuInfoServiceFeign;
-import com.ebanma.cloud.order.util.RedisUtil;
-import org.apache.commons.collections.CollectionUtils;
+import com.ebanma.cloud.mall.service.SkuInfoService;
+import com.ebanma.cloud.mall.util.RedisUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
-import org.springframework.data.annotation.AccessType;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
-//@Component
+@Component
 public class InitSkuCount implements ApplicationRunner {
 
     @Autowired
-    private SkuInfoServiceFeign skuInfoServiceFeign;
+    private SkuInfoService skuInfoService;
 
     @Autowired
     private RedisUtil redisUtil;
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
-        Result<Map<String, Long>> allSkuCount = null;
+        Map<String, Long> allSkuCount = null;
         try {
-            allSkuCount = skuInfoServiceFeign.getAllSkuCount();
+            allSkuCount = skuInfoService.getAllSkuCount();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
         if(allSkuCount != null){
-            Map<String, Long> data = allSkuCount.getData();
-            data.forEach((key,value) ->{
+            allSkuCount.forEach((key,value) ->{
                 redisUtil.getRedisTemplate().opsForValue().set(key,value+"");
             });
         }
