@@ -20,7 +20,7 @@ mybatis:
   mapper-locations: mapper/*.xml
 
 rocketmq:
-  name-server: 30.16.96.140:9090
+  name-server: 30.16.95.140:9876
   producer:
     group: group1
 logging:

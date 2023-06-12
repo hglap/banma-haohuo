@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ebanma.cloud.seckill.dao.ActivityMapper">
+  <resultMap id="BaseResultMap" type="com.ebanma.cloud.seckill.model.po.Activity">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="start_date" jdbcType="DATE" property="startDate" />
+    <result column="start_time" jdbcType="TIME" property="startTime" />
+    <result column="duration" jdbcType="INTEGER" property="duration" />
+    <result column="stock" jdbcType="INTEGER" property="stock" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="create_user_id" jdbcType="VARCHAR" property="createUserId" />
+    <result column="seckill_status" jdbcType="INTEGER" property="seckillStatus" />
+    <result column="version" jdbcType="INTEGER" property="version" />
+    <result column="amount" jdbcType="INTEGER" property="amount" />
+    <result column="create_user_name" jdbcType="VARCHAR" property="createUserName" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id,start_date,start_time,duration,stock,create_user_name,create_user_id,create_time,seckill_status,version,amount
+  </sql>
+  <insert id="saveActivity">
+    insert into activity (id,start_date,start_time,duration,stock,create_user_name,create_user_id,create_time,seckill_status,version,amount)
+    values (#{id}, #{startDate}, #{startTime}, #{duration}, #{amount}, #{createUserName}, #{createUserId}, #{createTime},1,1, #{amount})
+
+  </insert>
+  <select id="searchBypage" resultType="com.ebanma.cloud.seckill.model.po.Activity">
+      select <include refid="Base_Column_List"></include>
+          from activity
+    <where>
+      <if test="createUserName != null and createUserName != ''">
+        and create_user_name  = ${createUserName}
+      </if>
+      <if test="createTime != null">
+        and create_time &gt;= '${createTime}'
+      </if>
+    </where>
+    </select>
+  <select id="countStatusIsUNPUBLISHED" resultType="java.lang.Integer">
+    select count(0) from activity where seckill_status = 1;
+  </select>
+</mapper>

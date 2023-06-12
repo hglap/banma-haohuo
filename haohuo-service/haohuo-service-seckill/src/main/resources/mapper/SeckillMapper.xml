@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ebanma.cloud.seckill.dao.SeckillMapper">
+  <resultMap id="BaseResultMap" type="com.ebanma.cloud.seckill.model.po.Seckill">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <result column="id" jdbcType="BIGINT" property="id" />
+    <result column="user_id" jdbcType="VARCHAR" property="userId" />
+    <result column="activity_id" jdbcType="BIGINT" property="activityId" />
+    <result column="seckill_time" jdbcType="TIMESTAMP" property="seckillTime" />
+    <result column="prize_type" jdbcType="INTEGER" property="prizeType" />
+    <result column="prize_amount" jdbcType="INTEGER" property="prizeAmount" />
+  </resultMap>
+  <sql id="Base_Column_list">
+    id,user_id,activity_id,seckill_time,prize_type,prize_amount
+  </sql>
+    <insert id="addBantch">
+      insert into seckill ( id,user_id,activity_id,seckill_time,prize_type,prize_amount ) values
+      <foreach collection="list" index="index" item="value" open="" close="" separator=",">
+        (#{value.id},#{value.userId},#{value.activityId},#{value.seckillTime},#{value.prizeType},#{value.prizeAmount})
+      </foreach>
+
+    </insert>
+
+    <select id="searchBypage" resultType="com.ebanma.cloud.seckill.model.po.Activity">
+      select <include refid="Base_Column_list"></include>
+          from seckill
+        <where>
+          <if test="createUserName != null and createUserName != ''">
+            and
+          </if>
+        </where>
+    </select>
+</mapper>
