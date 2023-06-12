@@ -3,21 +3,27 @@ package com.ebanma.cloud.seckill.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.ebanma.cloud.common.core.AbstractService;
 import com.ebanma.cloud.common.dto.Result;
+import com.ebanma.cloud.common.enums.GameEggEnum;
+import com.ebanma.cloud.common.enums.GamePriceOrPropEnum;
 import com.ebanma.cloud.common.util.BeanUtil;
 import com.ebanma.cloud.common.util.IdWorker;
 import com.ebanma.cloud.game.api.vo.GameEggRuleVO;
+import com.ebanma.cloud.game.api.vo.GamePresentRuleVO;
 import com.ebanma.cloud.seckill.dao.ActivityMapper;
 import com.ebanma.cloud.seckill.globalException.BusinessException;
 import com.ebanma.cloud.seckill.model.dto.ActivitySaveDto;
 import com.ebanma.cloud.seckill.model.dto.ActivitySearchInfoDto;
+import com.ebanma.cloud.seckill.model.dto.Git;
 import com.ebanma.cloud.seckill.model.dto.SeckillMessageDto;
 import com.ebanma.cloud.seckill.model.po.Activity;
 import com.ebanma.cloud.seckill.model.vo.ActivityGetInfoVo;
 import com.ebanma.cloud.seckill.model.vo.ActivitySearchInfoVo;
 import com.ebanma.cloud.seckill.model.vo.SeckillGit;
 import com.ebanma.cloud.seckill.service.ActivityService;
-import com.ebanma.cloud.seckill.service.GameServiceGateway;
+import com.ebanma.cloud.seckill.service.FeignServiceGateway;
 import com.ebanma.cloud.seckill.service.KafkaTransMessage;
+import com.ebanma.cloud.seckill.utils.AliasMethod;
+import com.ebanma.cloud.seckill.utils.ThreadPoolUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 
@@ -39,7 +45,9 @@ import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 
 /**
@@ -63,10 +71,13 @@ public class ActivityServiceImpl extends AbstractService<Activity> implements Ac
     private RedissonClient redissonClient;
 
     @Resource
-    private GameServiceGateway gameServiceGateway;
+    private FeignServiceGateway gameServiceGateway;
 
     @Resource
     private KafkaTransMessage kafkaTransMessage;
+
+    @Resource
+    private ThreadPoolUtil threadPoolUtil;
 
     private final StringBuffer stringBuffer = new StringBuffer();
 
@@ -89,6 +100,7 @@ public class ActivityServiceImpl extends AbstractService<Activity> implements Ac
     @Override
     public int saveActivity(ActivitySaveDto saveDto) {
 
+
         Activity activity = new Activity(
                 id.nextId(),
                 saveDto.getStartDate(),
@@ -107,6 +119,7 @@ public class ActivityServiceImpl extends AbstractService<Activity> implements Ac
 
     @Transactional(isolation = Isolation.READ_COMMITTED,rollbackFor = RuntimeException.class)
     public int saveActivityByTransaction(Activity activity){
+        activityMapper.closeDoneActivity(new Timestamp(System.currentTimeMillis()));
        int i = activityMapper.saveActivity(activity);
        int num = activityMapper.countStatusIsUNPUBLISHED();
        if(i == 0){
@@ -126,19 +139,49 @@ public class ActivityServiceImpl extends AbstractService<Activity> implements Ac
 
     private void getGiftList(long amount, long during) {
         Result<List<GameEggRuleVO>> result = gameServiceGateway.percentage();
+        System.out.println(JSON.toJSONString(result,true));
+        List<GamePresentRuleVO> presentRuleVOS = result.getData().stream()
+                .filter(m->m.getEggType().equals("金蛋")).map(m->m.getPresentRuleVOS()).findFirst().get();
         String key = "ActivityGift"+redisTemplate.opsForValue().get("activityId");
-        for(int i = 0; i < amount; i++) {
-           String gitName = stringBuffer.append("积分").append(i).toString();
-            stringBuffer.setLength(0);
-            redisTemplate.opsForList().rightPush(key,gitName);
+        List<Double> list = presentRuleVOS.stream().map(GamePresentRuleVO :: getPresentOdd).collect(Collectors.toList());
+        ExecutorService service = threadPoolUtil.threadPoolUtil1();
+        int count1 = (int) Math.floor(amount/5);
+        for(int i = 0; i < 5; i++){
+            int finalI = i;
+            service.execute(new Runnable() {
+                @Override
+                public void run() {
+                    AliasMethod method = new AliasMethod(list);
+                    int size = finalI == 0 ? (int) (amount - 4 * count1) :count1;
+                    for(int j = 0; j <size; j++) {
+                        Git git = new Git();
+                        GamePresentRuleVO gamePresentRuleVO = presentRuleVOS.get(method.next());
+                        git.setAmount(gamePresentRuleVO.getPresentCount());
+                        git.setBizType(gamePresentRuleVO.getPresentCode());
+//                        if(finalI>2){
+                            redisTemplate.opsForList().rightPush(key,git);
+//                        }else{
+//                            redisTemplate.opsForList().leftPush(key,git);
+//                        }
+                        redisTemplate.expire("ActivityGift",during,TimeUnit.MILLISECONDS);
+                    }
+                }
+            });
         }
-        redisTemplate.expire("ActivityGift",during,TimeUnit.MILLISECONDS);
+//        for(int i = 0; i < amount; i++) {
+//           String gitName = stringBuffer.append("积分").append(i).toString();
+//            stringBuffer.setLength(0);
+//            redisTemplate.opsForList().rightPush(key,gitName);
+//        }
+//        redisTemplate.expire("ActivityGift",during,TimeUnit.MILLISECONDS);
     }
 
 
 
     @Override
     public Object getRedisInfo(String activity) {
+        System.out.println("_______________________________");
+        System.out.println(redisTemplate.opsForList().size("ActivityGift"+redisTemplate.opsForValue().get("activityId")));
         System.out.println("_______________________________");
         Result<List<GameEggRuleVO>> result = gameServiceGateway.percentage();
         System.out.println(JSON.toJSONString(result,true));
@@ -149,6 +192,16 @@ public class ActivityServiceImpl extends AbstractService<Activity> implements Ac
         System.out.println("path :" +path);
         System.out.println(JSON.toJSONString(activity1));
         System.out.println(bound.range(1,20).toString());
+        System.out.println("_______________________________");
+        SeckillMessageDto seckillMessageDto = new SeckillMessageDto(
+                id.nextId(),
+                "userId",
+                1231321L,
+                new Timestamp(System.currentTimeMillis()),
+                "gitName"
+        );
+        // TODO 将消息发送到kafka中，并校验返回值
+        kafkaTransMessage.sendMessageByKafka(JSON.toJSONString(seckillMessageDto));
         bound.rightPop();
         return  bound.rightPop();
     }
@@ -188,7 +241,12 @@ public class ActivityServiceImpl extends AbstractService<Activity> implements Ac
             redissonLock.lock();
             // TODO 获取奖品
             BoundListOperations<String,Object> bound = redisTemplate.boundListOps("ActivityGift"+redisTemplate.opsForValue().get("activityId"));
-            gitName = (String) bound.rightPop();
+            Git git = (Git) bound.rightPop();
+            if(git.getBizType() == 0){
+                gitName = "恭喜获得"+git.getAmount()+"积分";
+            }else{
+                gitName = "恭喜获得"+git.getAmount()+"元红包";
+            }
             // TODO 将path 放入redis中
             if(gitName != null){
                 redisTemplate.opsForSet().add("getGitPaths",path);
@@ -203,7 +261,9 @@ public class ActivityServiceImpl extends AbstractService<Activity> implements Ac
                     userId,
                     activityId,
                     new Timestamp(System.currentTimeMillis()),
-                    gitName
+                    gitName,
+                    git.getBizType(),
+                    git.getAmount()
             );
             // TODO 将消息发送到kafka中，并校验返回值
             kafkaTransMessage.sendMessageByKafka(JSON.toJSONString(seckillMessageDto));

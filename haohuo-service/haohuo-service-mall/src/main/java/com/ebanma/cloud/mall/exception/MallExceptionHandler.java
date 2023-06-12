@@ -1,4 +1,6 @@
 package com.ebanma.cloud.mall.exception;
+
+import com.ebanma.cloud.common.exception.MallException;
 import org.springframework.core.annotation.Order;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -12,14 +14,14 @@ import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
  * @description:
  */
 @ControllerAdvice
-@Order(500)
-public class GlobleExceptionHandler {
-    @ExceptionHandler(Throwable.class)
-    public ModelAndView throwableHandler(Throwable throwable) {
-        throwable.printStackTrace();
+@Order(400)
+public class MallExceptionHandler {
+    @ExceptionHandler(MallException.class)
+    public ModelAndView throwableHandler(MallException exception) {
+        exception.printStackTrace();
         ModelAndView modelAndView = new ModelAndView(new MappingJackson2JsonView());
-        modelAndView.addObject("code", 500);
-        modelAndView.addObject("message", throwable2String(throwable));
+        modelAndView.addObject("code", 200);
+        modelAndView.addObject("message", exception.getLocalizedMessage());
         modelAndView.addObject("data", null);
         modelAndView.addObject("success", false);
         return modelAndView;

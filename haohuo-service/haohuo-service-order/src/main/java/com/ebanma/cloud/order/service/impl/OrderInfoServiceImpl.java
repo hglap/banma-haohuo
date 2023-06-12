@@ -126,12 +126,11 @@ public class OrderInfoServiceImpl implements OrderInfoService {
 
     @Override
     public Result<OrderInfo> save(OrderInfo orderInfo) {
-        String skuId = orderInfo.getSkuId();
 
+        String skuId = orderInfo.getSkuId();
         List<String> keyList = new ArrayList<>();
         keyList.add(skuId);
         Object execute = redisUtil.getRedisTemplate().execute(redisScript, keyList, orderInfo.getSkuNum()+"");
-
         if ("1".equals(execute.toString())) {
 
             // 新增订单
@@ -204,32 +203,41 @@ public class OrderInfoServiceImpl implements OrderInfoService {
                 map.put(merchantId, countDTO);
             });
         }
-
         return ResultGenerator.genSuccessResult(map);
     }
 
     @Override
     public Result<DisplayOrder> getDisplayInfo(String skuId) {
         DisplayOrder displayOrder = new DisplayOrder();
-        // 获取登陆人信息
+         //获取登陆人信息
         String userId = userServiceFeign.getUserIdByToken();
         Result<Address> detail = userServiceFeign.detail(userId);
-        displayOrder.setAddress(detail.getData());
+        if(detail !=null){
+            displayOrder.setAddress(detail.getData());
+        }
         // 获取商品信息
         Result<SkuInfoVO> skuInfoVOResult = skuInfoServiceFeign.queryById(skuId);
-        displayOrder.setSkuInfo(skuInfoVOResult.getData());
+        if (skuInfoVOResult !=null){
+            displayOrder.setSkuInfo(skuInfoVOResult.getData());
+        }
         // 获取红包及积分
         TransAccountLogSearchVO transAccountLogSearchVO =new TransAccountLogSearchVO();
         transAccountLogSearchVO.setBizType(0);
         Result<TransAccountLogVO> transInfo = transFeign.getTransInfo(transAccountLogSearchVO);
-        List<TransAccountLogDTO> redPacketList = transInfo.getData().getLogList();
-        List<TransAccountLogDTO> redPackets = redPacketList.stream().filter(redPacket ->
-                redPacket.getRedPacketStatus() == 0 || redPacket.getRedPacketStatus() == 3).collect(Collectors.toList());
-        displayOrder.setRedPackets(redPackets);
-        // 构建 AccountInfo 对象
-        AccountInfo accountInfo = new AccountInfo();
-        accountInfo.setTotalIntegral(transInfo.getData().getAmountPoints());
-        displayOrder.setAccountInfo(accountInfo);
+        if(transInfo !=null){
+            List<TransAccountLogDTO> redPacketList = transInfo.getData().getLogList();
+            if(CollectionUtils.isNotEmpty(redPacketList)){
+                List<TransAccountLogDTO> redPackets = redPacketList.stream().filter(redPacket ->
+                        redPacket.getRedPacketStatus() !=null
+                                &&(redPacket.getRedPacketStatus() == 0 || redPacket.getRedPacketStatus() == 3)).collect(Collectors.toList());
+                displayOrder.setRedPackets(redPackets);
+                // 构建 AccountInfo 对象
+                AccountInfo accountInfo = new AccountInfo();
+                accountInfo.setTotalIntegral(transInfo.getData().getAmountPoints());
+                displayOrder.setAccountInfo(accountInfo);
+            }
+        }
+
         return ResultGenerator.genSuccessResult(displayOrder);
     }
 

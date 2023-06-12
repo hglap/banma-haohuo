@@ -5,6 +5,7 @@ import cn.hutool.core.collection.CollectionUtil;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ebanma.cloud.common.dto.Result;
 import com.ebanma.cloud.common.enums.ResultCode;
+import com.ebanma.cloud.common.exception.MallException;
 import com.ebanma.cloud.mall.model.dto.SkuStoreInfoEditDTO;
 import com.ebanma.cloud.mall.model.dto.SkuStoreInfoInsertDTO;
 import com.ebanma.cloud.mall.model.dto.SkuStoreInfoSearchDTO;
@@ -67,6 +68,7 @@ public class SkuStoreInfoServiceImpl extends ServiceImpl<SkuStoreInfoMapper, Sku
         }
         List<SkuStoreInfoPO> skuStoreInfoPOList = lambdaQuery().like(StringUtils.isNotEmpty(skuStoreInfoSearchDTO.getAccount()), SkuStoreInfoPO::getAccount, skuStoreInfoSearchDTO.getAccount())
                 .like(StringUtils.isNotEmpty(skuStoreInfoSearchDTO.getName()), SkuStoreInfoPO::getName, skuStoreInfoSearchDTO.getName())
+                .eq(StringUtils.isNotEmpty(skuStoreInfoSearchDTO.getUseStatus()),SkuStoreInfoPO::getUseStatus,skuStoreInfoSearchDTO.getUseStatus())
                 .between(CollectionUtil.isNotEmpty(skuStoreInfoSearchDTO.getCreateTime()), SkuStoreInfoPO::getCreateTime, firstDate, lastDate)
                 .list();
 
@@ -179,7 +181,7 @@ public class SkuStoreInfoServiceImpl extends ServiceImpl<SkuStoreInfoMapper, Sku
     public Boolean del(String id) {
         SkuStoreInfoPO skuStoreInfoPO = getById(id);
         if(SkuUseStatusTypeEnum.USE.getCode().equals(skuStoreInfoPO.getUseStatus())){
-            throw new RuntimeException("该账户为启用状态，无法删除");
+            throw new MallException("该账户为启用状态，无法删除");
         }
         boolean result = removeById(id);
         return result;

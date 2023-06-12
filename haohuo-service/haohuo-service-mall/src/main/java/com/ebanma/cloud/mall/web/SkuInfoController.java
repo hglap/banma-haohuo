@@ -90,4 +90,11 @@ public class SkuInfoController {
         return ResultGenerator.genSuccessResult(skuInfoService.getAllSkuCount());
     }
 
+    @ApiOperation(value = "testES", notes = "testES", httpMethod = "GET")
+    @GetMapping("/testEs")
+    public Result testEs(){
+        return ResultGenerator.genSuccessResult(skuInfoService.testEs());
+    }
+
+
 }

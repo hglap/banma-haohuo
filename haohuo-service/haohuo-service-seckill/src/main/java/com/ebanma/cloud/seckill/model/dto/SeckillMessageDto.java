@@ -35,6 +35,10 @@ public class SeckillMessageDto  implements Serializable {
      */
     private String gitName;
 
+    private int bizType;
+
+    private int amount;
+
     public SeckillMessageDto() {
 
     }
@@ -45,5 +49,17 @@ public class SeckillMessageDto  implements Serializable {
         this.activityId = activityId;
         this.seckillTime = seckillTime;
         this.gitName = gitName;
+
+
+    }
+
+    public SeckillMessageDto(Long id, String userId, Long activityId, Timestamp seckillTime, String gitName, int bizType, int amount) {
+        this.id = id;
+        this.userId = userId;
+        this.activityId = activityId;
+        this.seckillTime = seckillTime;
+        this.gitName = gitName;
+        this.bizType = bizType;
+        this.amount = amount;
     }
 }
