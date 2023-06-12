@@ -10,6 +10,7 @@ import com.ebanma.cloud.mall.api.vo.SkuInfoVO;
 import com.ebanma.cloud.order.dao.OrderInfoMapper;
 import com.ebanma.cloud.order.feign.SkuInfoQueryDTO;
 import com.ebanma.cloud.order.feign.countDTO;
+import com.ebanma.cloud.order.model.AccountInfo;
 import com.ebanma.cloud.order.model.DisplayOrder;
 import com.ebanma.cloud.order.model.OrderInfo;
 import com.ebanma.cloud.order.model.dto.OrderInfoDTO;
@@ -128,8 +129,7 @@ public class OrderInfoServiceImpl implements OrderInfoService {
 
         if ("1".equals(execute.toString())) {
             // 新增订单
-
-
+            orderInfoMapper.insert(orderInfo);
             // 调用支付接口支付订单
 
 
@@ -141,7 +141,6 @@ public class OrderInfoServiceImpl implements OrderInfoService {
 
 
             // 取消支付或支付失败则回滚redis中库存更改订单状态为已取消
-
 
 
 
@@ -222,11 +221,16 @@ public class OrderInfoServiceImpl implements OrderInfoService {
         TransAccountLogSearchVO transAccountLogSearchVO =new TransAccountLogSearchVO();
         transAccountLogSearchVO.setBizType(0);
         Result<TransAccountLogVO> transInfo = transFeign.getTransInfo(transAccountLogSearchVO);
-        List<TransAccountLogDTO> redPacketList = transInfo.getData().getLogList().getList();
+        List<TransAccountLogDTO> redPacketList = transInfo.getData().getLogList();
         List<TransAccountLogDTO> redPackets = redPacketList.stream().filter(redPacket ->
                 redPacket.getRedPacketStatus() == 0 || redPacket.getRedPacketStatus() == 3).collect(Collectors.toList());
+        displayOrder.setRedPackets(redPackets);
+        // 构建 AccountInfo 对象
+        AccountInfo accountInfo = new AccountInfo();
+        accountInfo.setTotalIntegral(transInfo.getData().getAmountPoints());
+        displayOrder.setAccountInfo(accountInfo);
 
-        return null;
+        return ResultGenerator.genSuccessResult(displayOrder);
     }
 
 

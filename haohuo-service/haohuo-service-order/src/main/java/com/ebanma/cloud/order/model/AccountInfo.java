@@ -12,7 +12,7 @@ public class AccountInfo {
 
     private BigDecimal freight;
 
-    private Integer totalIntegral;
+    private long totalIntegral;
 
     private Integer moneyDeduction;
 
