@@ -19,11 +19,6 @@ public class GameUserProp  implements Serializable {
     private String userId;
 
     /**
-     * 道具类型
-     */
-    @Column(name = "prop_type")
-    private String propType;
-    /**
      * 道具编码
      */
     @Column(name = "prop_code")

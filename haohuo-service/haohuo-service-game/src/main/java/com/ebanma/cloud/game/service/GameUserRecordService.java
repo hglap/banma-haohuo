@@ -3,7 +3,10 @@ package com.ebanma.cloud.game.service;
 import com.ebanma.cloud.game.model.dto.GameUserRecordDto;
 import com.ebanma.cloud.game.model.po.GameUserRecord;
 import com.ebanma.cloud.common.core.Service;
+import com.ebanma.cloud.game.model.vo.GameTopRankVO;
 import com.github.pagehelper.PageInfo;
+
+import java.util.List;
 
 
 /**
@@ -19,4 +22,11 @@ public interface GameUserRecordService extends Service<GameUserRecord> {
      * @return
      */
     PageInfo<GameUserRecord> record(GameUserRecordDto gameUserRecordDto);
+
+    /**
+     * 中奖滚动信息
+     *
+     * @return {@link GameTopRankVO}
+     */
+    List<GameTopRankVO> getTopRank();
 }

@@ -21,7 +21,7 @@ public class GamePresentRuleVO implements Serializable {
     /**
      * 奖品类型
      */
-    private String presentType;
+    private Integer presentCode;
 
     /**
      * 奖品数量
@@ -40,13 +40,13 @@ public class GamePresentRuleVO implements Serializable {
      * @param gameRules 游戏规则
      */
     public GamePresentRuleVO(GameRule gameRules) {
-        this.presentType = gameRules.getPresentType();
+        this.presentCode = gameRules.getPresentCode();
         this.presentCount = gameRules.getPresentCount();
         this.presentOdd = gameRules.getPresentOdd();
     }
 
-    public GamePresentRuleVO(String presentType, Integer presentCount, Double presentOdd) {
-        this.presentType = presentType;
+    public GamePresentRuleVO(Integer presentType, Integer presentCount, Double presentOdd) {
+        this.presentCode = presentType;
         this.presentCount = presentCount;
         this.presentOdd = presentOdd;
     }

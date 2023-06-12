@@ -1,5 +1,6 @@
 package com.ebanma.cloud.game.util;
 
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -23,7 +24,17 @@ public class AliasMethod {
          */
         if (probabilities == null || random == null) throw new NullPointerException();
         if (probabilities.size() == 0)
-            throw new IllegalArgumentException("Probability vector must be nonempty.");
+            throw new IllegalArgumentException("概率向量必须为非空。");
+        /**
+         * 概率校验及修正
+         * 如果概率和不等于1;进行修正
+         */
+        double sum = probabilities.stream().mapToDouble(Double::doubleValue).sum();
+        if( new BigDecimal(sum).compareTo( new BigDecimal(1) )!=0){
+            for (int i = 0; i < probabilities.size(); i++) {
+                probabilities.set(i, probabilities.get(i) * (1D / sum));
+            }
+        }
         /* 初始化数组容量*/
         probability = new double[probabilities.size()];
         alias = new int[probabilities.size()];
@@ -84,15 +95,17 @@ public class AliasMethod {
     public static void main(String[] args) {
         TreeMap<String, Double> map = new TreeMap<String, Double>();
         map.put("1金币", 0.2);
-        map.put("2金币", 0.15);
+        map.put("2金币", 0.19);
         map.put("3金币", 0.1);
-        map.put("4金币", 0.05);
+//        map.put("4金币", 0.01);
         map.put("未中奖", 0.5);
         List<Double> list = new ArrayList<Double>(map.values());
+        double sum = list.stream().mapToDouble(Double::doubleValue).sum();
         List<String> gifts = new ArrayList<String>(map.keySet());
         AliasMethod method = new AliasMethod(list);
         Map<String, AtomicInteger> resultMap = new HashMap<String, AtomicInteger>();
-        for (int i = 0; i < 100000; i++) {
+        int len = 100000;
+        for (int i = 0; i < len; i++) {
             int index = method.next();
             String key = gifts.get(index);
             if (!resultMap.containsKey(key)) {
@@ -100,9 +113,13 @@ public class AliasMethod {
             }
             resultMap.get(key).incrementAndGet();
         }
+        int count = 0;
         for (String key : resultMap.keySet()) {
-            System.out.println(key + "==" + resultMap.get(key));
+            count += resultMap.get(key).get();
+            double value =  (sum*resultMap.get(key).get()/len/map.get(key)-1)*100;
+            System.out.printf(key + "==" + resultMap.get(key)+"   %.2f \n" ,value);
         }
+        System.out.println(count);
     }
 
 }

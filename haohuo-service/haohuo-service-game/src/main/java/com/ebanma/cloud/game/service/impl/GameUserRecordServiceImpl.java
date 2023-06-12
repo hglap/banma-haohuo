@@ -1,9 +1,11 @@
 package com.ebanma.cloud.game.service.impl;
 
 import com.ebanma.cloud.common.core.AbstractService;
+import com.ebanma.cloud.common.enums.GamePriceOrPropEnum;
 import com.ebanma.cloud.game.dao.GameUserRecordMapper;
 import com.ebanma.cloud.game.model.dto.GameUserRecordDto;
 import com.ebanma.cloud.game.model.po.GameUserRecord;
+import com.ebanma.cloud.game.model.vo.GameTopRankVO;
 import com.ebanma.cloud.game.service.GameUserRecordService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -25,10 +27,15 @@ public class GameUserRecordServiceImpl extends AbstractService<GameUserRecord> i
 
     @Override
     public PageInfo<GameUserRecord> record(GameUserRecordDto gameUserRecordDto) {
-        PageHelper.startPage(gameUserRecordDto.getPageNum(),gameUserRecordDto.getPageSize(),"create_time");
+        PageHelper.startPage(gameUserRecordDto.getPageNum(),gameUserRecordDto.getPageSize(),"create_time desc");
         GameUserRecord gameUserRecord = new GameUserRecord();
         gameUserRecord.setUserId(gameUserRecordDto.getUserId());
         List<GameUserRecord> records = gameUserRecordMapper.select(gameUserRecord);
         return new PageInfo<GameUserRecord>(records);
+    }
+
+    @Override
+    public List<GameTopRankVO> getTopRank() {
+        return gameUserRecordMapper.getTopRank(GamePriceOrPropEnum.RED_PACKET.getValue() , 5);
     }
 }

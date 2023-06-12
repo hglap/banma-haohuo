@@ -6,6 +6,7 @@ import com.ebanma.cloud.game.dao.GameUserInfoMapper;
 import com.ebanma.cloud.game.model.dto.GameUserRecordDto;
 import com.ebanma.cloud.game.model.po.GameUserInfo;
 import com.ebanma.cloud.game.model.po.GameUserRecord;
+import com.ebanma.cloud.game.model.vo.GameRankingVO;
 import com.ebanma.cloud.game.model.vo.GameUserInfoVO;
 import com.ebanma.cloud.game.service.GameUserInfoService;
 import com.ebanma.cloud.game.service.GameUserRecordService;
@@ -24,6 +25,7 @@ import java.util.concurrent.TimeUnit;
 @Service
 @Transactional
 public class GameUserInfoServiceImpl extends AbstractService<GameUserInfo> implements GameUserInfoService {
+
 
     @Resource
     private GameUserInfoMapper gameUserInfoMapper;
@@ -74,4 +76,10 @@ public class GameUserInfoServiceImpl extends AbstractService<GameUserInfo> imple
     }
 
 
+    @Override
+    public GameRankingVO getRankingList() {
+        GameRankingVO result = gameUserInfoMapper.getRanking();
+        result.setRankingList(gameUserInfoMapper.getRankingList());
+        return result;
+    }
 }
