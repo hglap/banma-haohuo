@@ -45,6 +45,7 @@ public class SkuCategoryServiceImpl extends ServiceImpl<SkuCategoryMapper, SkuCa
         PageHelper.startPage(skuCategorySearchDTO.getPageNum(),skuCategorySearchDTO.getPageSize());
         List<SkuCategoryPO> skuCategoryPOList = lambdaQuery().like(StringUtils.isNotEmpty(skuCategorySearchDTO.getName()), SkuCategoryPO::getName, skuCategorySearchDTO.getName())
                 .like(StringUtils.isNotEmpty(skuCategorySearchDTO.getCategoryNo()), SkuCategoryPO::getCategoryNo, skuCategorySearchDTO.getCategoryNo())
+                .eq(SkuCategoryPO::getUseStatus,skuCategorySearchDTO.getUseStatus())
                 .list();
         List<SkuCategoryVO> skuCategoryVOList = BeanUtil.copyToList(skuCategoryPOList, SkuCategoryVO.class);
         PageInfo pageInfo = new PageInfo(skuCategoryVOList);
