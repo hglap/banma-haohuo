@@ -24,6 +24,7 @@ public class LoginController {
 
     @PostMapping("/login")
     public Result login(UserLogin userLogin) {
+        System.out.println(userLogin.getUserPhone());
         if(userLogin.getType().equals(UserLoginEnum.APP_PHONE_LOGIN.getType())){
             return loginService.appCodeLogin(userLogin);
         }else if(userLogin.getType().equals(UserLoginEnum.APP_PASSWORD_LOGIN.getType())){
