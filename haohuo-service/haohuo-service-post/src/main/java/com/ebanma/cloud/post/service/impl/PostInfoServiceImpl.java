@@ -3,29 +3,27 @@ package com.ebanma.cloud.post.service.impl;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ebanma.cloud.common.dto.ResultGenerator;
+import com.ebanma.cloud.post.dao.PostInfoMapper;
 import com.ebanma.cloud.post.model.dto.ImgDto;
 import com.ebanma.cloud.post.model.dto.PostSearchDto;
 import com.ebanma.cloud.post.model.po.PostInfoPO;
 import com.ebanma.cloud.post.model.po.PostLikePO;
 import com.ebanma.cloud.post.model.vo.PostInfoVO;
 import com.ebanma.cloud.post.service.PostInfoService;
-import com.ebanma.cloud.post.dao.PostInfoMapper;
 import com.ebanma.cloud.post.service.PostLikeService;
 import com.ebanma.cloud.post.service.PostReadService;
-import com.ebanma.cloud.trans.api.dto.UserInfoSearchVO;
-import com.ebanma.cloud.trans.api.openfeign.UserServiceFeign;
+import com.ebanma.cloud.user.api.openfeign.UserServiceFeign;
+import com.ebanma.cloud.user.model.UserInfo;
 import com.github.pagehelper.PageInfo;
 import com.github.tobato.fastdfs.service.FastFileStorageClient;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -61,6 +59,9 @@ public class PostInfoServiceImpl extends ServiceImpl<PostInfoMapper, PostInfoPO>
 
     @Resource
     private RedisTemplate<String,Long> redisTemplate;
+
+    @Resource
+    private PostInfoMapper mapper;
 
 //    @Resource
 //    private MongoTemplate mongoTemplate;
@@ -171,15 +172,18 @@ public class PostInfoServiceImpl extends ServiceImpl<PostInfoMapper, PostInfoPO>
         }
         // todo api 处理 当前用户信息
         postInfoPO.setUserId(postInfo.getUserId());
-        UserInfoSearchVO userInfo = userServiceFeign.getUserInfo(postInfo.getUserId().toString()).getData();
-        if(userInfo != null){
-            postInfoPO.setNickName(userInfo.getNickname());
-            postInfoPO.setHeadImg(userInfo.getAvator());
+        String userIdLocal = userServiceFeign.getUserIdByToken();
+        UserInfo user=mapper.queryUser(userIdLocal);
+//        UserInfoSearchVO userInfo = userServiceFeign.getUserInfo(postInfo.getUserId().toString()).getData();
+        if(user != null){
+            postInfoPO.setNickName(user.getNickName());
+            postInfoPO.setHeadImg(user.getHeadImg());
         }else{
             postInfoPO.setNickName("姜鹏小小姜");
             postInfoPO.setHeadImg("http://30.16.95.140:8080/group1/M00/00/00/HhBfjGSAZ4SAcEP9ADkqq6Y4bzo429.jpg");
         }
         postInfoPO.setCreateTime(new Date());
+
         return save(postInfoPO);
     }
 
