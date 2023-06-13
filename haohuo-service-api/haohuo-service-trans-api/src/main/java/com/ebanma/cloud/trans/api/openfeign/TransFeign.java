@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestBody;
  */
 
 @FeignClient(value = "trans-service" ,path="/trans/account/log")
-//@FeignClient(value = "trans-service" ,path="/trans/account",url = "http://127.0.0.1:8085")
 public interface TransFeign {
 
     /**
