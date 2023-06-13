@@ -7,25 +7,43 @@ spring:
     nacos:
       discovery:
         server-addr: 30.16.95.140:8848
-        namespace: 3f19e8e1-250f-455f-a1f4-eb2609f2573d
+        namespace: 7bdad1e8-52f0-4905-814a-d413d6d819e5
       username: nacos
       password: nacos
+  kafka:
+    bootstrap-servers: 30.16.95.140:9092
+    consumer:
+      group-id: consumer-group
   redis:
-#    host: 30.16.95.140
-    host: 127.0.0.1
+    host: 30.16.95.140
+#    host: 127.0.0.1
     port: 6379
-    password:
+    password: admin
     database: 1
 #    cluster:
 #      nodes: 30.16.95.140:6379
+  main:
+    #允许存在多个Feign调用相同Service的接口
+    allow-bean-definition-overriding: true
+mybatis-plus:
+  mapper-locations: classpath:/mapper/*.xml
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+alipay:
+  appId: 9021000122685348
+  appPrivateKey: MIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDEZ1kZnsjwAf/8H6j6GipXxEkeKaf6FspbLS1pQXvpyqCM4kJ4C5by3F30apTmjCXp4aClA6Hp7HHRshdUHS9PuQ9Nb6/u0SuuqX7yVa3aPxvt3FZoLbAZRwF3NlStsjESsxC0Fg2AQoSHbOOqKKDEqxYwT85XQDEvuoh23+YeO4PfWy1sIErjBsgGh9tV5/2DE+eCtt+yuZ8HsXnl95yDknrXOsG20ln9v9OrbXXzLJENy+9Cmiz8Sg5YtWQarCiwXgStIt7dL4vVWvb23BQ66qnPyBMe/XUHJmmoACn2uIqrUZoXT1ItTz8rZuPZNEaAJsfmMBqtM0NPKnzpf3tZAgMBAAECggEBAKgj+gmPAGNIswf7asRCpkFhD1+9NctKu453DMtxfk3WZMB364OuGFpuAhl/LV56WPLzcH4UsAb9nytwlbwzCA/uVIVsumdvtz/eZ4m7hAy1volR+r9RbdMWENEoODJDvPNPTVt/DaviRmdR903zXj9AYMyXZgUYNYOw46cxY2Y4+Fl61RkKfsZtpvBi5t0NvuGGgTme3dum7/aegOHlwSHr42qzNNT1kPgVkLDbxbeSXwKEXeAy0CZKc8Gs2cK47GJxOiVTGfCJdWW4++jSE6PwAumUYskSy8TLUtklX7ZhfWPSE3XB+izseHYjpt3RUcH8D/qndnkrjLuC2/SAdokCgYEA8aIkDEKVD6JnNvSmYIOWdSSgeeqUmDoQwpM35REmy2+I+iJck1SxYuX/bK6XIZygtD7dfitFCPFeECde44qTxf249/31UFUt/wZpcpyCZqU3mao7VgSZrMasn/3lzcaL0dHTDlS9GVyStUPiX4kQu7kLnlBEYGQAEBO+d3XACA8CgYEA0BTGRVPaGHh6o2l/CVFYBXKRBNmqD6XT3y0qXUzgynkLJfyE5gtHXbF84z+wa00QgA+bdgaHfCwp4ecgOc4XYsO9HGxkKJKhh+u5SW4Pxuh/Wof7RB5aKPd3UPxQeI02sodZJw9bPZfTjmQw26gLc9bW5OTjFKKtHk1kYGHjHhcCgYB7ukCnHnjhVpFvbHq9NOQX+7dIdju8bw8h8uxOGSg6R1RmcK3iqx1hvM+7wPKWPXN0mDQmZNWmrKEzuFU4Qj9ExJSwN5QjnFo/GfNowodrM/Jydt6HPzfJZroB+qpvYdk6iSx/TBjAIczlkGsb7D1rQmeWmxdIHCyEDvgah2rbNQKBgA2cfkfEr2yQXP1ZhkzWvFpG30Og9WXmpBBiRPYrdDzqZBdNCGh/7mArnw7CeMjcFqs52iKDVNODlA3J76q4V4FHapR0ZqzcwqJAgjNSdse9J6+FW6NeFOm/Hlf22VC5dA2DmwpaD87coqMa3LNRr8YZFJ+OdWhBJ+/mgh1n6dJrAoGBAKFkhzxDuxJhKCPfp96PSA/ghy1VYElEoyIAAdv4FKuQCMpfhLBeq+Ppz4CpOmpZdpk9SXnBjXTEhlFEtFI5ZZj9QhkiEE0e9YAsxVqgZIlHkqa78wYXRhKTUDxUgUEtt7x15cWsLgoBghC5QsAAcSYrn1jnucvH9ryufc90sULF
+  alipayPublicKey: MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAwc0BnpuTQR18wOlZwVWoquwW8fLC2cvo2ZmNPIqZKOoZUnNPMJuvE6Tkp2UUn2kmzex5Oth9pVfAJpW5VYKWkBoj6HLg4Z3ULLEWVDs/twHxtD9p5stMS0GydGQkKQd0gQcCDnHG6XPvS5htqcIkfwZKx6/jy37aMx26d+nkIDu1I5wHWJfmB5HI+gU+fKEmHSylLaOtw3HN4UpzcBqfRmyCgLwc9QNsfn+Jmah3H5G5prRWty3d36W3oqOn8+57OBVm305q66E5Z2QSyAklWRYIywxEnTYj8X4vD7qPT/i5EpytSUSz9qtd+CHcBpim6c0CB1vIKgCEoiRj7qkExwIDAQAB
+  notifyUrl: http://254rhg.natappfree.cc/alipay/notify
 
-#rocketmq:
-##  rocketmq的命名服务器，格式为 host:port;host:port
-#  name-server: 30.16.95.140:9090
-#  producer:
-##    生产者组名
-#    group: hgl-order
-##    发送消息超时时间
-#    send-message-timeout: 3000
+
+
+rocketmq:
+#  rocketmq的命名服务器，格式为 host:port;host:port
+  name-server: 30.16.95.140:9876
+  producer:
+#    生产者组名
+    group: hgl-order
+#    发送消息超时时间
+    send-message-timeout: 3000
 
 

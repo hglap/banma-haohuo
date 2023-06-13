@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 //@EnableDiscoveryClient
 @MapperScan(basePackages = {"com.ebanma.cloud.order.dao"})
 @EnableFeignClients({"com.ebanma.cloud.*.api.*"})
-
 public class OrderServiceApplication {
 
     public static void main(String[] args) {

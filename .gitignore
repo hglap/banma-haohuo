@@ -9,6 +9,7 @@ target/
 .idea/compiler.xml
 .idea/libraries/
 .idea/smartfox/common_info.xml
+.idea
 *.iws
 *.iml
 *.ipr

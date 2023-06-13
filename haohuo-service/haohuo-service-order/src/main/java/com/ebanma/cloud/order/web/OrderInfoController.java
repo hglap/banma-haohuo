@@ -3,6 +3,8 @@ package com.ebanma.cloud.order.web;
 import com.ebanma.cloud.common.dto.Result;
 import com.ebanma.cloud.common.dto.ResultGenerator;
 import com.ebanma.cloud.order.feign.SkuInfoQueryDTO;
+import com.ebanma.cloud.order.feign.countDTO;
+import com.ebanma.cloud.order.model.DisplayOrder;
 import com.ebanma.cloud.order.model.OrderInfo;
 import com.ebanma.cloud.order.model.dto.OrderInfoDTO;
 import com.ebanma.cloud.order.service.OrderInfoService;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by CodeGenerator on 2023/06/06.
@@ -23,10 +26,15 @@ public class OrderInfoController {
     @Resource
     private OrderInfoService orderInfoService;
 
+    @PostMapping("/getDisplayInfo")
+    public Result<DisplayOrder> getDisplayInfo(@RequestParam("skuId") String skuId) {
+        return orderInfoService.getDisplayInfo(skuId);
+    }
+
+
     @PostMapping("/add")
     public Result add(@RequestBody OrderInfo orderInfo) {
-        orderInfoService.save(orderInfo);
-        return ResultGenerator.genSuccessResult();
+        return orderInfoService.save(orderInfo);
     }
 
     @PostMapping("/list")
@@ -53,11 +61,11 @@ public class OrderInfoController {
         } catch (Exception e) {
             return ResultGenerator.genFailResult("操作失败");
         }
-        return ResultGenerator.genSuccessResult();
+        return ResultGenerator.genSuccessResult("操作成功");
     }
 
     @PostMapping("/querySkuSaleCount")
-    Result querySkuSaleCount(@RequestBody SkuInfoQueryDTO skuInfoQueryDTO){
+    public Result<Map<String, countDTO>> querySkuSaleCount(@RequestBody SkuInfoQueryDTO skuInfoQueryDTO){
 
         return orderInfoService.querySkuSaleCount(skuInfoQueryDTO);
     }

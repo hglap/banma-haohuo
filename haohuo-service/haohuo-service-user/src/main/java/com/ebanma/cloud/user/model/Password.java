@@ -10,9 +10,27 @@ public class Password {
 
     private String newPassword;
 
-    private String SMSCode;
-
     private Boolean createNewUser;
+
+    private String smsCode;
+
+    public String getSmsCode() {
+        return smsCode;
+    }
+
+    @Override
+    public String toString() {
+        return "Password{" +
+                "userPhone='" + userPhone + '\'' +
+                ", newPassword='" + newPassword + '\'' +
+                ", createNewUser=" + createNewUser +
+                ", smsCode='" + smsCode + '\'' +
+                '}';
+    }
+
+    public void setSmsCode(String smsCode) {
+        this.smsCode = smsCode;
+    }
 
     public Boolean getCreateNewUser() {
         return createNewUser;
@@ -38,21 +56,10 @@ public class Password {
         this.newPassword = newPassword;
     }
 
-    public String getSMSCode() {
-        return SMSCode;
-    }
 
-    public void setSMSCode(String SMSCode) {
-        this.SMSCode = SMSCode;
-    }
 
     public Password() {
     }
 
-    public Password(String userPhone, String newPassword, String SMSCode, Boolean createNewUser) {
-        this.userPhone = userPhone;
-        this.newPassword = newPassword;
-        this.SMSCode = SMSCode;
-        this.createNewUser = createNewUser;
-    }
+
 }

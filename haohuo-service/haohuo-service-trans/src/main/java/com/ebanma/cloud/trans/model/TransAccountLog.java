@@ -3,6 +3,8 @@ package com.ebanma.cloud.trans.model;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.Date;
 
@@ -18,6 +20,7 @@ public class TransAccountLog {
     /**
      * 用户id
      */
+    @Transient
     private String userId;
 
     /**
@@ -36,12 +39,14 @@ public class TransAccountLog {
      * 交易类型 0增加 1支出
      */
     @Column(name = "log_type")
+    @NotNull(message = "交易类型不能为空")
     private Integer logType;
 
     /**
      * 代币类型 0积分 1红包
      */
     @Column(name = "biz_type")
+    @NotNull(message = "代币类型不能为空")
     private Integer bizType;
 
     /**
@@ -53,6 +58,7 @@ public class TransAccountLog {
     /**
      * 描述
      */
+    @NotNull(message = "账务流水描述不能为空")
     private String description;
 
     /**
@@ -88,6 +94,21 @@ public class TransAccountLog {
      * 红包实体
      */
     private RedPacket redPacket;
+
+    /**
+     * 业务流水号
+     */
+    @Transient
+    @NotBlank(message = "业务流水号不能为空")
+    private String bizSerialNumber;
+
+    public String getBizSerialNumber() {
+        return bizSerialNumber;
+    }
+
+    public void setBizSerialNumber(String bizSerialNumber) {
+        this.bizSerialNumber = bizSerialNumber;
+    }
 
     public RedPacket getRedPacket() {
         return redPacket;

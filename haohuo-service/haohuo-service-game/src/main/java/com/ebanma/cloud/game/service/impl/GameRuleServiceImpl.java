@@ -14,6 +14,9 @@ import com.ebanma.cloud.game.model.vo.GamePresentRuleVO;
 import com.ebanma.cloud.game.service.GameRuleService;
 import com.ebanma.cloud.game.service.GameUserPropService;
 import com.ebanma.cloud.game.util.AliasMethod;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,8 +39,8 @@ public class  GameRuleServiceImpl extends AbstractService<GameRule> implements G
 
     private static final int  REMAIN_TIMES = 100;
 
-//    @Autowired
-//    private RedissonClient redissonClient;
+    @Autowired
+    private RedissonClient redissonClient;
     @Resource
     private RedisTemplate redisTemplate;
 
@@ -61,9 +64,7 @@ public class  GameRuleServiceImpl extends AbstractService<GameRule> implements G
                     //道具数量减一
                     m.setPropRemainCount(m.getPropRemainCount() - 1);
                     //记录用户使用的道具,方便后续更新数据库
-                    userInfo.setUseGameUserProp(m);
-                    //更新数据库
-                    gameUserPropService.update(m);
+                    userInfo.getUseGameUserProp().add(m);
                     //使用道具类型判断
                     switch (Objects.requireNonNull(GamePriceOrPropEnum.getGamePropByValue(propCode))) {
                         case A:
@@ -84,6 +85,18 @@ public class  GameRuleServiceImpl extends AbstractService<GameRule> implements G
         return gameRules;
     }
 
+    @Override
+    public void guaranteedRollback(GameEggRuleVO eggDraw) {
+        GameDrawVO gameDrawVO = (GameDrawVO) redisTemplate.opsForValue().get(GameRedisEnum.DRAW_INFO.getKey());
+        //保底剩余次数+1
+        gameDrawVO.setRemainTimes( gameDrawVO.getRemainTimes() +1 );
+        if( GameEggEnum.GOLDEN_EGG.getEggType().equals(eggDraw.getEggType()) ){
+            //如果该次为金蛋,则金蛋统计次数回置
+            gameDrawVO.setWinning( gameDrawVO.getWinning() -1 );
+        }
+        redisTemplate.opsForValue().set(GameRedisEnum.DRAW_INFO.getKey(),gameDrawVO);
+    }
+
     /**
      * 保底抽奖
      *
@@ -94,68 +107,70 @@ public class  GameRuleServiceImpl extends AbstractService<GameRule> implements G
     public GameEggRuleVO getEggDrawByGuaranteed(List<GameEggRuleVO> gameRules) {
         //1.上锁
         GameEggRuleVO gameEggRuleVO = null;
-//        RLock lock = redissonClient.getLock(GameRedisEnum.DRAW_LOCK.getKey());
+        RLock lock = redissonClient.getLock(GameRedisEnum.DRAW_LOCK.getKey());
         try {
             //2.获取抽奖次数
-            GameDrawVO gameDrawVO = (GameDrawVO) redisTemplate.opsForValue().get(GameRedisEnum.DRAW_INFO);
+            GameDrawVO gameDrawVO = (GameDrawVO) redisTemplate.opsForValue().get(GameRedisEnum.DRAW_INFO.getKey());
             //2.1如果没有信息，新建对象
-            if (gameDrawVO == null) {
-                //获取金蛋概率
-                for(GameEggRuleVO m :gameRules){
-                    if (m.getEggType().equals(GameEggEnum.GOLDEN_EGG.getEggType())) {
+            //定义一个金蛋对象
+            GameEggRuleVO goldenEggRule = null;
+            //获取金蛋概率
+            for(GameEggRuleVO m :gameRules){
+                if (m.getEggType().equals(GameEggEnum.GOLDEN_EGG.getEggType())) {
+                    goldenEggRule = m;
+                    if (gameDrawVO == null) {
                         gameDrawVO = new GameDrawVO(REMAIN_TIMES,m.getEggOdd());
-                        redisTemplate.opsForValue().set(GameRedisEnum.DRAW_INFO,gameDrawVO);
+                        redisTemplate.opsForValue().set(GameRedisEnum.DRAW_INFO.getKey(),gameDrawVO);
                     }
+                    break;
                 }
             }
+
             //断言不为空
             assert gameDrawVO != null :"金蛋保底错误";
+
 
             //3.保底判断
             if( gameDrawVO.getGuaranteedTimes()-gameDrawVO.getWinning() ==0){
                 //3.1 如果金蛋次数==保底要求次数
-                //金蛋个数以满足,更新概率
-
+                //金蛋个数以满足,更新概率,后续不再出金蛋
+                //移除金蛋
+                gameRules.remove(goldenEggRule);
                 //抽奖
+                //抽奖算法当概率和不为1时,会对其他奖项概率进行等比例扩大.
                 gameEggRuleVO = getEggDraw(gameRules);
 
             }else if(gameDrawVO.getGuaranteedTimes() - gameDrawVO.getWinning() == gameDrawVO.getRemainTimes()){
 
-                //3.2如果还需要出的金蛋个人 == 剩余抽奖次数,则必出金蛋
-                for( GameEggRuleVO m :gameRules){
-                    //如果为金蛋
-                    if (GameEggEnum.GOLDEN_EGG.getEggType().equals(m.getEggType())) {
-                        gameEggRuleVO = m;
-                        break;
-                    }
-                }
+                //3.2如果还需要出的金蛋个数 == 剩余抽奖次数,则必出金蛋
+                gameEggRuleVO = goldenEggRule;
             }else {
                 //正常抽奖
                 gameEggRuleVO = getEggDraw(gameRules);
             }
 
             //4.抽奖次数更新
-            if ( gameDrawVO.getGuaranteedTimes() > 1) {
+            if ( gameDrawVO.getRemainTimes() > 1) {
                 //4.1.1如果还有剩余次数进行次数-1;
-                gameDrawVO.setRemainTimes(gameDrawVO.getGuaranteedTimes() - 1);
+                gameDrawVO.setRemainTimes(gameDrawVO.getRemainTimes() - 1);
                 //4.1.2 金蛋则win+1
                 if (GameEggEnum.GOLDEN_EGG.getEggType().equals(gameEggRuleVO.getEggType())) {
                     gameDrawVO.setWinning(gameDrawVO.getWinning() + 1);
                 }
-            }else if( gameDrawVO.getGuaranteedTimes() == 1 ) {
-                //4.2 如果已经为1,则重置次数
+            }else if( gameDrawVO.getRemainTimes() == 1 ) {
+                //4.2 如果已经是最后一次抽奖机会,则重置次数
                 gameDrawVO.resetting();
             }
             //更新redis
-            redisTemplate.opsForValue().set(GameRedisEnum.DRAW_INFO, gameDrawVO);
+            redisTemplate.opsForValue().set(GameRedisEnum.DRAW_INFO.getKey(), gameDrawVO);
 
 
         }catch (Exception e) {
             throw e;
         }finally {
-//            if(lock != null && lock.isHeldByCurrentThread()) {
-//                lock.unlock();
-//            }
+            if(lock != null && lock.isHeldByCurrentThread()) {
+                lock.unlock();
+            }
         }
         return gameEggRuleVO;
     }
@@ -253,12 +268,12 @@ public class  GameRuleServiceImpl extends AbstractService<GameRule> implements G
             //如果金蛋,必然是5元红包
             if (GameEggEnum.GOLDEN_EGG.getEggType().equals(m.getEggType())) {
                 m.getPresentRuleVOS().clear();
-                m.getPresentRuleVOS().add(new GamePresentRuleVO(GamePriceOrPropEnum.RED_PACKET.getKey(),5,1d));
+                m.getPresentRuleVOS().add(new GamePresentRuleVO(GamePriceOrPropEnum.RED_PACKET.getValue(),5,1d));
             }
             //如果为银蛋,必然为50积分
             if (GameEggEnum.SILVER_EGG.getEggType().equals(m.getEggType())) {
                 m.getPresentRuleVOS().clear();
-                m.getPresentRuleVOS().add(new GamePresentRuleVO(GamePriceOrPropEnum.POINT.getKey(),50,1d));
+                m.getPresentRuleVOS().add(new GamePresentRuleVO(GamePriceOrPropEnum.POINT.getValue(),50,1d));
             }
         });
     }

@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -66,10 +67,15 @@ public class GameUserInfo implements Serializable {
      */
     @Column(name = "modified_time")
     private Date modifiedTime;
+    /**
+     * 最新中奖时间
+     */
+    @Column(name = "winning_date")
+    private Date winningDate;
 
     List<GameUserProp> gameUserProp;
 
-    GameUserProp useGameUserProp;
+    List<GameUserProp> useGameUserProp = new ArrayList<>();
 
     public GameUserInfo(String userId) {
         this.userId = userId;
@@ -80,6 +86,7 @@ public class GameUserInfo implements Serializable {
         this.totalDrawTimes=0;
         this.createTime = new Date();
         this.modifiedTime = new Date();
+        this.winningDate = null;
     }
 
     /**
@@ -90,14 +97,29 @@ public class GameUserInfo implements Serializable {
      * @param presentDraw 中间类型
      */
     public void afterDraw(GamePresentRuleVO presentDraw ){
-        switch (Objects.requireNonNull(GamePriceOrPropEnum.getGamePropByKey(presentDraw.getPresentType()))){
+
+        switch (Objects.requireNonNull(GamePriceOrPropEnum.getGamePropByValue(presentDraw.getPresentCode()))){
             case RED_PACKET:
                 this.totalRedPacket += presentDraw.getPresentCount();
                 this.winningTimes ++;
+                this.winningDate = new Date();
                 break;
             case POINT:
                 this.totalWinPoints += presentDraw.getPresentCount();
                 this.winningTimes ++;
+                this.winningDate = new Date();
+                break;
+            case A:
+            case B:
+            case C:
+                //增加道具
+                addProp(presentDraw);
+                break;
+            case LUCKY_HAMMER:
+                this.remainTimes ++;
+                break;
+            case ANGEL_BLESSINGS:
+                this.remainTimes += 3;
                 break;
             default:
                 break;
@@ -105,6 +127,16 @@ public class GameUserInfo implements Serializable {
         this.remainTimes --;
         this.totalDrawTimes ++;
         this.modifiedTime = new Date();
+    }
 
+    private void addProp(GamePresentRuleVO presentDraw){
+        for (int i = 0; i < this.gameUserProp.size(); i++) {
+            if(presentDraw.getPresentCode().intValue() == this.gameUserProp.get(i).getPropCode().intValue() ){
+                this.gameUserProp.get(i).setPropRemainCount(this.gameUserProp.get(i).getPropRemainCount()+presentDraw.getPresentCount());
+                //添加进list,后续进行更新
+                this.getUseGameUserProp().add(this.gameUserProp.get(i));
+                break;
+            }
+        }
     }
 }

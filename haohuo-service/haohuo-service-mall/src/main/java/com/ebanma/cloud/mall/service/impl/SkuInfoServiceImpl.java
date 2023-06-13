@@ -4,6 +4,8 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollectionUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.ebanma.cloud.common.dto.Result;
+import com.ebanma.cloud.common.exception.MallException;
 import com.ebanma.cloud.mall.model.dto.*;
 import com.ebanma.cloud.mall.model.enums.SkuAttachmentRelationTypeEnum;
 import com.ebanma.cloud.mall.model.enums.SkuRecordTypeEnum;
@@ -17,16 +19,24 @@ import com.ebanma.cloud.mall.service.SkuInfoService;
 import com.ebanma.cloud.mall.dao.SkuInfoMapper;
 import com.ebanma.cloud.mall.service.SkuInventoryService;
 import com.ebanma.cloud.mall.service.SkuRecordService;
+import com.ebanma.cloud.order.api.dto.SkuInfoQueryDTO;
+import com.ebanma.cloud.order.api.dto.countDTO;
+import com.ebanma.cloud.order.api.openfeign.OrderInfoServiceFeign;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -37,6 +47,8 @@ import java.util.stream.Collectors;
 @Service
 public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoMapper, SkuInfoPO>
     implements SkuInfoService{
+
+    private Logger logger = LoggerFactory.getLogger(SkuInfoServiceImpl.class);
 
     @Autowired
     private SkuInfoMapper skuInfoMapper;
@@ -62,6 +74,18 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoMapper, SkuInfoPO>
     @Autowired
     private SkuInventoryServiceImpl skuInventoryServiceImpl;
 
+    @Autowired
+    private OrderInfoServiceFeign orderInfoServiceFeign;
+
+
+    @Autowired
+    private ElasticsearchRepository elasticsearchRepository;
+
+    /**
+     * 查询商品列表
+     * @param skuInfoSearchDTO
+     * @return
+     */
     @Override
     public PageInfo queryList(SkuInfoSearchDTO skuInfoSearchDTO) {
 
@@ -77,10 +101,14 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoMapper, SkuInfoPO>
                 .like(StringUtils.isNotEmpty(skuInfoSearchDTO.getSearchValue()),SkuInfoPO::getSkuName, skuInfoSearchDTO.getSearchValue()));
         PageInfo pageInfo = new PageInfo<>(skuInfoPOList);
 
-        /*查询商品相册*/
+
+
+
         List<SkuInfoPO> pageInfoList = pageInfo.getList();
         List<SkuInfoVO> skuInfoVOList = BeanUtil.copyToList(pageInfoList, SkuInfoVO.class);
         List<String> skuInfoIdList = skuInfoVOList.stream().map(SkuInfoVO::getId).collect(Collectors.toList());
+
+        /*查询商品相册*/
         Map<String, List<SkuAttachmentVO>> attachmentMap = skuAttachmentService.getAttachmentMap(new SkuAttachmentSearchDTO()
                 .setRelationIdList(skuInfoIdList)
                 .setRelationType(SkuAttachmentRelationTypeEnum.PRODUCT_ALBUM.getName()));
@@ -88,9 +116,37 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoMapper, SkuInfoPO>
             skuInfo.setAttachmentVOList(attachmentMap.get(skuInfo.getId()));
         });
 
+        /* 调用【订单服务】查询商品销量 */
+        /* 查询已卖数量【调用订单】*/
+        Map<String, countDTO> saleCountMap = getSaleCount(idList);
+        skuInfoVOList.forEach(skuInfoVO -> {
+            Integer skuSaleCount = Optional.ofNullable(saleCountMap)
+                    .map(m -> m.get(skuInfoVO.getId()))
+                    .map(countDTO::getSkuSaleCount)
+                    .orElseGet(null);
+            skuInfoVO.setSaledCount(skuSaleCount);
+        });
         pageInfo.setList(skuInfoVOList);
 
         return pageInfo;
+    }
+
+    /**
+     * 调用订单服务
+     * 根据商品ID查询对应销量
+     * @param idList
+     * @return
+     */
+    private Map<String, countDTO> getSaleCount(List<String> idList){
+        SkuInfoQueryDTO skuInfoQueryDTO = new SkuInfoQueryDTO();
+        skuInfoQueryDTO.setSkuIDList(idList);
+        Result<Map<String, countDTO>> mapResult = new Result<Map<String, countDTO>>();
+        try{
+            mapResult = orderInfoServiceFeign.querySkuSaleCount(skuInfoQueryDTO);
+        }catch (Exception e){
+            logger.info("调用订单服务失败,入参：{}",skuInfoQueryDTO.toString());
+        }
+        return mapResult.getData();
     }
 
     /**
@@ -103,7 +159,18 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoMapper, SkuInfoPO>
         SkuInfoPO skuInfoPO = skuInfoMapper.selectById(id);
         SkuInfoVO skuInfoVO = BeanUtil.copyProperties(skuInfoPO, SkuInfoVO.class);
 
-        //TODO 查询已卖数量【调用订单】
+        /* 查询已卖数量【调用订单】*/
+        List<String> idList = new ArrayList<>();
+        idList.add(id);
+
+        Map<String, countDTO> saleCountMap = getSaleCount(idList);
+        Integer skuSaleCount = Optional.ofNullable(saleCountMap)
+                .map(m -> m.get(id))
+                .map(countDTO::getSkuSaleCount)
+                .orElseGet(null);
+        skuInfoVO.setSaledCount(skuSaleCount);
+
+
 
         /*查询热度【收藏数】*/
         Integer allCount = skuRecordService.getRecrodCountBySkuIdAndType(new SkuRecordSearchDTO()
@@ -123,7 +190,6 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoMapper, SkuInfoPO>
         List<SkuAttachmentVO> attachmentAlbumList = skuAttachmentService.getAttachmentList(new SkuAttachmentSearchDTO()
                 .setRelationId(id)
                 .setRelationType(SkuAttachmentRelationTypeEnum.PRODUCT_ALBUM.getName()));
-
         skuInfoVO.setAttachmentVOList(attachmentAlbumList);
 
         return skuInfoVO;
@@ -140,11 +206,17 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoMapper, SkuInfoPO>
         return null;
     }
 
+    /**
+     * 分页查询
+     * @param skuInfoSearchDTO
+     * @return
+     */
     @Override
     public PageInfo searchList(SkuInfoSearchDTO skuInfoSearchDTO) {
         PageHelper.startPage(skuInfoSearchDTO.getPageNum(), skuInfoSearchDTO.getPageSize());
         List<SkuInfoPO> skuInfoPOList = skuInfoMapper.selectList(new LambdaQueryWrapper<SkuInfoPO>()
                 .eq(StringUtils.isNotEmpty(skuInfoSearchDTO.getCategoryId()), SkuInfoPO::getCategoryId, skuInfoSearchDTO.getCategoryId())
+                .eq(StringUtils.isNotEmpty(skuInfoSearchDTO.getUseStatus()),SkuInfoPO::getUseStatus,skuInfoSearchDTO.getUseStatus())
                 .like(StringUtils.isNotEmpty(skuInfoSearchDTO.getSkuName()), SkuInfoPO::getSkuName, skuInfoSearchDTO.getSkuName())
                 .like(StringUtils.isNotEmpty(skuInfoSearchDTO.getGoodsNo()), SkuInfoPO::getGoodsNo, skuInfoSearchDTO.getGoodsNo()));
 
@@ -343,13 +415,49 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoMapper, SkuInfoPO>
 
         SkuInfoPO skuInfoPO = skuInfoMapper.selectById(id);
         if(SkuUseStatusTypeEnum.USE.getCode().equals(skuInfoPO.getUseStatus())){
-            throw new RuntimeException("该商品为上架状态，无法删除");
+            throw new MallException("该商品为上架状态，无法删除");
         }else{
             skuInfoPO.setUseStatus(SkuUseStatusTypeEnum.UN_USE.getCode());
             skuInfoMapper.updateById(skuInfoPO);
         }
 
         return true;
+    }
+
+    /**
+     * 根据商户IdList查询商品数量
+     * @param idList
+     * @return
+     */
+    @Override
+    public Map<String, Long> getSkuInfoCountByStoreIdList(List<String> idList) {
+        if(CollectionUtil.isEmpty(idList)){
+            return null;
+        }
+        List<SkuInfoPO> skuInfoPOList = lambdaQuery().in(SkuInfoPO::getStoreId, idList).list();
+        Map<String, Long> map = skuInfoPOList.stream()
+                .collect(Collectors.groupingBy(SkuInfoPO::getStoreId, Collectors.summingLong(SkuInfoPO::getCurrentQua)));
+        return map;
+    }
+
+    /**
+     * 获取所有商品的库存数
+     * @return
+     */
+    @Override
+    public Map<String, Long> getAllSkuCount() {
+        List<SkuInfoPO> skuInfoPOList = list();
+        Map<String, Long> countMap = skuInfoPOList.stream().collect(Collectors.toMap(SkuInfoPO::getId, SkuInfoPO::getCurrentQua));
+        return countMap;
+    }
+
+    @Override
+    public List<SkuInfoVO> testEs() {
+        Iterable iterable = elasticsearchRepository.findAll();
+        List<SkuInfoPO> list = new ArrayList<>();
+        iterable.forEach(skuinfo->list.add((SkuInfoPO)skuinfo));
+        List<SkuInfoVO> skuInfoVOList = BeanUtil.copyToList(list, SkuInfoVO.class);
+        return skuInfoVOList;
     }
 
 

@@ -25,8 +25,8 @@ public class GameRule implements Serializable {
     /**
      * 奖品类型
      */
-    @Column(name = "present_type")
-    private String presentType;
+    @Column(name = "present_code")
+    private Integer presentCode;
 
     /**
      * 奖品数量

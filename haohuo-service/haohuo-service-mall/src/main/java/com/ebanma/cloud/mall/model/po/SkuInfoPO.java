@@ -8,16 +8,20 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
+import org.springframework.data.elasticsearch.annotations.Document;
 
 /**
  * 
  * @TableName sku_info
  * 商品信息
  */
+@EqualsAndHashCode(callSuper = true)
 @TableName(value ="sku_info")
 @Data
 @Accessors(chain = true)
+@Document(indexName = "sku_info",createIndex = true)
 public class SkuInfoPO extends BasePO implements Serializable {
 
     /**

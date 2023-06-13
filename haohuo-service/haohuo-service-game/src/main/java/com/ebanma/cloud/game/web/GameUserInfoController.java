@@ -14,7 +14,7 @@ import javax.annotation.Resource;
 
 /**
  * @author banma-
- * @version $ Id: GameController, v 0.1 2023/06/06 16:31 banma- Exp $
+ * @version $ Id: GameOperationController, v 0.1 2023/06/06 16:31 banma- Exp $
  */
 @RestController
 @RequestMapping("/game/userInfo")

@@ -2,11 +2,12 @@ package com.ebanma.cloud.trans.web;
 
 import com.ebanma.cloud.common.dto.Result;
 import com.ebanma.cloud.common.dto.ResultGenerator;
-import com.ebanma.cloud.trans.vo.TransAccountLogSearchVO;
-import com.ebanma.cloud.trans.vo.TransAccountLogVO;
 import com.ebanma.cloud.trans.model.TransAccountLog;
 import com.ebanma.cloud.trans.service.TransAccountLogService;
-import com.github.pagehelper.PageHelper;
+import com.ebanma.cloud.trans.vo.TransAccountLogSearchVO;
+import com.ebanma.cloud.trans.vo.TransAccountLogVO;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -14,6 +15,7 @@ import javax.annotation.Resource;
 /**
  * Created by CodeGenerator on 2023/06/06.
  */
+@Slf4j
 @RestController
 @RequestMapping("/trans/account")
 public class TransAccountLogController {
@@ -51,7 +53,8 @@ public class TransAccountLogController {
      * @return
      */
     @PostMapping("/updateTrans")
-    public Result updateTrans(@RequestBody TransAccountLog transAccountLog) throws Exception {
+    public Result updateTrans(@Validated @RequestBody TransAccountLog transAccountLog) throws Exception {
+        log.info("账务流水记录入参：{}",transAccountLog);
         transAccountLogService.record(transAccountLog);
         return ResultGenerator.genSuccessResult();
     }
@@ -63,8 +66,8 @@ public class TransAccountLogController {
      * @return
      */
     @PostMapping("/getTransInfo")
-    public Result getTransInfo(@RequestBody TransAccountLogSearchVO transAccountLogSearchVO) throws Exception {
-        PageHelper.startPage(transAccountLogSearchVO.getPageNum(), transAccountLogSearchVO.getPageSize());
+    public Result<TransAccountLogVO> getTransInfo(@RequestBody TransAccountLogSearchVO transAccountLogSearchVO) throws Exception {
+        log.info("账务查询入参：{}",transAccountLogSearchVO);
         TransAccountLogVO transAccountLogVO = transAccountLogService.searchByCondition(transAccountLogSearchVO);
         return ResultGenerator.genSuccessResult(transAccountLogVO);
     }

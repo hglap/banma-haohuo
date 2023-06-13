@@ -19,11 +19,6 @@ public class GameUserProp  implements Serializable {
     private String userId;
 
     /**
-     * 道具类型
-     */
-    @Column(name = "prop_type")
-    private String propType;
-    /**
      * 道具编码
      */
     @Column(name = "prop_code")
@@ -46,4 +41,12 @@ public class GameUserProp  implements Serializable {
      */
     @Column(name = "modified_time")
     private Date modifiedTime;
+
+    public GameUserProp( String userId, Integer propCode ) {
+        this.userId = userId;
+        this.propCode = propCode;
+        this.propRemainCount = 0;
+        this.createTime = new Date();
+        this.modifiedTime = new Date();
+    }
 }

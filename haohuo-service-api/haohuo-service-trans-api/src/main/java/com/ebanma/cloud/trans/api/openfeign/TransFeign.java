@@ -3,7 +3,10 @@ package com.ebanma.cloud.trans.api.openfeign;
 import com.ebanma.cloud.common.dto.Result;
 import com.ebanma.cloud.trans.api.dto.TransAccountLog;
 import com.ebanma.cloud.trans.api.dto.TransAccountLogSearchVO;
+import com.ebanma.cloud.trans.api.dto.TransAccountLogVO;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -12,7 +15,8 @@ import org.springframework.web.bind.annotation.RequestBody;
  * @version $ Id: UpdateTrans, v 0.1 2023/06/08 22:48 banma-0193 Exp $
  */
 
-@FeignClient(value = "mall-service" ,path="/trans/account")
+//@FeignClient(value = "trans-service" ,path="/trans/account")
+@FeignClient(value = "trans-service" ,path="/trans/account",url = "http://127.0.0.1:8085")
 public interface TransFeign {
 
     /**
@@ -31,5 +35,6 @@ public interface TransFeign {
      * @return
      */
     @PostMapping("/getTransInfo")
-    Result getTransInfo(@RequestBody TransAccountLogSearchVO transAccountLogSearchVO);
+    Result<TransAccountLogVO> getTransInfo(@RequestBody TransAccountLogSearchVO transAccountLogSearchVO);
+
 }
