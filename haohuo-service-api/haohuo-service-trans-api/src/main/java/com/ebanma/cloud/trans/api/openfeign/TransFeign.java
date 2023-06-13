@@ -5,8 +5,6 @@ import com.ebanma.cloud.trans.api.dto.TransAccountLog;
 import com.ebanma.cloud.trans.api.dto.TransAccountLogSearchVO;
 import com.ebanma.cloud.trans.api.dto.TransAccountLogVO;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -16,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
  */
 
 @FeignClient(value = "trans-service" ,path="/trans/account/log")
+//@FeignClient(value = "trans-service" ,path="/trans/account",url = "http://127.0.0.1:8085")
 public interface TransFeign {
 
     /**
