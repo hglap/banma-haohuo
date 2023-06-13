@@ -4,8 +4,10 @@ import com.ebanma.cloud.common.dto.Result;
 import com.ebanma.cloud.common.dto.ResultGenerator;
 import com.ebanma.cloud.common.enums.ResultCode;
 import com.ebanma.cloud.common.pojo.AppUserToken;
+import com.ebanma.cloud.common.util.JwtUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import io.jsonwebtoken.Claims;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
@@ -36,9 +38,11 @@ public class ValidMallUserTokenGlobalFilter implements GlobalFilter, Ordered {
 
         final List<String> ignoreURLs = new ArrayList<>();
         ignoreURLs.add("/user-service/user/login");
-        ignoreURLs.add("/user-service/user/getSMSCode");
+        ignoreURLs.add("/user-service/user/getSmsCode");
+        ignoreURLs.add("/user-service/user/checkCode");
         ignoreURLs.add("/user/login");
-        ignoreURLs.add("/user/getSMSCode");
+        ignoreURLs.add("/user/getSmsCode");
+        ignoreURLs.add("/user/checkCode");
 
         // 登录注册接口，直接放行
         if (ignoreURLs.contains(exchange.getRequest().getURI().getPath())) {
@@ -58,10 +62,9 @@ public class ValidMallUserTokenGlobalFilter implements GlobalFilter, Ordered {
             // 返回错误提示
             return wrapErrorResponse(exchange, chain);
         }
-        ValueOperations<String, AppUserToken> opsForMallUserToken = redisTemplate.opsForValue();
-        AppUserToken tokenObject = opsForMallUserToken.get(token);
-        if (tokenObject == null) {
-            // 返回错误提示
+        try{
+            Claims claims = JwtUtil.parseJWT(token);
+        }catch(Exception e){
             return wrapErrorResponse(exchange, chain);
         }
 
