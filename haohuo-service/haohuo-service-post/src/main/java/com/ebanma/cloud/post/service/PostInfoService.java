@@ -1,13 +1,14 @@
 package com.ebanma.cloud.post.service;
 
-import com.baomidou.mybatisplus.extension.service.IService;
 import com.ebanma.cloud.post.model.dto.ImgDto;
 import com.ebanma.cloud.post.model.dto.PostSearchDto;
 import com.ebanma.cloud.post.model.po.PostInfoPO;
+import com.baomidou.mybatisplus.extension.service.IService;
 import com.ebanma.cloud.post.model.vo.PostInfoVO;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.List;
 
 /**
@@ -17,7 +18,7 @@ import java.util.List;
 */
 public interface PostInfoService extends IService<PostInfoPO> {
 
-    PostInfoVO getByPostId(Long id);
+    PostInfoVO getByPostId(PostInfoVO postInfoVO);
 
     String upload(MultipartFile multipartFile) throws IOException;
 
@@ -25,11 +26,11 @@ public interface PostInfoService extends IService<PostInfoPO> {
 
     boolean removeImg(ImgDto imgDto);
 
-    Long add(PostInfoVO postInfo);
+    boolean add(PostInfoVO postInfo);
 
-    List<PostInfoVO> getList(Integer page, Integer size, String userId);
+    List<PostInfoVO> search(PostSearchDto postSearchDto) throws ParseException;
 
-    List<PostInfoVO> search(PostSearchDto postSearchDto);
+    List<PostInfoVO> getList(Integer page, Integer size, Long userId);
 
-
+    List<PostInfoVO> getListByUserIdOrSku(Integer pageNum, Integer pageSize, Long userId, String sku,Long readerId);
 }

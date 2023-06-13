@@ -1,32 +1,41 @@
-package com.ebanma.cloud.post.model.po;
+package com.ebanma.cloud.post.model;
 
-import java.io.Serializable;
-
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import java.io.Serializable;
 import lombok.Data;
 
 /**
  * 
- * @TableName post_read
+ * @TableName post_like
  */
-@TableName("post_read")
+@TableName(value ="post_like")
 @Data
-public class PostReadPO implements Serializable {
+public class PostLike implements Serializable {
     /**
-     * 主键自增
+     * 主键
      */
+    @TableId(type = IdType.AUTO)
     private Long id;
 
     /**
-     * 帖子id
+     * 贴子主键
      */
     private Long postId;
 
     /**
-     * 用户id
+     * 用户id,点赞用户
      */
     private Long userId;
 
+    /**
+     * 0.未删除,1删除
+     */
+    private Integer state;
+
+    @TableField(exist = false)
     private static final long serialVersionUID = 1L;
 
     @Override
@@ -40,10 +49,11 @@ public class PostReadPO implements Serializable {
         if (getClass() != that.getClass()) {
             return false;
         }
-        PostReadPO other = (PostReadPO) that;
+        PostLike other = (PostLike) that;
         return (this.getId() == null ? other.getId() == null : this.getId().equals(other.getId()))
             && (this.getPostId() == null ? other.getPostId() == null : this.getPostId().equals(other.getPostId()))
-            && (this.getUserId() == null ? other.getUserId() == null : this.getUserId().equals(other.getUserId()));
+            && (this.getUserId() == null ? other.getUserId() == null : this.getUserId().equals(other.getUserId()))
+            && (this.getState() == null ? other.getState() == null : this.getState().equals(other.getState()));
     }
 
     @Override
@@ -53,6 +63,7 @@ public class PostReadPO implements Serializable {
         result = prime * result + ((getId() == null) ? 0 : getId().hashCode());
         result = prime * result + ((getPostId() == null) ? 0 : getPostId().hashCode());
         result = prime * result + ((getUserId() == null) ? 0 : getUserId().hashCode());
+        result = prime * result + ((getState() == null) ? 0 : getState().hashCode());
         return result;
     }
 
@@ -65,6 +76,7 @@ public class PostReadPO implements Serializable {
         sb.append(", id=").append(id);
         sb.append(", postId=").append(postId);
         sb.append(", userId=").append(userId);
+        sb.append(", state=").append(state);
         sb.append(", serialVersionUID=").append(serialVersionUID);
         sb.append("]");
         return sb.toString();

@@ -6,10 +6,7 @@ import com.ebanma.cloud.post.model.po.PostLikePO;
 import com.ebanma.cloud.post.service.PostLikeService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -30,20 +27,21 @@ public class PostLikeController {
      * @return {@link Result}
      */
     @PostMapping("/add")
-    public Result add(PostLikePO postLike) {
+    public Result add(@RequestBody PostLikePO postLike) {
         boolean flag = postLikeService.add(postLike);
         return ResultGenerator.genSuccessResult(flag);
     }
 
     /**
+     * 删除
      * 取消点赞
      *
-     * @param id id
+     * @param postLike 后像
      * @return {@link Result}
      */
     @PostMapping("/delete")
-    public Result delete(@RequestParam Long id) {
-        boolean flag = postLikeService.remove(id);
+    public Result delete(@RequestBody PostLikePO postLike) {
+        boolean flag = postLikeService.removeByCondition(postLike);
         return ResultGenerator.genSuccessResult(flag);
     }
 

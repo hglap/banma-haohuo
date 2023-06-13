@@ -1,26 +1,55 @@
 server:
-  port: 10084
+  port: 11084
 spring:
   application:
     name: post-service
-#在application.yml中配置fastdfs的连接地址等信息
+  main:
+    #允许存在多个Feign调用相同Service的接口
+    allow-bean-definition-overriding: true
   cloud:
     nacos:
+      #注册中心
       discovery:
-        server-addr: 30.16.95.140:8848
-        namespace: 7bdad1e8-52f0-4905-814a-d413d6d819e5
-      username: nacos
-      password: nacos
+        server-addr: http://30.16.95.140:8848
+        namespace: 6b829f28-2ad4-4ea9-8f77-bb227c571d38
+      #配置中心
+      config:
+        server-addr: http://30.16.95.140:8848
+        file-extension: yaml #配置的格式 yaml
+
+  data:
+    mongodb:
+      database: test
+      host: 127.0.0.1
+      port: 27017
+      repositories:
+        type: auto
+
+  redis:
+    port: 6379
+    database: 0
+    timeout: 5000ms
+    host: 30.16.95.140
+    password: admin
+  #  配置rabbitMq 服务器
+
+
+
+  #在application.yml中配置fastdfs的连接地址等信息
   # 注意这个trackerList：如果是集群tracker的话以逗号分隔开就行 30.16.95.144
 fdfs:
   connect-timeout: 600
   so-timeout: 1500
-  trackerList: 124.221.94.214:22122
-  # 后续删除
-  thumb-image:
-    width: 150
-    height: 150
-  pool:
-    max-total: 200
-mybatis:
-  mapper-locations: mapper/*.xml
+#  trackerList: 124.221.94.214:22122
+#本地版
+  trackerList: 30.16.95.140:22122
+#  # 后续删除
+#  thumb-image:
+#    width: 150
+#    height: 150
+#  pool:
+#    max-total: 200
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+

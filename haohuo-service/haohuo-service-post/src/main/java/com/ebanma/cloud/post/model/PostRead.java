@@ -1,20 +1,23 @@
-package com.ebanma.cloud.post.model.po;
+package com.ebanma.cloud.post.model;
 
-import java.io.Serializable;
-
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import java.io.Serializable;
 import lombok.Data;
 
 /**
  * 
  * @TableName post_read
  */
-@TableName("post_read")
+@TableName(value ="post_read")
 @Data
-public class PostReadPO implements Serializable {
+public class PostRead implements Serializable {
     /**
      * 主键自增
      */
+    @TableId
     private Long id;
 
     /**
@@ -27,6 +30,7 @@ public class PostReadPO implements Serializable {
      */
     private Long userId;
 
+    @TableField(exist = false)
     private static final long serialVersionUID = 1L;
 
     @Override
@@ -40,7 +44,7 @@ public class PostReadPO implements Serializable {
         if (getClass() != that.getClass()) {
             return false;
         }
-        PostReadPO other = (PostReadPO) that;
+        PostRead other = (PostRead) that;
         return (this.getId() == null ? other.getId() == null : this.getId().equals(other.getId()))
             && (this.getPostId() == null ? other.getPostId() == null : this.getPostId().equals(other.getPostId()))
             && (this.getUserId() == null ? other.getUserId() == null : this.getUserId().equals(other.getUserId()));
