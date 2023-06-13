@@ -48,10 +48,10 @@ public class SignProdStrategy implements ProdStrategy {
                 prodLifeTimeVO.setCount(count);
                 prodLifeTimeVO.setNeedCount(30 - count);
             }
-            if (count == 1L) {
+            if (count > 1L) {
                 prodLifeTimeVO.setRank(2L);
                 prodLifeTimeVO.setCount(count);
-                prodLifeTimeVO.setNeedCount(9L);
+                prodLifeTimeVO.setNeedCount(10 - count);
             }
             if (count == 0L) {
                 prodLifeTimeVO.setRank(1L);
