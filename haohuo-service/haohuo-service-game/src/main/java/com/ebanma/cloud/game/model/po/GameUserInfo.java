@@ -86,7 +86,7 @@ public class GameUserInfo implements Serializable {
         this.totalDrawTimes=0;
         this.createTime = new Date();
         this.modifiedTime = new Date();
-        this.winningDate = null;
+        this.winningDate =  new Date();
     }
 
     /**

@@ -351,4 +351,6 @@ public class TransAccountLog {
     public void setCreateBy(String createBy) {
         this.createBy = createBy;
     }
+
+
 }

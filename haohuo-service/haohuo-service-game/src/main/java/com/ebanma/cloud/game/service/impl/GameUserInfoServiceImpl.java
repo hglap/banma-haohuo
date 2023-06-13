@@ -54,7 +54,6 @@ public class GameUserInfoServiceImpl extends AbstractService<GameUserInfo> imple
         //2.类型转换
         GameUserInfoVO vo = new GameUserInfoVO(userInfo);
         //2.个人中心获取用户积分
-        //todo
         vo.setUserPoints(transService.getPointInfo(userId).intValue());
         return vo;
     }

@@ -6,6 +6,7 @@ import com.ebanma.cloud.common.enums.GameRedisEnum;
 import com.ebanma.cloud.game.model.dto.GameDrawDto;
 import com.ebanma.cloud.game.model.dto.GamePurchasesDto;
 import com.ebanma.cloud.game.model.vo.GameDrawVO;
+import com.ebanma.cloud.game.model.vo.GamePrizeVO;
 import com.ebanma.cloud.game.service.GameService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import java.util.Random;
 
 /**
  * @author banma-
@@ -27,7 +29,11 @@ public class GameOperationController {
 
 
     @Resource
+
+
+
     private RedisTemplate<String ,GameDrawVO> redisTemplate;
+
 
     @Resource
     private GameService gameService;
@@ -42,6 +48,28 @@ public class GameOperationController {
     public Result result(GameDrawDto gameDrawDto) {
         try {
             return ResultGenerator.genSuccessResult( gameService.result(gameDrawDto));
+        }catch (Exception e) {
+            return ResultGenerator.genFailResult(e.getMessage());
+        }
+    };
+    /**
+     * 抽奖--获取抽奖结果
+     *
+     * @return {@link Result}
+     */
+    @ApiOperation("抽奖--获取抽奖结果")
+    @PostMapping("/resultTest")
+    public Result resultTest() {
+        try {
+            GameDrawDto gameDrawDto = new GameDrawDto();
+            String[] strs = {"100","101","102","103","104","105","106"};
+            Random random = new Random();
+            String userId = strs[random.nextInt(strs.length)];
+
+            gameDrawDto.setUserId(userId);
+            gameDrawDto.setPropCode(10);
+            GamePrizeVO result = gameService.result(gameDrawDto);
+            return ResultGenerator.genSuccessResult(result);
         }catch (Exception e) {
             return ResultGenerator.genFailResult(e.getMessage());
         }
