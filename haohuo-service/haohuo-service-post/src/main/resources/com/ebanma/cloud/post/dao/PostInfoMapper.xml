@@ -6,7 +6,6 @@
 
     <resultMap id="BaseResultMap" type="com.ebanma.cloud.post.model.po.PostInfoPO">
             <id property="id" column="id" jdbcType="BIGINT"/>
-            <result property="postId" column="post_id" jdbcType="VARCHAR"/>
             <result property="userId" column="user_id" jdbcType="VARCHAR"/>
             <result property="nickName" column="nick_name" jdbcType="VARCHAR"/>
             <result property="headImg" column="head_img" jdbcType="VARCHAR"/>

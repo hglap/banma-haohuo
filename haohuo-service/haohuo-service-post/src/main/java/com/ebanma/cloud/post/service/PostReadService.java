@@ -2,6 +2,7 @@ package com.ebanma.cloud.post.service;
 
 import com.ebanma.cloud.post.model.po.PostReadPO;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.ebanma.cloud.post.model.vo.PostInfoVO;
 
 /**
 * @author banma-0163
@@ -10,4 +11,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
 */
 public interface PostReadService extends IService<PostReadPO> {
 
+    void addRead(PostInfoVO postInfoVO);
 }

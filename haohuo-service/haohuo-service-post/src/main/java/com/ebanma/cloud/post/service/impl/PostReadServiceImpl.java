@@ -2,8 +2,10 @@ package com.ebanma.cloud.post.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ebanma.cloud.post.model.po.PostReadPO;
+import com.ebanma.cloud.post.model.vo.PostInfoVO;
 import com.ebanma.cloud.post.service.PostReadService;
 import com.ebanma.cloud.post.dao.PostReadMapper;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 /**
@@ -15,6 +17,14 @@ import org.springframework.stereotype.Service;
 public class PostReadServiceImpl extends ServiceImpl<PostReadMapper, PostReadPO>
     implements PostReadService{
 
+    @Override
+    @Async
+    public void addRead(PostInfoVO postInfoVO) {
+        PostReadPO postReadPO = new PostReadPO();
+        postReadPO.setPostId(postInfoVO.getId());
+        postReadPO.setUserId(postInfoVO.getUserId());
+        save(postReadPO);
+    }
 }
 
 

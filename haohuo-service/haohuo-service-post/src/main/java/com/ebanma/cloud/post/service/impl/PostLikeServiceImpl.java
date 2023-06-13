@@ -1,9 +1,12 @@
 package com.ebanma.cloud.post.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ebanma.cloud.post.model.po.PostLikePO;
 import com.ebanma.cloud.post.service.PostLikeService;
 import com.ebanma.cloud.post.dao.PostLikeMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Service;
@@ -20,9 +23,11 @@ import java.util.concurrent.Future;
 public class PostLikeServiceImpl extends ServiceImpl<PostLikeMapper, PostLikePO>
     implements PostLikeService{
 
+
     @Override
     public boolean add(PostLikePO postLike) {
         Boolean flag = null;
+
         try {
             flag = saveThis(postLike).get();
         } catch (InterruptedException | ExecutionException e) {
@@ -50,6 +55,14 @@ public class PostLikeServiceImpl extends ServiceImpl<PostLikeMapper, PostLikePO>
             throw new RuntimeException(e);
         }
         return true;
+    }
+
+    @Override
+    public boolean removeByCondition(PostLikePO postLike) {
+        LambdaQueryWrapper<PostLikePO> lq = Wrappers.lambdaQuery();
+        int delete = this.getBaseMapper().delete(lq.eq(PostLikePO::getPostId, postLike.getPostId())
+                .eq(PostLikePO::getUserId, postLike.getUserId()));
+        return delete > 0;
     }
 
     /**
