@@ -8,7 +8,6 @@ import com.ebanma.cloud.common.util.BeanUtil;
 import com.ebanma.cloud.mall.api.openfeign.SkuInfoServiceFeign;
 import com.ebanma.cloud.mall.api.vo.SkuInfoVO;
 import com.ebanma.cloud.order.dao.OrderInfoMapper;
-import com.ebanma.cloud.order.dao.PaymentInfoMapper;
 import com.ebanma.cloud.order.feign.SkuInfoQueryDTO;
 import com.ebanma.cloud.order.feign.countDTO;
 import com.ebanma.cloud.order.model.AccountInfo;
@@ -22,16 +21,13 @@ import com.ebanma.cloud.trans.api.dto.TransAccountLogSearchVO;
 import com.ebanma.cloud.trans.api.dto.TransAccountLogVO;
 import com.ebanma.cloud.trans.api.openfeign.TransFeign;
 import com.ebanma.cloud.user.api.dto.Address;
-import com.ebanma.cloud.user.api.openfeign.UserAddressFeign;
 import com.ebanma.cloud.user.api.openfeign.UserServiceFeign;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.rocketmq.spring.core.RocketMQTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,7 +35,6 @@ import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 
 /**
