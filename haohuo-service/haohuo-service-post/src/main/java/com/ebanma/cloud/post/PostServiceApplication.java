@@ -15,8 +15,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @SpringBootApplication
 @EnableScheduling
 //@EnableDiscoveryClient
-@EnableFeignClients(basePackages="com.ebanma.cloud.trans.api")
-@MapperScan(basePackages = {"com.ebanma.cloud.post.dao", "com.ebanma.cloud.common.core"})
+@EnableFeignClients(basePackages={"com.ebanma.cloud.*.api.*"})
+@MapperScan(basePackages = {"com.ebanma.cloud.post.dao"})
 public class PostServiceApplication {
 
     public static void main(String[] args) {
