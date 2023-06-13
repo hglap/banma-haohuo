@@ -108,7 +108,7 @@ public class ActivityServiceImpl extends AbstractService<Activity> implements Ac
                 saveDto.getDuration(),
                 0,
                 new Timestamp(System.currentTimeMillis()),
-                saveDto.getCreateUserId()+"",
+                saveDto.getCreateUserId(),
                 1,
                 1,
                 (int) saveDto.getAmount(),
@@ -233,15 +233,14 @@ public class ActivityServiceImpl extends AbstractService<Activity> implements Ac
     @Override
     public SeckillGit seckill(String path, String userId, long activityId) {
         //1.用户锁-避免用户重复提交抽奖
-       RLock redissonLock = redissonClient.getLock("seckill");
-        String gitName = "空";
+        RLock redissonLock = redissonClient.getLock("seckill");
+        String gitName = null;
         SeckillGit seckillGit = new SeckillGit();
         try {
             // TODO 获取分布式锁
             redissonLock.lock();
             // TODO 获取奖品
-            BoundListOperations<String,Object> bound = redisTemplate.boundListOps("ActivityGift"+redisTemplate.opsForValue().get("activityId"));
-            Git git = (Git) bound.rightPop();
+            Git git = (Git) redisTemplate.opsForList().rightPop("ActivityGift"+redisTemplate.opsForValue().get("activityId"));
             if(git.getBizType() == 0){
                 gitName = "恭喜获得"+git.getAmount()+"积分";
             }else{
@@ -278,6 +277,12 @@ public class ActivityServiceImpl extends AbstractService<Activity> implements Ac
         return seckillGit;
     }
 
+    @Override
+    public Git redisTestRead(String key) {
+        BoundListOperations<String,Object> bound = redisTemplate.boundListOps("ActivityGift"+redisTemplate.opsForValue().get("activityId"));
+        Git git = (Git) bound.rightPop();
+        return git;
+    }
 
 
     private long getDuration() {

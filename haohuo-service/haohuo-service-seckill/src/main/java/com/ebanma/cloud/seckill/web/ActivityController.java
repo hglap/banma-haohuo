@@ -59,4 +59,8 @@ public class ActivityController {
         return ResultGenerator.genSuccessResult(result);
     }
 
+    @GetMapping("/redisTestRead")
+    public Result redisTestRead(){
+        return ResultGenerator.genSuccessResult(activityService.redisTestRead(""));
+    }
 }
