@@ -4,6 +4,7 @@ package com.ebanma.cloud.seckill.service;
 import com.ebanma.cloud.common.core.Service;
 import com.ebanma.cloud.seckill.model.dto.ActivitySaveDto;
 import com.ebanma.cloud.seckill.model.dto.ActivitySearchInfoDto;
+import com.ebanma.cloud.seckill.model.dto.Git;
 import com.ebanma.cloud.seckill.model.po.Activity;
 import com.ebanma.cloud.seckill.model.vo.ActivityGetInfoVo;
 import com.ebanma.cloud.seckill.model.vo.SeckillGit;
@@ -23,4 +24,7 @@ public interface ActivityService extends Service<Activity> {
     ActivityGetInfoVo getInfo(String userId);
 
     SeckillGit seckill(String path, String userId, long activityId);
+
+
+    Git redisTestRead(String key);
 }

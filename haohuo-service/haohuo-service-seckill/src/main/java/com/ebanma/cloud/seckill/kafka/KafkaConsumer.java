@@ -55,6 +55,8 @@ public class KafkaConsumer {
     }
     @KafkaListener(topics = "seckill",groupId = "seckill_single_group",id = "seckillSingle")
     public void onMessage(String record) {
+        System.out.println("__________________________________________");
+        System.out.println(record);
         SeckillMessageDto seckillMessageDto =JSON.parseObject(record,SeckillMessageDto.class);
         TransAccountLog log = new TransAccountLog();
         log.setUserId( seckillMessageDto.getUserId());
@@ -66,6 +68,7 @@ public class KafkaConsumer {
         log.setCreateOn(new Date());
         log.setCreateBy("秒杀活动");
         log.setBizSerialNumber(String.valueOf(CRC16.crc16((seckillMessageDto.getUserId()+seckillMessageDto.getActivityId()).getBytes())));
-        Result r = gameServiceGateway.updateTrans(log);
+//        Result r = gameServiceGateway.updateTrans(log);
+        System.out.println(JSON.toJSONString(log));
     }
 }
