@@ -2,6 +2,7 @@ package com.ebanma.cloud.post.dao;
 
 import com.ebanma.cloud.post.model.po.PostInfoPO;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.ebanma.cloud.user.model.UserInfo;
 
 /**
 * @author banma-0163
@@ -11,6 +12,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 */
 public interface PostInfoMapper extends BaseMapper<PostInfoPO> {
 
+    UserInfo queryUser(String userIdLocal);
 }
 
 

@@ -11,7 +11,7 @@ spring:
       #注册中心
       discovery:
         server-addr: http://30.16.95.140:8848
-        namespace: 6b829f28-2ad4-4ea9-8f77-bb227c571d38
+        group: 7bdad1e8-52f0-4905-814a-d413d6d819e5
       #配置中心
       config:
         server-addr: http://30.16.95.140:8848
@@ -27,7 +27,7 @@ spring:
 
   redis:
     port: 6379
-    database: 0
+    database: 1
     timeout: 5000ms
     host: 30.16.95.140
     password: admin

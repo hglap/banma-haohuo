@@ -24,7 +24,7 @@ public class ActivitySaveDto implements Serializable {
     /**
      * 创建人id
      */
-    private long createUserId;
+    private String createUserId;
     /**
      * 创建人姓名
      */

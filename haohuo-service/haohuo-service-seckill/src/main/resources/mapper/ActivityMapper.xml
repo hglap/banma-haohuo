@@ -33,7 +33,7 @@
           from activity
     <where>
       <if test="createUserName != null and createUserName != ''">
-        and create_user_name  = ${createUserName}
+        and create_user_name  = '${createUserName}'
       </if>
       <if test="createTime != null">
         and create_time &gt;= '${createTime}'
