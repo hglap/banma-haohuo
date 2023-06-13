@@ -20,7 +20,7 @@ import java.util.List;
 * Created by CodeGenerator on 2023/06/06.
 */
 @RestController
-@RequestMapping("/user/info")
+@RequestMapping("/userInfo/info")
 public class UserInfoController {
 
     @Autowired
