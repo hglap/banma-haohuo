@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+import java.util.Map;
 
 /**
  * 抽奖信息
@@ -38,6 +39,8 @@ public class GameDrawVO implements Serializable {
      * 是否已经出现金蛋
      */
     private Integer winning;
+
+    private Map<String,Integer> map ;
 
     public GameDrawVO(int totalTimes, Double eggOdd) {
         this.totalTimes = totalTimes;

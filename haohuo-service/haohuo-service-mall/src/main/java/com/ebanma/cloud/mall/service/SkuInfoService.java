@@ -46,4 +46,6 @@ public interface SkuInfoService extends IService<SkuInfoPO> {
 
 
     Map<String, Long> getAllSkuCount();
+
+    List<SkuInfoVO> testEs();
 }

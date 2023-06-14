@@ -17,30 +17,30 @@ import javax.annotation.Resource;
  */
 @Slf4j
 @RestController
-@RequestMapping("/trans/account")
+@RequestMapping("/trans/account/log")
 public class TransAccountLogController {
     @Resource
     private TransAccountLogService transAccountLogService;
 
-    @PostMapping("/log/add")
+    @PostMapping("/add")
     public Result add(@RequestBody TransAccountLog transAccountLog) throws Exception {
         transAccountLogService.save(transAccountLog);
         return ResultGenerator.genSuccessResult();
     }
 
-    @PostMapping("/log/delete")
+    @PostMapping("/delete")
     public Result delete(@RequestParam Integer id) {
         transAccountLogService.deleteById(id);
         return ResultGenerator.genSuccessResult();
     }
 
-    @PostMapping("/log/update")
+    @PostMapping("/update")
     public Result update(@RequestBody TransAccountLog transAccountLog) {
         transAccountLogService.update(transAccountLog);
         return ResultGenerator.genSuccessResult();
     }
 
-    @PostMapping("/log/detail")
+    @PostMapping("/detail")
     public Result detail(@RequestParam Integer id) {
         TransAccountLog transAccountLog = transAccountLogService.findById(id);
         return ResultGenerator.genSuccessResult(transAccountLog);

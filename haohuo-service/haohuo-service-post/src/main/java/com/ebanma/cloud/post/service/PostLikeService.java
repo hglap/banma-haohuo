@@ -13,4 +13,6 @@ public interface PostLikeService extends IService<PostLikePO> {
     boolean add(PostLikePO postLike);
 
     boolean remove(Long id);
+
+    boolean removeByCondition(PostLikePO postLike);
 }

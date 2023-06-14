@@ -2,10 +2,10 @@ package com.ebanma.cloud.post.web;
 
 import com.ebanma.cloud.common.dto.Result;
 import com.ebanma.cloud.common.dto.ResultGenerator;
+import com.ebanma.cloud.post.model.dto.DeleteDto;
 import com.ebanma.cloud.post.model.dto.ImgDto;
 import com.ebanma.cloud.post.model.dto.PostSearchDto;
 import com.ebanma.cloud.post.model.po.PostInfoPO;
-import com.ebanma.cloud.post.model.vo.PostInfoSearchVO;
 import com.ebanma.cloud.post.model.vo.PostInfoVO;
 import com.ebanma.cloud.post.service.PostInfoService;
 import com.github.pagehelper.PageHelper;
@@ -15,6 +15,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import java.io.IOException;
+import java.text.ParseException;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -34,8 +36,8 @@ public class PostInfoController {
      */
     @PostMapping("/insert")
     public Result add(@RequestBody PostInfoVO postInfo) {
-        Long id = postInfoService.add(postInfo);
-        return ResultGenerator.genSuccessResult(id);
+        Result<Boolean> booleanResult = ResultGenerator.genSuccessResult(postInfoService.add(postInfo));
+        return booleanResult;
     }
 
     @PostMapping("/delete")
@@ -58,7 +60,7 @@ public class PostInfoController {
      */
     @PostMapping("/detail")
     public Result detail(@RequestBody PostInfoVO postInfoVO) {
-        PostInfoVO postInfo = postInfoService.getByPostId(postInfoVO.getId());
+        PostInfoVO postInfo = postInfoService.getByPostId(postInfoVO);
         return ResultGenerator.genSuccessResult(postInfo);
     }
 
@@ -107,9 +109,43 @@ public class PostInfoController {
      *
      * @return {@link Result}
      */
+    @PostMapping("/deleteIds")
+    public Result deleteIds(@RequestBody DeleteDto deleteDto) {
+        boolean pageInfoList=postInfoService.removeByIds(deleteDto.getId());
+        return ResultGenerator.genSuccessResult(pageInfoList);
+    }
+    /**
+     * 推荐主页帖子展示
+     *
+     * @return {@link Result}
+     */
     @PostMapping("/list")
-    public Result list(@RequestBody PostInfoSearchVO searchVO) {
-        List<PostInfoVO> pageInfoList=postInfoService.getList(searchVO.getPageNum(), searchVO.getPageSize(), searchVO.getUserId());
+    public Result list(@RequestBody PostSearchDto postSearchDto) {
+        List<PostInfoVO> pageInfoList=postInfoService.getList(postSearchDto.getPageNum(), postSearchDto.getPageSize(), postSearchDto.getUserId());
+        return ResultGenerator.genSuccessResult(pageInfoList);
+    }
+
+    /**
+     * 推荐主页帖子展示
+     *
+     * @param postSearchDto 职位搜索dto
+     * @return {@link Result}
+     */
+    @PostMapping("/getListByUserId")
+    public Result getListByUserId(@RequestBody PostSearchDto postSearchDto) {
+        List<PostInfoVO> pageInfoList=postInfoService.getListByUserIdOrSku(postSearchDto.getPageNum(), postSearchDto.getPageSize(), postSearchDto.getUserId(),null,postSearchDto.getReaderId());
+        return ResultGenerator.genSuccessResult(pageInfoList);
+    }
+
+    /**
+     * 推荐主页帖子展示
+     *
+     * @param postSearchDto 职位搜索dto
+     * @return {@link Result}
+     */
+    @PostMapping("/getListBySku")
+    public Result getListBySku(@RequestBody PostSearchDto postSearchDto) {
+        List<PostInfoVO> pageInfoList=postInfoService.getListByUserIdOrSku(postSearchDto.getPageNum(), postSearchDto.getPageSize(),null,postSearchDto.getSku(),postSearchDto.getReaderId());
         return ResultGenerator.genSuccessResult(pageInfoList);
     }
 
@@ -119,8 +155,10 @@ public class PostInfoController {
      * @return {@link Result}
      */
     @PostMapping("/search")
-    public Result search(PostSearchDto postSearchDto) {
-        PageHelper.startPage(postSearchDto.getPageNum(),postSearchDto.getPageSize());
+    public Result search(@RequestBody PostSearchDto postSearchDto) throws ParseException {
+        if(postSearchDto.getPageNum()!=null&&postSearchDto.getPageSize()!=null){
+            PageHelper.startPage(postSearchDto.getPageNum(),postSearchDto.getPageSize());
+        }
         List<PostInfoVO> list = postInfoService.search(postSearchDto);
         PageInfo pageInfo = new PageInfo(list);
         return ResultGenerator.genSuccessResult(pageInfo);

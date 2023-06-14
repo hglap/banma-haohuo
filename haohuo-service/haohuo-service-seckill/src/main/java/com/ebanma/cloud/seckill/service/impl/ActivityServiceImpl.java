@@ -3,8 +3,6 @@ package com.ebanma.cloud.seckill.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.ebanma.cloud.common.core.AbstractService;
 import com.ebanma.cloud.common.dto.Result;
-import com.ebanma.cloud.common.enums.GameEggEnum;
-import com.ebanma.cloud.common.enums.GamePriceOrPropEnum;
 import com.ebanma.cloud.common.util.BeanUtil;
 import com.ebanma.cloud.common.util.IdWorker;
 import com.ebanma.cloud.game.api.vo.GameEggRuleVO;
@@ -27,10 +25,11 @@ import com.ebanma.cloud.seckill.utils.ThreadPoolUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 
+import org.apache.logging.log4j.Logger;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+//import org.slf4j.Logger;
+//import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.redis.core.BoundListOperations;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -56,10 +55,8 @@ import java.util.stream.Collectors;
  * @date 2023/06/06
  */
 @Service
-@Transactional(rollbackFor = RuntimeException.class)
 public class ActivityServiceImpl extends AbstractService<Activity> implements ActivityService{
 
-    private Logger log = LoggerFactory.getLogger(ActivityServiceImpl.class);
 
     @Resource
     private ActivityMapper activityMapper;
@@ -108,7 +105,7 @@ public class ActivityServiceImpl extends AbstractService<Activity> implements Ac
                 saveDto.getDuration(),
                 0,
                 new Timestamp(System.currentTimeMillis()),
-                saveDto.getCreateUserId()+"",
+                saveDto.getCreateUserId(),
                 1,
                 1,
                 (int) saveDto.getAmount(),
@@ -233,15 +230,14 @@ public class ActivityServiceImpl extends AbstractService<Activity> implements Ac
     @Override
     public SeckillGit seckill(String path, String userId, long activityId) {
         //1.用户锁-避免用户重复提交抽奖
-       RLock redissonLock = redissonClient.getLock("seckill");
-        String gitName = "空";
+        RLock redissonLock = redissonClient.getLock("seckill");
+        String gitName = null;
         SeckillGit seckillGit = new SeckillGit();
         try {
             // TODO 获取分布式锁
             redissonLock.lock();
             // TODO 获取奖品
-            BoundListOperations<String,Object> bound = redisTemplate.boundListOps("ActivityGift"+redisTemplate.opsForValue().get("activityId"));
-            Git git = (Git) bound.rightPop();
+            Git git = (Git) redisTemplate.opsForList().rightPop("ActivityGift"+redisTemplate.opsForValue().get("activityId"));
             if(git.getBizType() == 0){
                 gitName = "恭喜获得"+git.getAmount()+"积分";
             }else{
@@ -278,12 +274,17 @@ public class ActivityServiceImpl extends AbstractService<Activity> implements Ac
         return seckillGit;
     }
 
+    @Override
+    public Git redisTestRead(String key) {
+        BoundListOperations<String,Object> bound = redisTemplate.boundListOps("ActivityGift"+redisTemplate.opsForValue().get("activityId"));
+        Git git = (Git) bound.rightPop();
+        return git;
+    }
 
 
     private long getDuration() {
         long end = (long)redisTemplate.opsForValue().get("activityEndTimeMillis");
         long during =end - System.currentTimeMillis();
-        log.info("during:{};end:{};now:{}",during,end,new Date());
         return during;
     }
 }

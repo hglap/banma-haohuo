@@ -28,5 +28,7 @@ public class SkuInfoSearchDTO extends BasePageSearchVO implements Serializable {
     private String categoryId;
     // 商品货号
     private String goodsNo;
+    // 是否启用
+    private String useStatus;
 
 }

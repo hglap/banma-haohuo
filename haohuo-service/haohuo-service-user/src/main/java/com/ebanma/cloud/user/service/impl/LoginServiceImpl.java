@@ -82,6 +82,7 @@ public class LoginServiceImpl implements LoginService {
         redisUtil.set(token,"OK");
         LoginVO loginVO = new LoginVO();
         loginVO.setAccess_token(token);
+        loginVO.setToken(token);
         return ResultGenerator.genSuccessResult(loginVO);
     }
 

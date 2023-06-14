@@ -27,6 +27,10 @@ spring:
         max-idle: 8
 mybatis:
   mapper-locations: mapper/*.xml
+rocketmq:
+  name-server: 30.16.95.140:9876
+  producer:
+    group: trans-group
 logging:
   level:
     com.ebanma.cloud.trans.dao: debug

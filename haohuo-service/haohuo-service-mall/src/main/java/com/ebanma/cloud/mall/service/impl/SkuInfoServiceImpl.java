@@ -5,6 +5,7 @@ import cn.hutool.core.collection.CollectionUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ebanma.cloud.common.dto.Result;
+import com.ebanma.cloud.common.exception.MallException;
 import com.ebanma.cloud.mall.model.dto.*;
 import com.ebanma.cloud.mall.model.enums.SkuAttachmentRelationTypeEnum;
 import com.ebanma.cloud.mall.model.enums.SkuRecordTypeEnum;
@@ -27,6 +28,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -74,6 +76,10 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoMapper, SkuInfoPO>
 
     @Autowired
     private OrderInfoServiceFeign orderInfoServiceFeign;
+
+
+    @Autowired
+    private ElasticsearchRepository elasticsearchRepository;
 
     /**
      * 查询商品列表
@@ -200,11 +206,17 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoMapper, SkuInfoPO>
         return null;
     }
 
+    /**
+     * 分页查询
+     * @param skuInfoSearchDTO
+     * @return
+     */
     @Override
     public PageInfo searchList(SkuInfoSearchDTO skuInfoSearchDTO) {
         PageHelper.startPage(skuInfoSearchDTO.getPageNum(), skuInfoSearchDTO.getPageSize());
         List<SkuInfoPO> skuInfoPOList = skuInfoMapper.selectList(new LambdaQueryWrapper<SkuInfoPO>()
                 .eq(StringUtils.isNotEmpty(skuInfoSearchDTO.getCategoryId()), SkuInfoPO::getCategoryId, skuInfoSearchDTO.getCategoryId())
+                .eq(StringUtils.isNotEmpty(skuInfoSearchDTO.getUseStatus()),SkuInfoPO::getUseStatus,skuInfoSearchDTO.getUseStatus())
                 .like(StringUtils.isNotEmpty(skuInfoSearchDTO.getSkuName()), SkuInfoPO::getSkuName, skuInfoSearchDTO.getSkuName())
                 .like(StringUtils.isNotEmpty(skuInfoSearchDTO.getGoodsNo()), SkuInfoPO::getGoodsNo, skuInfoSearchDTO.getGoodsNo()));
 
@@ -403,7 +415,7 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoMapper, SkuInfoPO>
 
         SkuInfoPO skuInfoPO = skuInfoMapper.selectById(id);
         if(SkuUseStatusTypeEnum.USE.getCode().equals(skuInfoPO.getUseStatus())){
-            throw new RuntimeException("该商品为上架状态，无法删除");
+            throw new MallException("该商品为上架状态，无法删除");
         }else{
             skuInfoPO.setUseStatus(SkuUseStatusTypeEnum.UN_USE.getCode());
             skuInfoMapper.updateById(skuInfoPO);
@@ -437,6 +449,15 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoMapper, SkuInfoPO>
         List<SkuInfoPO> skuInfoPOList = list();
         Map<String, Long> countMap = skuInfoPOList.stream().collect(Collectors.toMap(SkuInfoPO::getId, SkuInfoPO::getCurrentQua));
         return countMap;
+    }
+
+    @Override
+    public List<SkuInfoVO> testEs() {
+        Iterable iterable = elasticsearchRepository.findAll();
+        List<SkuInfoPO> list = new ArrayList<>();
+        iterable.forEach(skuinfo->list.add((SkuInfoPO)skuinfo));
+        List<SkuInfoVO> skuInfoVOList = BeanUtil.copyToList(list, SkuInfoVO.class);
+        return skuInfoVOList;
     }
 
 

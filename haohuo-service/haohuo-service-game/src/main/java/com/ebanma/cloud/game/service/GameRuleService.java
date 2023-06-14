@@ -57,7 +57,7 @@ public interface GameRuleService extends Service<GameRule> {
      * @param gameRules 游戏规则
      * @return {@link GameEggRuleVO}
      */
-    GameEggRuleVO getEggDrawByGuaranteed(List<GameEggRuleVO> gameRules);
+    GameEggRuleVO getEggDrawByGuaranteed(List<GameEggRuleVO> gameRules ,String userId);
 
 
     /**
@@ -65,5 +65,5 @@ public interface GameRuleService extends Service<GameRule> {
      *
      * @param eggDraw 鸡蛋画
      */
-    void guaranteedRollback(GameEggRuleVO eggDraw);
+    void guaranteedRollback(GameEggRuleVO eggDraw );
 }

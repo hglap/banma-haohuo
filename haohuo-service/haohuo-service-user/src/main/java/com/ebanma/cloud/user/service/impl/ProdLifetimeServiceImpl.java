@@ -43,7 +43,7 @@ public class ProdLifetimeServiceImpl extends AbstractService<ProdLifetime> imple
     //通过构造方法将策略注入策略池
     public ProdLifetimeServiceImpl(Map<String, ProdStrategy> strategyMap) {
         this.strategyMap.clear();
-        strategyMap.forEach((k, v) -> this.strategyMap.put(k, v));
+        this.strategyMap.putAll(strategyMap);
     }
 
 

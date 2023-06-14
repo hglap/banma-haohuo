@@ -1,12 +1,15 @@
 package com.ebanma.cloud.post.model.po;
 
 import java.io.Serializable;
+
+import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
 /**
  * 
  * @TableName post_read
  */
+@TableName("post_read")
 @Data
 public class PostReadPO implements Serializable {
     /**

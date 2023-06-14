@@ -13,6 +13,8 @@ import org.apache.commons.lang3.time.DateUtils;
 @Data
 public class PostSearchDto {
 
+    private Long id;
+
     /**
      * 作者id
      */
@@ -39,10 +41,22 @@ public class PostSearchDto {
      * 页面大小
      */
     private Integer pageSize;
+
+    /**
+     * 用户标识
+     */
+    private Long userId;
     /**
      * 标题
      */
     private String title;
+
+    /**
+     * 商品id
+     */
+    private String sku;
+
+    private Long readerId;
 
     private String[] timeRange;
 

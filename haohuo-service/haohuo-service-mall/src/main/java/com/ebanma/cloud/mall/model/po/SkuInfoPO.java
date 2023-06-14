@@ -10,6 +10,7 @@ import java.util.Date;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
+import org.springframework.data.elasticsearch.annotations.Document;
 
 /**
  * 
@@ -20,6 +21,7 @@ import lombok.experimental.Accessors;
 @TableName(value ="sku_info")
 @Data
 @Accessors(chain = true)
+@Document(indexName = "sku_info",createIndex = true)
 public class SkuInfoPO extends BasePO implements Serializable {
 
     /**
