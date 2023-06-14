@@ -30,7 +30,7 @@
         views,comments,create_time,
         modified_time
     </sql>
-    <select id="queryUser" resultType="com.ebanma.cloud.user.api.dto.UserInfo">
+    <select id="queryUser" resultType="com.ebanma.cloud.post.model.UserInfo">
         select * from user_info where id = #{userIdLocal}
     </select>
 </mapper>
