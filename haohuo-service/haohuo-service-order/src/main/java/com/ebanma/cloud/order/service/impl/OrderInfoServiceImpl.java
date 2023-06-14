@@ -8,7 +8,6 @@ import com.ebanma.cloud.common.util.BeanUtil;
 import com.ebanma.cloud.mall.api.openfeign.SkuInfoServiceFeign;
 import com.ebanma.cloud.mall.api.vo.SkuInfoVO;
 import com.ebanma.cloud.order.dao.OrderInfoMapper;
-import com.ebanma.cloud.order.dao.PaymentInfoMapper;
 import com.ebanma.cloud.order.feign.SkuInfoQueryDTO;
 import com.ebanma.cloud.order.feign.countDTO;
 import com.ebanma.cloud.order.model.AccountInfo;
@@ -22,31 +21,26 @@ import com.ebanma.cloud.trans.api.dto.TransAccountLogSearchVO;
 import com.ebanma.cloud.trans.api.dto.TransAccountLogVO;
 import com.ebanma.cloud.trans.api.openfeign.TransFeign;
 import com.ebanma.cloud.user.api.dto.Address;
-import com.ebanma.cloud.user.api.openfeign.UserAddressFeign;
 import com.ebanma.cloud.user.api.openfeign.UserServiceFeign;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.rocketmq.spring.core.RocketMQTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.messaging.support.MessageBuilder;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 
 /**
  * Created by CodeGenerator on 2023/06/06.
  */
 @Service
-@Transactional
 @Slf4j
 public class OrderInfoServiceImpl implements OrderInfoService {
     @Resource
@@ -126,16 +120,14 @@ public class OrderInfoServiceImpl implements OrderInfoService {
 
     @Override
     public Result<OrderInfo> save(OrderInfo orderInfo) {
-
         String skuId = orderInfo.getSkuId();
         List<String> keyList = new ArrayList<>();
         keyList.add(skuId);
         Object execute = redisUtil.getRedisTemplate().execute(redisScript, keyList, orderInfo.getSkuNum()+"");
         if ("1".equals(execute.toString())) {
-
             // 新增订单
             orderInfo.setOutTradeNo(UUID.randomUUID().toString());
-            orderInfoMapper.insert(orderInfo);
+            this.insertNewOrder(orderInfo);
             // 调用支付接口支付订单
 
             // 支付成功后，发送消息更新库存
@@ -150,6 +142,11 @@ public class OrderInfoServiceImpl implements OrderInfoService {
             log.info("扣减库存失败,商品id=={},商品剩余数量=={}",orderInfo.getSkuId(),redisUtil.getRedisTemplate().opsForValue().get(skuId));
             return ResultGenerator.genFailResult("库存不足！");
         }
+    }
+
+    @Async("defaultThreadPoolExecutor")
+    void insertNewOrder(OrderInfo orderInfo) {
+        orderInfoMapper.insert(orderInfo);
     }
 
     @Override
