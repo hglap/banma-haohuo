@@ -3,8 +3,6 @@ package com.ebanma.cloud.seckill.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.ebanma.cloud.common.core.AbstractService;
 import com.ebanma.cloud.common.dto.Result;
-import com.ebanma.cloud.common.enums.GameEggEnum;
-import com.ebanma.cloud.common.enums.GamePriceOrPropEnum;
 import com.ebanma.cloud.common.util.BeanUtil;
 import com.ebanma.cloud.common.util.IdWorker;
 import com.ebanma.cloud.game.api.vo.GameEggRuleVO;
@@ -27,10 +25,11 @@ import com.ebanma.cloud.seckill.utils.ThreadPoolUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 
+import org.apache.logging.log4j.Logger;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+//import org.slf4j.Logger;
+//import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.redis.core.BoundListOperations;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -56,10 +55,8 @@ import java.util.stream.Collectors;
  * @date 2023/06/06
  */
 @Service
-@Transactional(rollbackFor = RuntimeException.class)
 public class ActivityServiceImpl extends AbstractService<Activity> implements ActivityService{
 
-    private Logger log = LoggerFactory.getLogger(ActivityServiceImpl.class);
 
     @Resource
     private ActivityMapper activityMapper;
@@ -288,7 +285,6 @@ public class ActivityServiceImpl extends AbstractService<Activity> implements Ac
     private long getDuration() {
         long end = (long)redisTemplate.opsForValue().get("activityEndTimeMillis");
         long during =end - System.currentTimeMillis();
-        log.info("during:{};end:{};now:{}",during,end,new Date());
         return during;
     }
 }

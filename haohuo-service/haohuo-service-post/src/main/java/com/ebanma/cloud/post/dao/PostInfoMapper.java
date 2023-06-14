@@ -2,7 +2,8 @@ package com.ebanma.cloud.post.dao;
 
 import com.ebanma.cloud.post.model.po.PostInfoPO;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.ebanma.cloud.user.model.UserInfo;
+import com.ebanma.cloud.user.api.dto.UserInfo;
+//import com.ebanma.cloud.user.model.UserInfo;
 
 /**
 * @author banma-0163

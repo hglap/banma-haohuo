@@ -13,7 +13,7 @@ import com.ebanma.cloud.post.service.PostInfoService;
 import com.ebanma.cloud.post.service.PostLikeService;
 import com.ebanma.cloud.post.service.PostReadService;
 import com.ebanma.cloud.user.api.openfeign.UserServiceFeign;
-import com.ebanma.cloud.user.model.UserInfo;
+import com.ebanma.cloud.user.api.dto.UserInfo;
 import com.github.pagehelper.PageInfo;
 import com.github.tobato.fastdfs.service.FastFileStorageClient;
 import org.apache.commons.io.FilenameUtils;
