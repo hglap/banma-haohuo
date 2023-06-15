@@ -29,20 +29,7 @@ public class GameOperationController {
 
 
     @Resource
-    private RedisUtil<String ,GameDrawVO> redisUtil;
-
-    @Resource
-    private GameUserInfoService gameUserInfoService;
-
-    @Resource
     private GameService gameService;
-
-    private static final String[] STR = {"100","101","102","103","104","105","106","107","108","109",
-            "110","111","112","113","114","115","116","117","118","119",
-            "120","121","122","123","124","125","126","127","128","129",
-            "130","131","132","133","134","135","136","137","138","139",
-            "140","141","142","143","144","145","146","147","148","149",
-            "150","151","152","153","154","155","156","157","158","159"};
 
 
     /**
@@ -55,27 +42,6 @@ public class GameOperationController {
     public Result result(GameDrawDto gameDrawDto) {
         try {
             return ResultGenerator.genSuccessResult( gameService.result(gameDrawDto));
-        }catch (Exception e) {
-            return ResultGenerator.genFailResult(e.getMessage());
-        }
-    };
-    /**
-     * 抽奖--获取抽奖结果
-     *
-     * @return {@link Result}
-     */
-    @ApiOperation("抽奖--获取抽奖结果")
-    @PostMapping("/resultTest")
-    public Result resultTest( int num) {
-        try {
-            GameDrawDto gameDrawDto = new GameDrawDto();
-            Random random = new Random();
-            String userId = STR[random.nextInt(STR.length)];
-//            String userId = String.valueOf(random.nextInt(num));
-            gameDrawDto.setUserId(userId);
-            gameDrawDto.setPropCode(10);
-            GamePrizeVO result = gameService.result(gameDrawDto);
-            return ResultGenerator.genSuccessResult(result);
         }catch (Exception e) {
             return ResultGenerator.genFailResult(e.getMessage());
         }
@@ -95,19 +61,5 @@ public class GameOperationController {
                 :ResultGenerator.genFailResult("购买砸蛋次数失败");
     };
 
-    @PostMapping("/test")
-    public Result test(int num ){
-//        GameDrawVO gameDrawVO =  redisUtil.get(GameRedisEnum.DRAW_INFO.getKey());
-//        System.out.println(gameDrawVO);
-//        if (gameDrawVO != null) {
-//            gameDrawVO.setRemainTimes(remainTimes);
-//            gameDrawVO.setWinning(winning);
-//            redisUtil.set(GameRedisEnum.DRAW_INFO.getKey(),gameDrawVO);
-//        }
-        for (int i = 0; i < num; i++) {
-            gameUserInfoService.getUserInfo(String.valueOf(i));
-        }
-        return ResultGenerator.genSuccessResult();
-    }
 
 }

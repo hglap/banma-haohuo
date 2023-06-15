@@ -50,11 +50,6 @@ public class GameServiceImpl implements GameService {
     @Resource
     private GameUserInfoService gameUserInfoService;
 
-    @Resource
-    private GameUserRecordService gameUserRecordService;
-
-    @Resource
-    private GameUserPropService gameUserPropService;
 
     @Resource
     private GameRuleService gameRuleService;
@@ -73,9 +68,9 @@ public class GameServiceImpl implements GameService {
         GameEggRuleVO eggDraw = null;
         try {
             //1.2 加锁
-//            if (!userLock.tryLock()) {
-//                throw new ServiceException("请勿多次重复点击抽奖");
-//            }
+            if (!userLock.tryLock()) {
+                throw new ServiceException("请勿多次重复点击抽奖");
+            }
             //2.判断用户抽奖次数
             GameUserInfo userInfo = gameUserInfoService.getUserInfo(gameDrawDto.getUserId());
             if ( userInfo.getRemainTimes()<=0){
@@ -173,33 +168,6 @@ public class GameServiceImpl implements GameService {
 
         rocketMQTemplate.convertAndSend(TransRocketMQEnum.TOPIC_TRANS_RECORD.getValue()+":"+TransRocketMQEnum.TAG_TRANS_RECORD.getValue(),
                 gameDistributionPresentVO);
-
-
-
-//        //1 更新数据库个人数据
-//        GameUserInfo userInfo = gameDistributionPresentVO.getGameUserInfo();
-//        GamePresentRuleVO presentDraw = gameDistributionPresentVO.getGamePresentRuleVO();
-//        //1更新中奖纪录
-//        GameUserRecord gameUserRecord = new GameUserRecord(userInfo.getUserId(),"",presentDraw);
-//        gameUserRecordService.save(gameUserRecord);
-//        gameUserInfoService.update(userInfo);
-//        //2.更新道具剩余信息
-//        if ( !CollectionUtils.isEmpty(userInfo.getUseGameUserProp())) {
-//           userInfo.getUseGameUserProp().forEach( m -> {
-//               gameUserPropService.update(m);
-//           });
-//        }
-//        //3 更新redis个人信息
-//        redisUtil.set(GameRedisEnum.USER_INFO.getKey()+userInfo.getUserId(),userInfo,Long.valueOf(GameRedisEnum.USER_INFO_TIME.getKey()), TimeUnit.MINUTES);
-//        //4. 红包-积分rocketMQ异步发奖
-//        if(GamePriceOrPropEnum.RED_PACKET.getValue()==presentDraw.getPresentCode()
-//               ||GamePriceOrPropEnum.POINT.getValue()==presentDraw.getPresentCode()  ){
-//            log.info("用户:"+userInfo.getUserId()+"  "+ Objects.requireNonNull(GamePriceOrPropEnum.getGamePropByValue(presentDraw.getPresentCode())).getKey() +": "+presentDraw.getPresentCount());
-//            rocketMQTemplate.convertAndSend(TransRocketMQEnum.TOPIC_TRANS_RECORD.getValue()+":"+TransRocketMQEnum.TAG_TRANS_RECORD.getValue(),
-//                   presentDraw.getTransAccountLog(userInfo.getUserId()));
-//        }
-
-
 
     }
 

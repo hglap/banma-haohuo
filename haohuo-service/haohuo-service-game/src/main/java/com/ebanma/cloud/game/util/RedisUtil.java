@@ -85,7 +85,7 @@ public class RedisUtil<String,V> {
         try {
             ValueOperations<String, V> operations = redisTemplate.opsForValue();
             operations.set(key, value);
-            if(expireTime.intValue() > 0) {
+            if(expireTime.intValue() >= 0) {
                 redisTemplate.expire(key, expireTime, timeUnit);
             }
             result = true;
