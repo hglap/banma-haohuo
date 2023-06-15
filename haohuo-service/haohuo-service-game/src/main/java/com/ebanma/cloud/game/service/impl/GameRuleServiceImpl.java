@@ -13,10 +13,11 @@ import com.ebanma.cloud.game.model.vo.GameEggRuleVO;
 import com.ebanma.cloud.game.model.vo.GamePresentRuleVO;
 import com.ebanma.cloud.game.service.GameRuleService;
 import com.ebanma.cloud.game.util.AliasMethod;
+import com.ebanma.cloud.game.util.RedisUtil;
 import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -37,12 +38,15 @@ public class  GameRuleServiceImpl extends AbstractService<GameRule> implements G
 
     @Autowired
     private RedissonClient redissonClient;
-    @Resource
-    private RedisTemplate redisTemplate;
+
+    @Autowired
+    private RedisUtil redisUtil;
 
     @Resource
     private GameRuleMapper gameRuleMapper;
 
+    @Resource
+    DefaultRedisScript<Long> redisScript;
 
     @Override
     public List<GameEggRuleVO> getGameRules(GameUserInfo userInfo, int propCode) {
@@ -78,11 +82,13 @@ public class  GameRuleServiceImpl extends AbstractService<GameRule> implements G
         return gameRules;
     }
 
+
+
     @Override
     public void guaranteedRollback(GameEggRuleVO eggDraw) {
         //如果蛋奖励不为空，则并没金蛋保底概率控制概率已经更改，需要回滚
         if(eggDraw != null) {
-            GameDrawVO gameDrawVO = (GameDrawVO) redisTemplate.opsForValue().get(GameRedisEnum.DRAW_INFO.getKey());
+            GameDrawVO gameDrawVO = (GameDrawVO) redisUtil.get(GameRedisEnum.DRAW_INFO.getKey());
             //保底剩余次数+1
             if (gameDrawVO != null) {
                 gameDrawVO.setRemainTimes( gameDrawVO.getRemainTimes() +1 );
@@ -90,9 +96,31 @@ public class  GameRuleServiceImpl extends AbstractService<GameRule> implements G
                     //如果该次为金蛋,则金蛋统计次数回置
                     gameDrawVO.setWinning( gameDrawVO.getWinning() -1 );
                 }
-                redisTemplate.opsForValue().set(GameRedisEnum.DRAW_INFO.getKey(),gameDrawVO);
+                redisUtil.set(GameRedisEnum.DRAW_INFO.getKey(),gameDrawVO);
             }
         }
+    }
+
+    @Override
+    public GameEggRuleVO getGoldenEgg(List<GameEggRuleVO> gameRules) {
+        //获取金蛋概率
+        for(GameEggRuleVO m :gameRules){
+            if (m.getEggType().equals(GameEggEnum.GOLDEN_EGG.getEggType())) {
+                return  m;
+            }
+        }
+        return null;
+    }
+
+
+    @Override
+    public int guaranteed(boolean present){
+        Date date = new Date();
+        List<String> keys = new ArrayList<>();
+        keys.add(GameRedisEnum.DRAW_TOTAL.getKey());
+        keys.add(GameRedisEnum.DRAW_WINING.getKey());
+        Long result = (Long) redisUtil.getRedisTemplate().execute(redisScript, keys, present ?  1:0 );
+        return result.intValue();
     }
 
     /**
@@ -102,7 +130,7 @@ public class  GameRuleServiceImpl extends AbstractService<GameRule> implements G
      * @return {@link GameEggRuleVO}
      */
     @Override
-    public GameEggRuleVO getEggDrawByGuaranteed(List<GameEggRuleVO> gameRules , String userId) {
+    public GameEggRuleVO getEggDrawByGuaranteed(List<GameEggRuleVO> gameRules ) {
         //1.上锁
         GameEggRuleVO gameEggRuleVO = null;
         RLock lock = redissonClient.getLock(GameRedisEnum.DRAW_LOCK.getKey());
@@ -110,24 +138,13 @@ public class  GameRuleServiceImpl extends AbstractService<GameRule> implements G
             //1.1  上锁
             lock.lock();
             //2.获取抽奖次数
-            GameDrawVO gameDrawVO = (GameDrawVO) redisTemplate.opsForValue().get(GameRedisEnum.DRAW_INFO.getKey());
+            GameDrawVO gameDrawVO = (GameDrawVO) redisUtil.get(GameRedisEnum.DRAW_INFO.getKey());
             //2.1如果没有信息，新建对象
             //定义一个金蛋对象
-            GameEggRuleVO goldenEggRule = null;
-            //获取金蛋概率
-            for(GameEggRuleVO m :gameRules){
-                if (m.getEggType().equals(GameEggEnum.GOLDEN_EGG.getEggType())) {
-                    goldenEggRule = m;
-                    if (gameDrawVO == null) {
-                        gameDrawVO = new GameDrawVO(REMAIN_TIMES,m.getEggOdd());
-                        redisTemplate.opsForValue().set(GameRedisEnum.DRAW_INFO.getKey(),gameDrawVO);
-                    }
-                    break;
-                }
+            GameEggRuleVO goldenEggRule = this.getGoldenEgg(gameRules);
+            if (gameDrawVO == null) {
+                gameDrawVO = new GameDrawVO(REMAIN_TIMES,goldenEggRule.getEggOdd());
             }
-
-            //断言不为空
-            assert gameDrawVO != null :"金蛋保底错误";
 
 
             //3.保底判断
@@ -162,18 +179,8 @@ public class  GameRuleServiceImpl extends AbstractService<GameRule> implements G
                 gameDrawVO.resetting();
             }
 
-
-
-            Map<String, Integer> map = gameDrawVO.getMap();
-            if (map == null) {
-                map = new HashMap<>();
-            }
-            map.put(userId, map.containsKey(userId)? map.get(userId)+1 :  1);
-            gameDrawVO.setMap(map);
-            System.out.println(map.toString());
-
             //更新redis
-            redisTemplate.opsForValue().set(GameRedisEnum.DRAW_INFO.getKey(), gameDrawVO);
+            redisUtil.set(GameRedisEnum.DRAW_INFO.getKey(), gameDrawVO);
 
 
         }catch (Exception e) {
@@ -196,9 +203,11 @@ public class  GameRuleServiceImpl extends AbstractService<GameRule> implements G
     @Override
     public List<GameEggRuleVO> getGameRules() {
         //1.从从Redis中获取游戏规则
-        List<GameEggRuleVO> gameEggRuleVOS = (List<GameEggRuleVO>) redisTemplate.opsForValue().get(GameRedisEnum.GAME_RULE.getKey());
+        List<GameEggRuleVO> gameEggRuleVOS = (List<GameEggRuleVO>) redisUtil.get(GameRedisEnum.GAME_RULE.getKey());
         //2.判断redis里是否存在,如果没有进行数据库查询
         if( gameEggRuleVOS == null ){
+            redisUtil.set(GameRedisEnum.DRAW_TOTAL.getKey(),100);
+            redisUtil.set(GameRedisEnum.DRAW_WINING.getKey(),0);
             //2.1查询
             Map<String, List<GameRule>> map = this.findAll().stream().collect(Collectors.groupingBy(GameRule::getEggType));
             //2.2数据处理
@@ -208,7 +217,7 @@ public class  GameRuleServiceImpl extends AbstractService<GameRule> implements G
             });
             //2.3储存进Redis
             if ( !CollectionUtils.isEmpty(newGameEggRuleVOS) ) {
-                redisTemplate.opsForValue().set( GameRedisEnum.GAME_RULE.getKey(),newGameEggRuleVOS);
+                redisUtil.set( GameRedisEnum.GAME_RULE.getKey(),newGameEggRuleVOS);
             }
             gameEggRuleVOS=newGameEggRuleVOS;
         }
