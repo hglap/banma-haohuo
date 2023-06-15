@@ -17,6 +17,10 @@ public enum GameRedisEnum {
      */
     USER_INFO("game:u:i:"),
     /**
+     * 用户信息保留时间
+     */
+    USER_INFO_TIME("-1"),
+    /**
      * 用户购买锁
      */
     USER_BUY("game:u:buy:"),
@@ -24,6 +28,11 @@ public enum GameRedisEnum {
      * 抽奖锁
      */
     DRAW_LOCK("game:draw:l"),
+    /**
+     *抽奖次数
+     */
+    DRAW_TOTAL("game:draw:total"),
+    DRAW_WINING("game:draw:wining"),
     /**
      * 抽奖信息[概率控制]
      */
@@ -33,7 +42,6 @@ public enum GameRedisEnum {
      * 游戏规则
      */
     GAME_RULE("game:rule");
-
     private String key;
 
     GameRedisEnum(String key) {

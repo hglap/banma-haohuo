@@ -14,8 +14,8 @@ import com.ebanma.cloud.game.service.GameUserInfoService;
 import com.ebanma.cloud.game.service.GameUserPropService;
 import com.ebanma.cloud.game.service.GameUserRecordService;
 import com.ebanma.cloud.game.service.TransService;
+import com.ebanma.cloud.game.util.RedisUtil;
 import com.github.pagehelper.PageInfo;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,7 +39,7 @@ public class GameUserInfoServiceImpl extends AbstractService<GameUserInfo> imple
     private GameUserInfoMapper gameUserInfoMapper;
 
     @Resource
-    private RedisTemplate<String, GameUserInfo> redisTemplate;
+    private RedisUtil<String, GameUserInfo> redisUtil;
 
     @Resource
     private GameUserRecordService gameUserRecordService;
@@ -67,7 +67,7 @@ public class GameUserInfoServiceImpl extends AbstractService<GameUserInfo> imple
     @Transactional
     public GameUserInfo getUserInfo(String userId) {
         //1.Redis获取用户信息
-        GameUserInfo userInfo = redisTemplate.opsForValue().get(GameRedisEnum.USER_INFO.getKey()+userId);
+        GameUserInfo userInfo = redisUtil.get(GameRedisEnum.USER_INFO.getKey()+userId);
         if( userInfo != null ){
             //清除道具使用记录
             userInfo.getUseGameUserProp().clear();
@@ -92,7 +92,7 @@ public class GameUserInfoServiceImpl extends AbstractService<GameUserInfo> imple
         }
 
         //3.将用户信息存进redis中,提升后续用户抽奖时效率[5分钟]
-        redisTemplate.opsForValue().set(GameRedisEnum.USER_INFO.getKey()+userId,userInfo,5, TimeUnit.MINUTES);
+        redisUtil.set(GameRedisEnum.USER_INFO.getKey()+userId,userInfo,Long.valueOf(GameRedisEnum.USER_INFO_TIME.getKey()), TimeUnit.MINUTES);
         return userInfo;
     }
 
