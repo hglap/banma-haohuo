@@ -21,6 +21,7 @@ public class InitSkuCount implements ApplicationRunner {
     @Autowired
     private RedisUtil redisUtil;
 
+
     @Override
     public void run(ApplicationArguments args) throws Exception {
         Map<String, Long> allSkuCount = null;

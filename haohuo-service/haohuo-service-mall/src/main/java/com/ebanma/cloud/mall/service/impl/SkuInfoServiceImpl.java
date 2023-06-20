@@ -77,7 +77,6 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoMapper, SkuInfoPO>
     @Autowired
     private OrderInfoServiceFeign orderInfoServiceFeign;
 
-
     @Autowired
     private ElasticsearchRepository elasticsearchRepository;
 
