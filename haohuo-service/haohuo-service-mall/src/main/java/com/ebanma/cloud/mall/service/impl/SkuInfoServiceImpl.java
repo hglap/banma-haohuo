@@ -25,6 +25,9 @@ import com.ebanma.cloud.order.api.openfeign.OrderInfoServiceFeign;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.apache.commons.lang3.StringUtils;
+import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -458,7 +461,6 @@ public class SkuInfoServiceImpl extends ServiceImpl<SkuInfoMapper, SkuInfoPO>
         List<SkuInfoVO> skuInfoVOList = BeanUtil.copyToList(list, SkuInfoVO.class);
         return skuInfoVOList;
     }
-
 
 }
 
